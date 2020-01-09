@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GalileuszSchool.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace GalileuszSchool.Infrastructure
         }
 
 
-
+        public DbSet<Page> Pages { get; set; }
     }
 }

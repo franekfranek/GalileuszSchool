@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GalileuszSchool.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +26,10 @@ namespace GalileuszSchool
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            //Register database in ConfigurationServices
+            services.AddDbContext<GalileuszSchoolContext>(options => options.UseSqlServer
+                (Configuration.GetConnectionString("GalileuszSchoolContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
