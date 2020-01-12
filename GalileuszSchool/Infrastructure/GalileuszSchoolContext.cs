@@ -16,5 +16,6 @@ namespace GalileuszSchool.Infrastructure
 
         public DbSet<Page> Pages { get; set; }
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Teacher> Teachers { get; set; }
     }
 }
