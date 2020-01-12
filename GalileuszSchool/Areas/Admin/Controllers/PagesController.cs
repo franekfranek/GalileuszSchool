@@ -109,7 +109,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return View(page);
         }
 
-        //get /admin/pages/delete/{id}
+        //get(can be post too) /admin/pages/delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
             Page page = await context.Pages.FindAsync(id);

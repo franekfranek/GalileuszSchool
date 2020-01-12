@@ -10,7 +10,6 @@ namespace GalileuszSchool.Models
     {
         public int Id { get; set; }
         [Required, MinLength(2, ErrorMessage = "Minimal length is 2")]
-        //[Display(Name = "DUPA")]
         public string Title { get; set; }
         public string Slug { get; set; }
         [Required, MinLength(4, ErrorMessage = "Minimal length is 4")]
