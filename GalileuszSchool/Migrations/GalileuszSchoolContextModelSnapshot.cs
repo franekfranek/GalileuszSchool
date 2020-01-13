@@ -76,6 +76,41 @@ namespace GalileuszSchool.Migrations
                     b.ToTable("Pages");
                 });
 
+            modelBuilder.Entity("GalileuszSchool.Models.Student", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Students");
+                });
+
             modelBuilder.Entity("GalileuszSchool.Models.Teacher", b =>
                 {
                     b.Property<int>("Id")
@@ -106,6 +141,15 @@ namespace GalileuszSchool.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("Teachers");
+                });
+
+            modelBuilder.Entity("GalileuszSchool.Models.Student", b =>
+                {
+                    b.HasOne("GalileuszSchool.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GalileuszSchool.Models.Teacher", b =>

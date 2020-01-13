@@ -53,7 +53,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 context.Add(teacher);
                 await context.SaveChangesAsync();
 
-                TempData["Success"] = "The teacher has been added";
+                TempData["Success"] = "Teacher has been added";
 
                 return RedirectToAction("Index");
             }
@@ -75,6 +75,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return View(teacher);
         }
 
+        //admin/teachers/edit/{id}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Teacher teacher)
@@ -95,7 +97,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 context.Update(teacher);
                 await context.SaveChangesAsync();
 
-                TempData["Success"] = "The teacher has been edited";
+                TempData["Success"] = "Teacher has been edited";
 
                 return RedirectToAction("Index");
             }
@@ -109,7 +111,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             if (teacher == null)
             {
-                TempData["Error"] = "The page does not exist";
+                TempData["Error"] = "Teacher does not exist";
             }
             else
             {
