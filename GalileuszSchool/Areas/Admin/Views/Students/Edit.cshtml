@@ -1,17 +1,31 @@
-﻿@model Teacher
+﻿@model Student
 
 @{
-    ViewData["Title"] = "Add teacher";
+    ViewData["Title"] = "Edit student";
 }
 
-<h1>Add new teacher</h1>
+<h1>Edit student</h1>
 
 
 <div class="row">
-    <div class="col-md-10">
-        <form asp-action="Create">
+    <div class="col-md-4">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
+
+            <input type="hidden" asp-for="Image" />
+
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"> Current Image</label>
+                <img src="~/media/students/@Model.Image" width="60" alt="" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Image" class="control-label">New student Image</label>
+                <input asp-for="ImageUpload" class="form-control" />
+                <img src="" id="imgupload" alt="" />
+                <span asp-validation-for="ImageUpload" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -37,8 +51,9 @@
                 </select>
                 <span asp-validation-for="CourseId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Edit" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -50,4 +65,12 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        $("#ImageUpload").change(function () {
+            readURL(this);
+        })
+
+    </script>
 }
