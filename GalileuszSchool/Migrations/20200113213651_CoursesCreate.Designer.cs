@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GalileuszSchool.Migrations
 {
     [DbContext(typeof(GalileuszSchoolContext))]
-    [Migration("20200112221946_StudentCreate")]
-    partial class StudentCreate
+    [Migration("20200113213651_CoursesCreate")]
+    partial class CoursesCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,7 +47,12 @@ namespace GalileuszSchool.Migrations
                     b.Property<int>("Sorting")
                         .HasColumnType("int");
 
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("Courses");
                 });
@@ -85,9 +90,6 @@ namespace GalileuszSchool.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -108,8 +110,6 @@ namespace GalileuszSchool.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId");
-
                     b.ToTable("Students");
                 });
 
@@ -119,9 +119,6 @@ namespace GalileuszSchool.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -140,25 +137,14 @@ namespace GalileuszSchool.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId");
-
                     b.ToTable("Teachers");
                 });
 
-            modelBuilder.Entity("GalileuszSchool.Models.Student", b =>
+            modelBuilder.Entity("GalileuszSchool.Models.Course", b =>
                 {
-                    b.HasOne("GalileuszSchool.Models.Course", "Course")
+                    b.HasOne("GalileuszSchool.Models.Teacher", "Teacher")
                         .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GalileuszSchool.Models.Teacher", b =>
-                {
-                    b.HasOne("GalileuszSchool.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
+                        .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

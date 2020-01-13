@@ -25,6 +25,10 @@
             <th>
                 @Html.DisplayNameFor(model => model.Price)
             </th>
+
+            <th>
+                Teacher
+            </th>
             
           
             <th></th>
@@ -45,6 +49,10 @@
             </td>
             <td>
                 @item.Price PLN
+            </td>
+
+            <td>
+                @item.Teacher.FirstName @item.Teacher.LastName 
             </td>
            
             <td>

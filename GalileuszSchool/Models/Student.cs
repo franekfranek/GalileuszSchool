@@ -30,12 +30,12 @@ namespace GalileuszSchool.Models
         [RegularExpression(@"^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$", ErrorMessage = "Pattern is 000-000-000")]
         public string PhoneNumber { get; set; }
 
-        [Display(Name = "Course")]
-        [Range(1, int.MaxValue, ErrorMessage = "Please choose a course.")]
-        public int CourseId { get; set; }
+        //[Display(Name = "Course")]
+        //[Range(1, int.MaxValue, ErrorMessage = "Please choose a course.")]
+        //public int CourseId { get; set; }
 
-        [ForeignKey("CourseId")]
-        public virtual Course Course { get; set; }
+        //[ForeignKey("CourseId")]
+        //public virtual Course Course { get; set; }
 
         [NotMapped]
         [FileExtension]

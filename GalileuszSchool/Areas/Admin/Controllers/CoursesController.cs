@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
@@ -22,9 +23,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get Admin/Courses
         public async Task<IActionResult> Index()
         {
+           
+            return View(await context.Courses.OrderByDescending(x => x.Sorting).Include(x => x.Teacher).ToListAsync());
 
-            return View(await context.Courses.OrderBy(x => x.Sorting).ToListAsync());
         }
+
+
 
         // /admin/courses/details/{id}
         public async Task<IActionResult> Details(int id)
@@ -39,8 +43,23 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return View(course);
         }
 
-        // /admin/courses/create
-        public IActionResult Create() => View();
+        //admin/courses/create
+        public IActionResult Create() 
+        {
+            var teacherInfo = context.Teachers.OrderBy(x => x.Id);
+            IEnumerable<SelectListItem> selectList = from s in teacherInfo
+                                                     select new SelectListItem
+                                                     {
+                                                         Value = s.Id.ToString(),
+                                                         Text = s.FirstName + " " + s.LastName.ToString()
+                                                     };
+            ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
+
+            //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
+            //IOrderedQueryable<Teacher>
+            return View();
+        }
+
 
         //POST /admin/courses/create
         [HttpPost]
@@ -71,12 +90,24 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get /admin/courses/edit/{id}
         public async Task<IActionResult> Edit(int id)
         {
+            var teacherInfo = context.Teachers.OrderBy(x => x.Id);
+            IEnumerable<SelectListItem> selectList = from s in teacherInfo
+                                                     select new SelectListItem
+                                                     {
+                                                         Value = s.Id.ToString(),
+                                                         Text = s.FirstName + " " + s.LastName.ToString()
+                                                     };
+            ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
+
             Course course = await context.Courses.FindAsync(id);
 
             if (course == null)
             {
                 return NotFound();
             }
+
+            //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
+
 
             return View(course);
         }
@@ -86,6 +117,17 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Course course)
         {
+            var teacherInfo = context.Teachers.OrderBy(x => x.Id);
+            IEnumerable<SelectListItem> selectList = from s in teacherInfo
+                                                     select new SelectListItem
+                                                     {
+                                                         Value = s.Id.ToString(),
+                                                         Text = s.FirstName + " " + s.LastName.ToString()
+                                                     };
+            ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
+            //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
+
+
             if (ModelState.IsValid)
             {
                 course.Slug = course.Name.ToLower().Replace(" ", "-");

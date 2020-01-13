@@ -2,43 +2,47 @@
 
 namespace GalileuszSchool.Migrations
 {
-    public partial class TeacherCreate : Migration
+    public partial class StudentCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<string>(
+                name: "Slug",
+                table: "Teachers",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
             migrationBuilder.CreateTable(
-                name: "Teachers",
+                name: "Students",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Image = table.Column<string>(nullable: true),
                     FirstName = table.Column<string>(nullable: false),
                     LastName = table.Column<string>(nullable: false),
                     Slug = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: false),
-                    CourseId = table.Column<int>(nullable: false)
+                    PhoneNumber = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Teachers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Teachers_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Students", x => x.Id);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Teachers_CourseId",
-                table: "Teachers",
-                column: "CourseId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Teachers");
+                name: "Students");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Slug",
+                table: "Teachers",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldNullable: true);
         }
     }
 }

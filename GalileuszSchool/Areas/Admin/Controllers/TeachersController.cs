@@ -22,13 +22,13 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get Admin/Teachers
         public async Task<IActionResult> Index()
         {
-            return View(await context.Teachers.OrderByDescending(x => x.Id).Include(x => x.Course).ToListAsync());
+            return View(await context.Teachers.OrderByDescending(x => x.Id).ToListAsync());
         }
 
         // /admin/teachers/create
-        public IActionResult Create() 
+        public IActionResult Create()
         {
-            ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name");
+            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name");
 
             return View();
         }
@@ -41,7 +41,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 teacher.Slug = teacher.FirstName.ToLower().Replace(" ", "-") + teacher.LastName.ToLower().Replace(" ", "-");
-                
+
 
                 var slug = await context.Teachers.FirstOrDefaultAsync(x => x.Slug == teacher.Slug);
                 if (slug != null)
@@ -69,7 +69,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", teacher.CourseId);
+            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", teacher.CourseId);
 
 
             return View(teacher);
@@ -81,7 +81,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Teacher teacher)
         {
-            ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", teacher.CourseId);
+            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", teacher.CourseId);
 
             if (ModelState.IsValid)
             {

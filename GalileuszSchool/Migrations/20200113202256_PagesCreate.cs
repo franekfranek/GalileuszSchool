@@ -2,7 +2,7 @@
 
 namespace GalileuszSchool.Migrations
 {
-    public partial class First : Migration
+    public partial class PagesCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

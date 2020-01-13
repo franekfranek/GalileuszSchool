@@ -14,13 +14,22 @@ namespace GalileuszSchool.Models
         public string Name { get; set; }
         [Required]
         public string Level { get; set; }
+
         [MinLength(2, ErrorMessage = "Minimal length is 2")]
         public string Description { get; set; }
+
         [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Price per hour")]
         public decimal Price { get; set; }
         public string Slug { get; set; }
         public int Sorting { get; set; }
+
+        public int TeacherId { get; set; }
+
+        [ForeignKey("TeacherId")]
+        public virtual Teacher Teacher { get; set; }
+
+        
         //public DateTime StartTime { get; set; }
         //public DateTime EndTime { get; set; }
     }

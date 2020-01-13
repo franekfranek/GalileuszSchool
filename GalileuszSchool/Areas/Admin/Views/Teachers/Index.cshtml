@@ -25,9 +25,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
-            <th>
-                Course
-            </th>
+           
             <th></th>
         </tr>
     </thead>
@@ -47,9 +45,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
-            <td>
-                @item.Course.Name
-            </td>
+           
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a class="confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">Delete</a>

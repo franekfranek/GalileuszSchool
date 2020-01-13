@@ -28,13 +28,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get admin/students
         public async Task<IActionResult> Index()
         {
-            return View(await context.Students.OrderByDescending(x => x.Id).Include(x => x.Course).ToListAsync());
+            
+            return View(await context.Students.OrderByDescending(x => x.Id).ToListAsync());
+            
         }
 
         // /admin/students/create
         public IActionResult Create()
         {
-            ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name");
+            //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
 
             return View();
         }
@@ -44,7 +46,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Student student)
         {
-            ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name");
+            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name");
 
             if (ModelState.IsValid)
             {
@@ -89,7 +91,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", student.CourseId);
+            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", student.CourseId);
 
 
             return View(student);
@@ -101,7 +103,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Student student)
         {
-            ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", student.CourseId);
+            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", student.CourseId);
 
             if (ModelState.IsValid)
             {
@@ -114,11 +116,11 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                     return View(student);
                 }
 
-                
+
                 if (student.ImageUpload != null)
                 {
                     string uploadsDir = Path.Combine(webHostEnvironment.WebRootPath, "media/students");
-                    if(!string.Equals(student.Image, "noimage.jpg"))
+                    if (!string.Equals(student.Image, "noimage.jpg"))
                     {
                         string oldImagePath = Path.Combine(uploadsDir, student.Image);
                         if (System.IO.File.Exists(oldImagePath))
@@ -127,14 +129,14 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                         }
                     }
 
-                    string imageName = Guid.NewGuid().ToString() + "_" + student.ImageUpload.FileName; 
+                    string imageName = Guid.NewGuid().ToString() + "_" + student.ImageUpload.FileName;
                     string filePath = Path.Combine(uploadsDir, imageName);
                     FileStream fileStream = new FileStream(filePath, FileMode.Create);
                     await student.ImageUpload.CopyToAsync(fileStream);
                     fileStream.Close();
                     student.Image = imageName;
                 }
-                
+
 
                 context.Update(student);
                 await context.SaveChangesAsync();
