@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
+using GalileuszSchool.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,9 +29,18 @@ namespace GalileuszSchool
         {
             services.AddControllersWithViews();
 
+            services.AddSession(options =>
+            {
+                //options.IdleTimeout = TimeSpan.FromSeconds(2);
+            });
+
             //Register database in ConfigurationServices
-            services.AddDbContext<GalileuszSchoolContext>(options => options.UseSqlServer
-                (Configuration.GetConnectionString("GalileuszSchoolContext")));
+            services.AddDbContext<GalileuszSchoolContext>(options => options
+                    .UseSqlServer(Configuration.GetConnectionString("GalileuszSchoolContext")));
+
+            services.AddIdentity<AppUser, IdentityRole>()
+                    .AddEntityFrameworkStores<GalileuszSchoolContext>()
+                    .AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +62,8 @@ namespace GalileuszSchool
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

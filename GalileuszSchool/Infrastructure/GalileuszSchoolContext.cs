@@ -1,4 +1,5 @@
 ﻿using GalileuszSchool.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Infrastructure
 {
-    public class GalileuszSchoolContext : DbContext
+    public class GalileuszSchoolContext : IdentityDbContext<AppUser>
     {
         public GalileuszSchoolContext(DbContextOptions<GalileuszSchoolContext> options) : base(options)
         {
