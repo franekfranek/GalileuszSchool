@@ -15,11 +15,15 @@ namespace GalileuszSchool.Controllers
 
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
+        private IPasswordHasher<AppUser> passwordHasher;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager,
+                                SignInManager<AppUser> signInManager,
+                                IPasswordHasher<AppUser> passwordHasher)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.passwordHasher = passwordHasher;
         }
         // get account/register
         [AllowAnonymous]
@@ -96,6 +100,49 @@ namespace GalileuszSchool.Controllers
             }
 
             return View(login);
+        }
+
+        // /get/account/logout
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return Redirect("/");
+        }
+
+        // /get/account/edit
+        public async Task<IActionResult> Edit()
+        {
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+            UserEdit user = new UserEdit(appUser);
+
+            return View(user);
+        }
+
+        // post account/edit
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UserEdit userEdit)
+        {
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+            if (ModelState.IsValid)
+            {
+                appUser.Email = userEdit.Email;
+                if(userEdit.Password != null)
+                {
+                    appUser.PasswordHash = passwordHasher.HashPassword(appUser, userEdit.Password);
+                }
+
+                IdentityResult result = await userManager.UpdateAsync(appUser);
+                if (result.Succeeded)
+                {
+                    TempData["Success"] = "Your details have been changed!";
+                    return Redirect("/");
+                }
+              
+            }
+
+            return View();
         }
     }
 }
