@@ -14,10 +14,12 @@ namespace GalileuszSchool.Controllers
     {
 
         private readonly UserManager<AppUser> userManager;
+        private readonly SignInManager<AppUser> signInManager;
 
-        public AccountController(UserManager<AppUser> userManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
         // get account/register
         [AllowAnonymous]
@@ -55,6 +57,45 @@ namespace GalileuszSchool.Controllers
             }
 
             return View(user); 
+        }
+
+        // /get/account/login
+        [AllowAnonymous]
+        public IActionResult Login(string returnUrl)
+        {
+            Login login = new Login
+            {
+                ReturnUrl = returnUrl
+            };
+
+
+            return View(login);
+        }
+
+        // post account/login
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(Login login)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = await userManager.FindByEmailAsync(login.Email);
+                if(appUser != null)
+                {
+                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync
+                        (appUser, login.Password, false, false);
+
+                    if (result.Succeeded)
+                    {
+                        return Redirect(login.ReturnUrl ?? "/");
+                    }
+                }
+
+                ModelState.AddModelError("", "Login failed, wrong credentials");
+            }
+
+            return View(login);
         }
     }
 }

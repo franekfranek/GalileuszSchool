@@ -38,7 +38,13 @@ namespace GalileuszSchool
             services.AddDbContext<GalileuszSchoolContext>(options => options
                     .UseSqlServer(Configuration.GetConnectionString("GalileuszSchoolContext")));
 
-            services.AddIdentity<AppUser, IdentityRole>()
+            services.AddIdentity<AppUser, IdentityRole>(options => {
+                options.Password.RequiredLength = 4;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = false;
+                })
                     .AddEntityFrameworkStores<GalileuszSchoolContext>()
                     .AddDefaultTokenProviders();
         }
@@ -61,9 +67,9 @@ namespace GalileuszSchool
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
