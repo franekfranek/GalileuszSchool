@@ -107,7 +107,34 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 result = await userManager.RemoveFromRoleAsync(user, roleEdit.RoleName);
             }
 
-            return Redirect(Request.Headers["Referer"].ToString());  //return to previosu request TODO check what is that
+            return Redirect(Request.Headers["Referer"].ToString());  //return to previous request TODO check what is that
+        }
+
+        //get/admin/roles/delete/{id}
+        public async Task<IActionResult> Delete(string id)
+        {
+
+            IdentityRole role  = await roleManager.FindByIdAsync(id);
+            if (role != null)
+            {
+                TempData["Error"] = "The role does not exist";
+            }
+
+            IdentityResult result = await roleManager.DeleteAsync(role);
+            if (result.Succeeded)
+            {
+                TempData["Success"] = "The role has been deleted";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+
+            return RedirectToAction("Index");
         }
 
     }
