@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using GalileuszSchool.Models;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Area("Admin")]
     
     public class RolesController : Controller
@@ -82,6 +84,30 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 Memmbers = members,
                 NonMemmbers = nonMembers
             });
+        }
+
+
+        //post /admin/roles/edit{id}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(RoleEdit roleEdit)
+        {
+            IdentityResult result;
+
+            foreach (string userId in roleEdit.AddIds ?? new string[] { }) // if null create new array nothing gonna happen for empty array
+            {
+                //if there are any ids add to AddIds
+                AppUser user = await userManager.FindByIdAsync(userId);
+                result = await userManager.AddToRoleAsync(user, roleEdit.RoleName);
+            }
+
+            foreach (string userId in roleEdit.DeleteIds ?? new string[] { }) 
+            {
+                AppUser user = await userManager.FindByIdAsync(userId);
+                result = await userManager.RemoveFromRoleAsync(user, roleEdit.RoleName);
+            }
+
+            return Redirect(Request.Headers["Referer"].ToString());  //return to previosu request TODO check what is that
         }
 
     }

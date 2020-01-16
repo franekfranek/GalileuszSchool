@@ -15,11 +15,12 @@
 
             <div class="row">
                 <div class="col-6">
+
                     <h2>Add users to <span class="badge badge-primary">@Model.Role.Name</span> role</h2>
                     <table class="table table-bordered">
                         @if (Model.NonMemmbers.Count() == 0)
                         {
-                            <tr><td>All user are members</td></tr>
+                            <tr><td>No user are members</td></tr>
                         }
                         else
                         {

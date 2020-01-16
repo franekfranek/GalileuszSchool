@@ -34,6 +34,11 @@ namespace GalileuszSchool
                 //options.IdleTimeout = TimeSpan.FromSeconds(2);
             });
 
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+            });
+
             //Register database in ConfigurationServices
             services.AddDbContext<GalileuszSchoolContext>(options => options
                     .UseSqlServer(Configuration.GetConnectionString("GalileuszSchoolContext")));
