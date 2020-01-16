@@ -92,7 +92,7 @@ namespace GalileuszSchool.Controllers
 
                     if (result.Succeeded)
                     {
-                        return Redirect(login.ReturnUrl ?? "/");
+                        return Redirect(login.ReturnUrl ?? "/account/edit");
                     }
                 }
 
