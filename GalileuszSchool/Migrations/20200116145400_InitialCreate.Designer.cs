@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GalileuszSchool.Migrations
 {
     [DbContext(typeof(GalileuszSchoolContext))]
-    [Migration("20200114220953_IndentityCreate")]
-    partial class IndentityCreate
+    [Migration("20200116145400_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -124,6 +124,38 @@ namespace GalileuszSchool.Migrations
                     b.HasIndex("TeacherId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("GalileuszSchool.Models.LessonPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("classroom")
+                        .HasColumnType("int");
+
+                    b.Property<int>("day")
+                        .HasColumnType("int");
+
+                    b.Property<int>("dayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("startTime")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("stopTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("LessonPlan");
                 });
 
             modelBuilder.Entity("GalileuszSchool.Models.Page", b =>
@@ -345,6 +377,15 @@ namespace GalileuszSchool.Migrations
                     b.HasOne("GalileuszSchool.Models.Teacher", "Teacher")
                         .WithMany()
                         .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GalileuszSchool.Models.LessonPlan", b =>
+                {
+                    b.HasOne("GalileuszSchool.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
