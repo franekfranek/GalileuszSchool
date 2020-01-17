@@ -27,5 +27,7 @@ namespace GalileuszSchool.Infrastructure
                 .HasKey(o => new { o.StudentId, o.CourseId });
         }
 
+        public DbSet<LessonPlan> LessonPlan { get; set; }
+
     }
 }

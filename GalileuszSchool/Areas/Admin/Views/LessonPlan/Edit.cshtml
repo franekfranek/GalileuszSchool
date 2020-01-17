@@ -1,0 +1,66 @@
+﻿@model GalileuszSchool.Models.LessonPlan
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>LessonPlan</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="classroom" class="control-label"></label>
+                <input asp-for="classroom" class="form-control" />
+                <span asp-validation-for="classroom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="day" class="control-label"></label>
+                @Html.DropDownList("dayId", Html.GetEnumSelectList(typeof(Days)),
+                "Select Day",
+                new { @class = "form-control" })
+                <span asp-validation-for="day" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="startTime" class="control-label"></label>
+                <input asp-for="startTime" class="form-control" />
+                <span asp-validation-for="startTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="stopTime" class="control-label"></label>
+                <input asp-for="stopTime" class="form-control" />
+                <span asp-validation-for="stopTime" class="text-danger"></span>
+            </div>
+
+            @*<div class="form-group">
+                <label asp-for="CourseId" class="control-label"></label>
+                <input asp-for="CourseId" class="form-control" />
+                <span asp-validation-for="CourseId" class="text-danger"></span>
+            </div>*@
+
+            <div class="form-group">
+                <label asp-for="CourseId" class="control-label"></label>
+                <select asp-for="CourseId" asp-items="@ViewBag.CourseId" class="form-control">
+                    <option value="0">--Choose existing course--</option>
+                </select>
+                <span asp-validation-for="CourseId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
