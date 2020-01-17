@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Area("Admin")]
    
     public class CoursesController : Controller
@@ -173,5 +173,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
+
+       
     }
 }

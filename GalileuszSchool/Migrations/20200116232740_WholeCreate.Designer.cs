@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GalileuszSchool.Migrations
 {
     [DbContext(typeof(GalileuszSchoolContext))]
-    [Migration("20200114220953_IndentityCreate")]
-    partial class IndentityCreate
+    [Migration("20200116232740_WholeCreate")]
+    partial class WholeCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,6 +180,19 @@ namespace GalileuszSchool.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("GalileuszSchool.Models.StudentCourseConnection", b =>
+                {
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "CourseId");
+
+                    b.ToTable("StudenCourseConnections");
                 });
 
             modelBuilder.Entity("GalileuszSchool.Models.Teacher", b =>

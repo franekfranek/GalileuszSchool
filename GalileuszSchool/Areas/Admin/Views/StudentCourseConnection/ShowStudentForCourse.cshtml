@@ -1,0 +1,35 @@
+﻿@model IEnumerable<StudentCourseConnection>
+
+@{
+    ViewData["Title"] = "ShowStudentForCourse";
+}
+
+<h1>Show student for course</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Student
+            </th>
+            <th>
+                Course
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item.StudentId
+            </td>
+            <td>
+                @item.CourseId
+            </td>
+            
+        </tr>
+}
+    </tbody>
+</table>

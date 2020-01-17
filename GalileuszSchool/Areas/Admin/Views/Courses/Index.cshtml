@@ -29,6 +29,9 @@
             <th>
                 Teacher
             </th>
+            <th>
+
+            </th>
             
           
             <th></th>
@@ -53,6 +56,11 @@
 
             <td>
                 @item.Teacher.FirstName @item.Teacher.LastName 
+            </td>
+
+            <td>   
+                <a asp-action="AddStudent" asp-controller="Students" 
+                   asp-route-id=@item.Id class="btn btn-primary">Add student</a>
             </td>
            
             <td>
