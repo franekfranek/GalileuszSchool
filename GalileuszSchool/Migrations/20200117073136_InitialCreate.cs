@@ -236,7 +236,7 @@ namespace GalileuszSchool.Migrations
                     classroom = table.Column<int>(nullable: false),
                     day = table.Column<int>(nullable: false),
                     dayId = table.Column<int>(nullable: false),
-                    startTime = table.Column<int>(nullable: false),
+                    startTime = table.Column<DateTime>(nullable: false),
                     stopTime = table.Column<DateTime>(nullable: false),
                     CourseId = table.Column<int>(nullable: false)
                 },

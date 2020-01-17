@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
 using GalileuszSchool.Areas.Admin.ViewModels;
+using System.Diagnostics;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
@@ -108,6 +109,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+
+
+
 
             if (ModelState.IsValid)
             {

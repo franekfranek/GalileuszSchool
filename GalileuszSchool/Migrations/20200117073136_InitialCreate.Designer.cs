@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GalileuszSchool.Migrations
 {
     [DbContext(typeof(GalileuszSchoolContext))]
-    [Migration("20200116145400_InitialCreate")]
+    [Migration("20200117073136_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -145,8 +145,8 @@ namespace GalileuszSchool.Migrations
                     b.Property<int>("dayId")
                         .HasColumnType("int");
 
-                    b.Property<int>("startTime")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("startTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("stopTime")
                         .HasColumnType("datetime2");

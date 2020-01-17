@@ -143,8 +143,8 @@ namespace GalileuszSchool.Migrations
                     b.Property<int>("dayId")
                         .HasColumnType("int");
 
-                    b.Property<int>("startTime")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("startTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("stopTime")
                         .HasColumnType("datetime2");
