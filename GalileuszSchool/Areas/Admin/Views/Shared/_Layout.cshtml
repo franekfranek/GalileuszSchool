@@ -33,13 +33,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="LessonPlan" asp-action="Index">Lesson Plan</a>
-                        </li>
-                        <li class="nav-item ml-1 logout">
-                            <a asp-area="" asp-controller="Account" asp-action="Logout" class="btn btn-danger"> Log out</a>
-                        </li>
-
+                        @*<li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="StudentCourseConnection"
+                               asp-action="ShowStudentForCourse">List of student per course</a>
+                        </li>*@
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item ml-1 logout">
+                                <a asp-area="" asp-controller="Account" asp-action="Logout" class="btn btn-danger"> Log out</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

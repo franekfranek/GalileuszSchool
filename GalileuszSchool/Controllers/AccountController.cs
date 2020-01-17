@@ -122,6 +122,7 @@ namespace GalileuszSchool.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Edit(UserEdit userEdit)
         {
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
@@ -144,5 +145,41 @@ namespace GalileuszSchool.Controllers
 
             return View();
         }
-    }
+
+        // post account/delete
+        
+        public async Task<IActionResult> Delete()
+        {
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+
+            if (appUser == null)
+            {
+                TempData["Error"] = "User not found";
+                return NotFound();
+
+            }
+            else
+            {
+                IdentityResult result = await userManager.DeleteAsync(appUser);
+
+                if (result.Succeeded)
+                {
+                    TempData["Success"] = "Your account has been deleted.";
+                    await Logout();
+                    //return RedirectToAction("Login");
+                }
+                else
+                {
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+                return RedirectToAction("Register");
+            }
+            
+        }
+            
+        }
 }
+

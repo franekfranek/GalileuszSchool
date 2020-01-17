@@ -19,6 +19,14 @@ namespace GalileuszSchool.Infrastructure
         public DbSet<Course> Courses { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Student> Students { get; set; }
+        public DbSet<StudentCourseConnection> StudenCourseConnections { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<StudentCourseConnection>()
+                .HasKey(o => new { o.StudentId, o.CourseId });
+        }
+
         public DbSet<LessonPlan> LessonPlan { get; set; }
 
     }

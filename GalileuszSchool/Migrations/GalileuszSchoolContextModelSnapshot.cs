@@ -212,6 +212,19 @@ namespace GalileuszSchool.Migrations
                     b.ToTable("Students");
                 });
 
+            modelBuilder.Entity("GalileuszSchool.Models.StudentCourseConnection", b =>
+                {
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "CourseId");
+
+                    b.ToTable("StudenCourseConnections");
+                });
+
             modelBuilder.Entity("GalileuszSchool.Models.Teacher", b =>
                 {
                     b.Property<int>("Id")
