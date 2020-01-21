@@ -35,11 +35,12 @@ namespace GalileuszSchool.Models
         public int dayId { get; set; }
 
         [Required(ErrorMessage = "--")]
-        public DateTime startTime { get; set; }
+        public TimeSpan startTime { get; set; }
 
         [Required(ErrorMessage = "--")]
-        public DateTime stopTime { get; set; }
+        public TimeSpan stopTime { get; set; }
 
+        [Required(ErrorMessage = "Please select course")]
         public int CourseId { get; set; }
 
         [ForeignKey("CourseId")]

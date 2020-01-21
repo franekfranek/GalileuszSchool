@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GalileuszSchool.Migrations
 {
     [DbContext(typeof(GalileuszSchoolContext))]
-    [Migration("20200117073136_InitialCreate")]
+    [Migration("20200120230445_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,27 @@ namespace GalileuszSchool.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("GalileuszSchool.Models.ClassRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ClassRoomCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClassRoomName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ClassRoomNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ClassRoom");
+                });
+
             modelBuilder.Entity("GalileuszSchool.Models.Course", b =>
                 {
                     b.Property<int>("Id")
@@ -145,11 +166,11 @@ namespace GalileuszSchool.Migrations
                     b.Property<int>("dayId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("startTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("startTime")
+                        .HasColumnType("time");
 
-                    b.Property<DateTime>("stopTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("stopTime")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
@@ -212,6 +233,19 @@ namespace GalileuszSchool.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("GalileuszSchool.Models.StudentCourseConnection", b =>
+                {
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "CourseId");
+
+                    b.ToTable("StudenCourseConnections");
                 });
 
             modelBuilder.Entity("GalileuszSchool.Models.Teacher", b =>

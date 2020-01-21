@@ -72,10 +72,18 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
             lessonPlan.day = (Days)lessonPlan.dayId;
 
+                if (!TimeValidation(lessonPlan))
+                {
+                    ModelState.AddModelError("", "The course already exists co to tu robi");
+                    return View(lessonPlan);
+                }
+                
                 _context.Add(lessonPlan);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "The lesson has been added";
                 return RedirectToAction(nameof(Index));
             }
+            ModelState.AddModelError("", "The course already exists");
             return View(lessonPlan);
         }
 
@@ -103,17 +111,13 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,classroom,dayId,startTime,stopTime, course")] LessonPlan lessonPlan)
+        public async Task<IActionResult> Edit(int id,  LessonPlan lessonPlan)
+            //[Bind("Id,classroom,dayId,startTime,stopTime, course")]
         {
             if (id != lessonPlan.Id)
             {
                 return NotFound();
             }
-
-
-
-
-
             if (ModelState.IsValid)
             {
                 lessonPlan.day = (Days)lessonPlan.dayId;
@@ -170,6 +174,25 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         private bool LessonPlanExists(int id)
         {
             return _context.LessonPlan.Any(e => e.Id == id);
+        }
+
+
+        private Boolean TimeValidation(LessonPlan lessonPlan)
+        {
+            if (lessonPlan.startTime >= lessonPlan.stopTime)
+            {
+                ModelState.AddModelError("", "Course duration is 0");
+                return false;
+            }
+            foreach (LessonPlan x in _context.LessonPlan)
+            {
+                if(!(x.startTime >= lessonPlan.stopTime || x.stopTime <= lessonPlan.startTime) && x.dayId == lessonPlan.dayId)
+                {
+                    return false;
+                }
+                Console.WriteLine(x.startTime);
+            }
+            return true;
         }
     }
 }

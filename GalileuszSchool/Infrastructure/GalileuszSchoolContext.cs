@@ -29,5 +29,7 @@ namespace GalileuszSchool.Infrastructure
 
         public DbSet<LessonPlan> LessonPlan { get; set; }
 
+        public DbSet<GalileuszSchool.Models.ClassRoom> ClassRoom { get; set; }
+
     }
 }

@@ -87,6 +87,27 @@ namespace GalileuszSchool.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("GalileuszSchool.Models.ClassRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ClassRoomCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClassRoomName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ClassRoomNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ClassRoom");
+                });
+
             modelBuilder.Entity("GalileuszSchool.Models.Course", b =>
                 {
                     b.Property<int>("Id")
@@ -143,11 +164,11 @@ namespace GalileuszSchool.Migrations
                     b.Property<int>("dayId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("startTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("startTime")
+                        .HasColumnType("time");
 
-                    b.Property<DateTime>("stopTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("stopTime")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 

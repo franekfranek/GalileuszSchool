@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GalileuszSchool.Migrations
 {
-    public partial class WholeCreate : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,21 @@ namespace GalileuszSchool.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClassRoom",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClassRoomNumber = table.Column<int>(nullable: false),
+                    ClassRoomName = table.Column<string>(nullable: true),
+                    ClassRoomCapacity = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassRoom", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -239,6 +254,30 @@ namespace GalileuszSchool.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "LessonPlan",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    classroom = table.Column<int>(nullable: false),
+                    day = table.Column<int>(nullable: false),
+                    dayId = table.Column<int>(nullable: false),
+                    startTime = table.Column<TimeSpan>(nullable: false),
+                    stopTime = table.Column<TimeSpan>(nullable: false),
+                    CourseId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LessonPlan", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LessonPlan_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -282,6 +321,11 @@ namespace GalileuszSchool.Migrations
                 name: "IX_Courses_TeacherId",
                 table: "Courses",
                 column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LessonPlan_CourseId",
+                table: "LessonPlan",
+                column: "CourseId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -302,7 +346,10 @@ namespace GalileuszSchool.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Courses");
+                name: "ClassRoom");
+
+            migrationBuilder.DropTable(
+                name: "LessonPlan");
 
             migrationBuilder.DropTable(
                 name: "Pages");
@@ -318,6 +365,9 @@ namespace GalileuszSchool.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Courses");
 
             migrationBuilder.DropTable(
                 name: "Teachers");

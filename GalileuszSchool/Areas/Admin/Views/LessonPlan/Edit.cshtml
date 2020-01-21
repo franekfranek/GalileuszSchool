@@ -26,13 +26,13 @@
                 <span asp-validation-for="day" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="startTime" class="control-label"></label>
-                <input asp-for="startTime" class="form-control" />
+                <label type="time" step="300" asp-for="startTime" class="control-label"></label>
+                <input type="time" step="300" asp-for="startTime" class="form-control" />
                 <span asp-validation-for="startTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="stopTime" class="control-label"></label>
-                <input asp-for="stopTime" class="form-control" />
+                <label type="time" step="300" asp-for="stopTime" class="control-label"></label>
+                <input type="time" step="300" asp-for="stopTime" class="form-control" />
                 <span asp-validation-for="stopTime" class="text-danger"></span>
             </div>
 
