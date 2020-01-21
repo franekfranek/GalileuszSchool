@@ -260,7 +260,7 @@ namespace GalileuszSchool.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    classroom = table.Column<int>(nullable: false),
+                    ClassRoomId = table.Column<int>(nullable: false),
                     day = table.Column<int>(nullable: false),
                     dayId = table.Column<int>(nullable: false),
                     startTime = table.Column<TimeSpan>(nullable: false),

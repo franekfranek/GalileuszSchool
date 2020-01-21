@@ -26,7 +26,10 @@ namespace GalileuszSchool.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "--")]
-        public int classroom { get; set; }
+        public int ClassRoomId { get; set; }
+
+        [ForeignKey("ClassRoomId")]
+        public virtual ClassRoom ClassRoom { get; set; }
 
         [Required(ErrorMessage = "--")]
         public Days day { get; set; }

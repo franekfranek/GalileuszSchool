@@ -13,10 +13,24 @@
 
 
 
-@*@foreach (int classRoom in)*@
 
 
+@foreach (var CRoom in ViewBag.ClassRoomsList)
+{
+    <h2>Class room: @CRoom.ClassRoomName</h2>
 
+
+@foreach(var item in Model)
+    {
+        TimeSpan begin = new TimeSpan(4, 4, 0);
+        if (item.startTime != null)
+        {
+            begin = item.startTime;
+        }
+        if (begin > item.startTime)
+        {
+        }
+    }
 
 
     <table class="table">
@@ -35,31 +49,41 @@
                 @foreach (int day in Enum.GetValues(typeof(Days)))
                 {
                     <td>
-                        @foreach (var item in Model)
-                        {
-                            <table>
-                                <tr>
-                                    @if (item.day == (Days)day)
-                                    {
+                        <table>
+                            @foreach (var item in Model)
+                            {
+                                @if (item.day == (Days)day && item.ClassRoomId == CRoom.Id)
+                                {
+                                    <tr style="height: 30px">
                                         <td>
                                             @{string hStart = item.startTime.Hours.ToString();}
                                             @{string mStart = item.startTime.Minutes.ToString("00");}
                                             @{string hStop = item.stopTime.Hours.ToString();}
                                             @{string mStop = item.stopTime.Minutes.ToString("00");}
-                                            @hStart:@mStart - @hStop:@mStop
+                                            <small>
+                                                @hStart:@mStart - @hStop:@mStop
+                                            </small>
                                             <br />
                                             <a asp-action="Details" asp-route-id="@item.Id">@item.Course.Name</a>
-                                            <br />
-                                            @Html.DisplayFor(modelItem => item.classroom)
                                         </td>
-                                    }
-                                </tr>
-                            </table>
+                                    </tr>
+                                }
 
-                        }
+
+
+
+
+                            }
+                        </table>
                     </td>
                 }
             </tr>
         </tbody>
     </table>
+
+
+
+}
+
+
 

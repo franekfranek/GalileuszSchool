@@ -152,10 +152,10 @@ namespace GalileuszSchool.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CourseId")
+                    b.Property<int>("ClassRoomId")
                         .HasColumnType("int");
 
-                    b.Property<int>("classroom")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<int>("day")

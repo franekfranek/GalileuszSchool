@@ -25,7 +25,16 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         // GET: Admin/LessonPlans
         public async Task<IActionResult> Index()
         {
-            return View(await _context.LessonPlan.Include(x => x.Course).ToListAsync());
+            List<ClassRoom> classRooms = new List<ClassRoom>();
+            foreach (var classRoom in _context.ClassRoom)
+            {
+                classRooms.Add(classRoom);
+            }
+            ViewBag.ClassRoomsList = classRooms;
+
+            await _context.LessonPlan.Include(x => x.Course).ToListAsync();
+            await _context.LessonPlan.Include(x => x.ClassRoom).ToListAsync();
+            return View(_context.LessonPlan.OrderBy(a => a.startTime));
 
 
             //return View(await context.Teachers.OrderByDescending(x => x.Id).Include(x => x.Course).ToListAsync());
@@ -52,7 +61,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         // GET: Admin/LessonPlans/Create
         public IActionResult Create()
         {
+            ViewBag.Test = new SelectList(_context.ClassRoom.OrderBy(x => x.ClassRoomNumber), "Id", "ClassRoomName");
             ViewBag.CourseId = new SelectList(_context.Courses.OrderBy(x => x.Id), "Id", "Name");
+            
+
 
 
             return View();
@@ -184,13 +196,14 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 ModelState.AddModelError("", "Course duration is 0");
                 return false;
             }
-            foreach (LessonPlan x in _context.LessonPlan)
+            foreach (LessonPlan existingLesson in _context.LessonPlan)
             {
-                if(!(x.startTime >= lessonPlan.stopTime || x.stopTime <= lessonPlan.startTime) && x.dayId == lessonPlan.dayId)
+                if(!(existingLesson.startTime >= lessonPlan.stopTime || existingLesson.stopTime <= lessonPlan.startTime) && existingLesson.dayId == lessonPlan.dayId && existingLesson.ClassRoomId == lessonPlan.ClassRoomId)
                 {
+
                     return false;
                 }
-                Console.WriteLine(x.startTime);
+                Console.WriteLine(existingLesson.startTime);
             }
             return true;
         }

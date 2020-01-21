@@ -15,7 +15,7 @@ namespace GalileuszSchool.Areas.Admin.ViewModels
         public int Id { get; set; }
 
         [Required(ErrorMessage = "--")]
-        public int classroom { get; set; }
+        public int ClassRoomId { get; set; }
 
         [Required(ErrorMessage = "--")]
 
