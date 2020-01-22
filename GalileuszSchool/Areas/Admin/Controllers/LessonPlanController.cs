@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
 using GalileuszSchool.Areas.Admin.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
+    //[Authorize(Roles = "admin, editor")]
     [Area("Admin")]
     public class LessonPlanController : Controller
     {

@@ -11,11 +11,11 @@ namespace GalileuszSchool.Models
         public int StudentId { get; set; }
         public int CourseId { get; set; }
 
-        //[ForeignKey("StudenId")]
-        //public virtual Student Student { get; set; }
+        [ForeignKey("StudentId")]
+        public virtual Student Student { get; set; }
 
-        //[ForeignKey("CourseId")]
-        //public virtual Course Course { get; set; }
+        [ForeignKey("CourseId")]
+        public virtual Course Course { get; set; }
 
 
     }

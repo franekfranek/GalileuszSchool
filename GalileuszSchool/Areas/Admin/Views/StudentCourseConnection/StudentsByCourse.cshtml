@@ -1,0 +1,24 @@
+﻿@model IEnumerable<StudentCourseConnection>
+@{
+    ViewData["Title"] = "Students by course";
+}
+
+<h1 class="display-4 pb-5">@ViewBag.CourseName</h1>
+
+<div class="row">
+    <div class="col-3">
+        @await Component.InvokeAsync("Courses")
+    </div>
+    <div class="col">
+        @foreach (var item in Model)
+        {
+            <div class="col-4">
+                <img src="~/media/students/@item.Student.Image" class="img-fluid" height="100" width="100" />
+                <h4>@item.Student.FirstName @item.Student.LastName</h4>
+                <div>
+                    Telephone number @item.Student.PhoneNumber
+                </div>
+            </div>
+        }
+        </div>
+    </div>

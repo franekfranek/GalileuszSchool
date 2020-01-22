@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
-    //[Authorize]
+    //[Authorize(Roles = "admin, editor")]
     [Area("Admin")]
-   
+
     public class CoursesController : Controller
     {
         private readonly GalileuszSchoolContext context;

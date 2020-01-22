@@ -20,6 +20,7 @@ namespace GalileuszSchool.Infrastructure
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentCourseConnection> StudenCourseConnections { get; set; }
+        public DbSet<LessonPlan> LessonPlan { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -27,7 +28,7 @@ namespace GalileuszSchool.Infrastructure
                 .HasKey(o => new { o.StudentId, o.CourseId });
         }
 
-        public DbSet<LessonPlan> LessonPlan { get; set; }
+        
 
     }
 }

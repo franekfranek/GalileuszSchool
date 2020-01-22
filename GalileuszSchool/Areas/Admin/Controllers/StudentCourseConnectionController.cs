@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
+    //[Authorize(Roles = "admin, editor")]
     [Area("Admin")]
     public class StudentCourseConnectionController : Controller
     {
@@ -30,20 +32,30 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return RedirectToAction("Index", "Courses");
         }
 
+        // get /admin/StudentCourseConnection/ShowStudentForCourse
         public async Task<IActionResult> ShowStudentForCourse()
         {
-            var connection = await context.StudenCourseConnections.OrderByDescending(x => x.CourseId).ToListAsync();
-            //List<Course> courses = new List<Course>();
-            //List<Student> students = new List<Student>();
-            //foreach (var item in connection)
-            //{
-            //    Course course = await context.Courses.FindAsync(item.CourseId);
-            //    courses.Add(course);
 
-            //    Student student = await context.Students.FindAsync(item.StudentId);
-            //    students.Add(student);
-            //}
-            return View();
+            var students = await context.Students.OrderByDescending(x => x.Id).ToListAsync();
+           
+            return View(students);
         }
+
+        // get /admin/StudentCourseConnection/StudentsByCourse/1 (course id) 
+        public async Task<IActionResult> StudentsByCourse(int id)
+        {
+            Course course = await context.Courses.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+            var studentsByCourse = await context.StudenCourseConnections.OrderByDescending(x => x.CourseId)
+                                                                .Where(x =>x.CourseId == id)
+                                                                .Include("Student").ToListAsync();
+
+            ViewBag.CourseName = course.Name;
+
+            return View(studentsByCourse);
+        }
+
+
+
     }
 }
