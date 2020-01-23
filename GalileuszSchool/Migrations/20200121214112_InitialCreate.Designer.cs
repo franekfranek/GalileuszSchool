@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GalileuszSchool.Migrations
 {
     [DbContext(typeof(GalileuszSchoolContext))]
-    [Migration("20200121141725_InitialCreate")]
+    [Migration("20200121214112_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -173,6 +173,8 @@ namespace GalileuszSchool.Migrations
                         .HasColumnType("time");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClassRoomId");
 
                     b.HasIndex("CourseId");
 
@@ -417,6 +419,12 @@ namespace GalileuszSchool.Migrations
 
             modelBuilder.Entity("GalileuszSchool.Models.LessonPlan", b =>
                 {
+                    b.HasOne("GalileuszSchool.Models.ClassRoom", "ClassRoom")
+                        .WithMany()
+                        .HasForeignKey("ClassRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GalileuszSchool.Models.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")

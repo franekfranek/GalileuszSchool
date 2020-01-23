@@ -271,6 +271,12 @@ namespace GalileuszSchool.Migrations
                 {
                     table.PrimaryKey("PK_LessonPlan", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_LessonPlan_ClassRoom_ClassRoomId",
+                        column: x => x.ClassRoomId,
+                        principalTable: "ClassRoom",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_LessonPlan_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
@@ -323,6 +329,11 @@ namespace GalileuszSchool.Migrations
                 column: "TeacherId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LessonPlan_ClassRoomId",
+                table: "LessonPlan",
+                column: "ClassRoomId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LessonPlan_CourseId",
                 table: "LessonPlan",
                 column: "CourseId");
@@ -346,9 +357,6 @@ namespace GalileuszSchool.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ClassRoom");
-
-            migrationBuilder.DropTable(
                 name: "LessonPlan");
 
             migrationBuilder.DropTable(
@@ -365,6 +373,9 @@ namespace GalileuszSchool.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "ClassRoom");
 
             migrationBuilder.DropTable(
                 name: "Courses");

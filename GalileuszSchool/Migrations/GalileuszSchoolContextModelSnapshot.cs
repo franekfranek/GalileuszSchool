@@ -172,6 +172,8 @@ namespace GalileuszSchool.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClassRoomId");
+
                     b.HasIndex("CourseId");
 
                     b.ToTable("LessonPlan");
@@ -415,6 +417,12 @@ namespace GalileuszSchool.Migrations
 
             modelBuilder.Entity("GalileuszSchool.Models.LessonPlan", b =>
                 {
+                    b.HasOne("GalileuszSchool.Models.ClassRoom", "ClassRoom")
+                        .WithMany()
+                        .HasForeignKey("ClassRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GalileuszSchool.Models.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")

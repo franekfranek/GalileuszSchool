@@ -43,6 +43,14 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         // GET: Admin/LessonPlans/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            List<Course> coursesList = new List<Course>();
+            foreach (var classRoom in _context.Courses)
+            {
+                coursesList.Add(classRoom);
+            }
+            ViewBag.ClassRoomsList = coursesList;
+
+
             if (id == null)
             {
                 return NotFound();
