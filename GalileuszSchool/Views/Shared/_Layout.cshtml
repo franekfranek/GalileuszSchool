@@ -25,8 +25,8 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
-                        @if (User?.Identity?.IsAuthenticated ?? false)
-                        {
+                        @*@if (User?.Identity?.IsAuthenticated ?? false)*@
+                        
                             <p class="p-1">Welcome @User.Identity.Name   </p>
 
                             <li class="nav-item">
@@ -35,21 +35,21 @@
                             <li class="nav-item ml-1">
                                 <a asp-controller="Account" asp-action="Logout" class="btn btn-danger"> Log out</a>
                             </li>
-                            if (User.IsInRole("admin"))
-                            {
+                            //if (User.IsInRole("admin")|| User.IsInRole("editor"))
+                            
                                 <li class="nav-item ml-1">
                                     <a asp-area="Admin" asp-controller="Courses" asp-action="Index" class="btn
                                        btn-secondary"> Admin area</a>
                                 </li>
-                            }
-                        }
-                        else
-                        {
+
+                            //}
+                            //else
+                            //{
                             //user is not authenticated
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Login" class="btn btn-success">Log in</a>
                             </li>
-                        }
+                        
 
 
                     </ul>

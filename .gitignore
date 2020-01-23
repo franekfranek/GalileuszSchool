@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/GalileuszSchool/Migrations/20200122181405_WholeCreate.cs
+/GalileuszSchool/Migrations/20200122181405_WholeCreate.Designer.cs

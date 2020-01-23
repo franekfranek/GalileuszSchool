@@ -1,35 +1,25 @@
-﻿@model IEnumerable<StudentCourseConnection>
+﻿@model IEnumerable<Student>
 
 @{
-    ViewData["Title"] = "ShowStudentForCourse";
+    ViewData["Title"] = "Students";
 }
 
-<h1>Show student for course</h1>
+<h1 class="display-4 pb-5">All current students</h1>
 
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Student
-            </th>
-            <th>
-                Course
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @item.StudentId
-            </td>
-            <td>
-                @item.CourseId
-            </td>
-            
-        </tr>
-}
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-3">
+        @await Component.InvokeAsync("Courses")
+    </div>
+    <div class="col">
+    @foreach (var item in Model)
+    {
+        <div class="col-4">
+            <img src="~/media/students/@item.Image" class="img-fluid" height="100" width="100" />
+            <h4>@item.FirstName @item.LastName</h4>
+            <div>
+                Telephone number @item.PhoneNumber
+            </div>
+        </div>
+    }
+    </div>
+</div>

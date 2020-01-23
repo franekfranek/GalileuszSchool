@@ -49,6 +49,7 @@ namespace GalileuszSchool.Controllers
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
                 if (result.Succeeded)
                 {
+                    TempData["Success"] = "You succesufully registered your account!";
                     return RedirectToAction("Login");
                 }
                 else
