@@ -49,7 +49,8 @@ namespace GalileuszSchool
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireDigit = false;
-                })
+                options.SignIn.RequireConfirmedEmail = true;
+            })
                     .AddEntityFrameworkStores<GalileuszSchoolContext>()
                     .AddDefaultTokenProviders();
         }

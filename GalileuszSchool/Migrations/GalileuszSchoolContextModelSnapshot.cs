@@ -245,6 +245,8 @@ namespace GalileuszSchool.Migrations
 
                     b.HasKey("StudentId", "CourseId");
 
+                    b.HasIndex("CourseId");
+
                     b.ToTable("StudenCourseConnections");
                 });
 
@@ -426,6 +428,21 @@ namespace GalileuszSchool.Migrations
                     b.HasOne("GalileuszSchool.Models.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GalileuszSchool.Models.StudentCourseConnection", b =>
+                {
+                    b.HasOne("GalileuszSchool.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GalileuszSchool.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

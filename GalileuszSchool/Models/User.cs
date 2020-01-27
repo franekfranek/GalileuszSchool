@@ -18,5 +18,11 @@ namespace GalileuszSchool.Models
         [DataType(DataType.Password), Required, MinLength(4, ErrorMessage = "Minimum lenght is 4")]
         public string Password { get; set; }
 
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm Password")]
+        [Compare("Password",
+            ErrorMessage = "Password and confrimation password do not match.")]
+        public string ConfirmPassword { get; set; }
+
     }
 }

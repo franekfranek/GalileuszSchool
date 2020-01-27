@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -9,21 +10,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GalileuszSchool.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class AccountController : Controller
     {
 
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
         private IPasswordHasher<AppUser> passwordHasher;
+        private readonly GalileuszSchoolContext context;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
-                                IPasswordHasher<AppUser> passwordHasher)
+                                IPasswordHasher<AppUser> passwordHasher,
+                                GalileuszSchoolContext context)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.passwordHasher = passwordHasher;
+            this.context = context;
         }
         // get account/register
         [AllowAnonymous]
@@ -40,11 +44,20 @@ namespace GalileuszSchool.Controllers
         {
             if (ModelState.IsValid)
             {
+                var isEmailAlreadyExists = context.Users.Any(x => x.Email == user.Email);
+
+                if (isEmailAlreadyExists)
+                {
+                    ModelState.AddModelError("Email", "User with this email already exists");
+                    return View(user);
+                }
                 AppUser appUser = new AppUser
                 {
                     UserName = user.UserName,
                     Email = user.Email
                 };
+
+                
 
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
                 if (result.Succeeded)
@@ -97,7 +110,7 @@ namespace GalileuszSchool.Controllers
                     }
                 }
 
-                ModelState.AddModelError("", "Login failed, wrong credentials");
+                ModelState.AddModelError("", "Login failed, wrong credentials or your email is not confirmed");
             }
 
             return View(login);
