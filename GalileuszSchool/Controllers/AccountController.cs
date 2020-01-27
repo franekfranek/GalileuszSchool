@@ -7,6 +7,7 @@ using GalileuszSchool.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace GalileuszSchool.Controllers
 {
@@ -18,16 +19,19 @@ namespace GalileuszSchool.Controllers
         private readonly SignInManager<AppUser> signInManager;
         private IPasswordHasher<AppUser> passwordHasher;
         private readonly GalileuszSchoolContext context;
+        private readonly ILogger<AccountController> logger;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
                                 IPasswordHasher<AppUser> passwordHasher,
-                                GalileuszSchoolContext context)
+                                GalileuszSchoolContext context,
+                                ILogger<AccountController> logger)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.passwordHasher = passwordHasher;
             this.context = context;
+            this.logger = logger;
         }
         // get account/register
         [AllowAnonymous]
@@ -62,6 +66,13 @@ namespace GalileuszSchool.Controllers
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
                 if (result.Succeeded)
                 {
+                    var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
+
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                                            new { userId = appUser.Id, token = token }, Request.Scheme);
+
+                    logger.Log(LogLevel.Warning, confirmationLink);
+
                     TempData["Success"] = "You succesufully registered your account!";
                     return RedirectToAction("Login");
                 }
@@ -99,7 +110,9 @@ namespace GalileuszSchool.Controllers
             if (ModelState.IsValid)
             {
                 AppUser appUser = await userManager.FindByEmailAsync(login.Email);
-                if(appUser != null)
+                //if (appUser != null && appUser.EmailConfirmed)
+
+                if (appUser != null)
                 {
                     Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync
                         (appUser, login.Password, false, false);
@@ -108,6 +121,7 @@ namespace GalileuszSchool.Controllers
                     {
                         return Redirect(login.ReturnUrl ?? "/account/edit");
                     }
+                    
                 }
 
                 ModelState.AddModelError("", "Login failed, wrong credentials or your email is not confirmed");
@@ -193,7 +207,36 @@ namespace GalileuszSchool.Controllers
             }
             
         }
-            
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if(userId == null || token == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                TempData["Error"] = $"The user Id {userId} is invalid";
+                return NotFound();
+            }
+
+            var result = await userManager.ConfirmEmailAsync(user, token);
+
+            if (result.Succeeded)
+            {
+                return View();
+            }
+
+            TempData["Error"] = "Email cannot be confirmed";
+            return RedirectToAction("Login", "Account");
+
         }
+
+
+    }
 }
 
