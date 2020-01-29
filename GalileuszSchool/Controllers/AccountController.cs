@@ -4,10 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
+using GalileuszSchool.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using WebPWrecover.Services;
 
 namespace GalileuszSchool.Controllers
 {
@@ -20,18 +23,21 @@ namespace GalileuszSchool.Controllers
         private IPasswordHasher<AppUser> passwordHasher;
         private readonly GalileuszSchoolContext context;
         private readonly ILogger<AccountController> logger;
+        private readonly IEmailSender emailSender;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
                                 IPasswordHasher<AppUser> passwordHasher,
                                 GalileuszSchoolContext context,
-                                ILogger<AccountController> logger)
+                                ILogger<AccountController> logger,
+                                IEmailSender emailSender)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.passwordHasher = passwordHasher;
             this.context = context;
             this.logger = logger;
+            this.emailSender = emailSender;
         }
         // get account/register
         [AllowAnonymous]
@@ -81,6 +87,10 @@ namespace GalileuszSchool.Controllers
                                             new { userId = appUser.Id, token = token }, Request.Scheme);
 
                     logger.Log(LogLevel.Warning, confirmationLink);
+
+
+                    await emailSender.SendEmailAsync(appUser.Email, "Email Confirmation",
+                        "Your confirmation link: "+ confirmationLink);
 
                     TempData["Success"] = "You succesufully registered your account! We sent you email confirmation";
                     return RedirectToAction("Login");
@@ -165,33 +175,45 @@ namespace GalileuszSchool.Controllers
 
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
             var oldEmail = appUser.Email;
+            var oldName = appUser.UserName;
+
             if (ModelState.IsValid)
             {
                 //email edit
                 var isEmailAlreadyExists = context.Users.Any(x => x.Email == userEdit.Email);
-
-                if (isEmailAlreadyExists)
+                if (oldEmail != userEdit.Email)
                 {
-                    ModelState.AddModelError("Email", "User with this email already exists");
-                    return View(userEdit);
+                    if (isEmailAlreadyExists)
+                    {
+                        ModelState.AddModelError("Email", "User with this email already exists");
+                        return View(userEdit);
+                    }
+                    appUser.Email = userEdit.Email;
                 }
-                appUser.Email = userEdit.Email;
+                else { appUser.Email = oldEmail; }
 
                 //name edit
                 var isNameAlreadyExists = context.Users.Any(x => x.UserName == userEdit.UserName);
-
-                if (isNameAlreadyExists)
+                if(oldName != userEdit.UserName)
                 {
-                    ModelState.AddModelError("UserName", "User with this name already exists");
-                    return View(userEdit);
+                    if (isNameAlreadyExists)
+                    {
+                        ModelState.AddModelError("UserName", "User with this name already exists");
+                        return View(userEdit);
+                    }
+                    appUser.UserName = userEdit.UserName;
                 }
-                appUser.UserName = userEdit.UserName;
+                else { appUser.UserName = oldName; }
+
+
 
                 //password edit
                 if (userEdit.Password != null)
                 {
                     appUser.PasswordHash = passwordHasher.HashPassword(appUser, userEdit.Password);
                 }
+
+
                 if (oldEmail != appUser.Email)
                 {
 
@@ -209,6 +231,10 @@ namespace GalileuszSchool.Controllers
                                                 new { userId = appUser.Id, token = token }, Request.Scheme);
 
                         logger.Log(LogLevel.Warning, confirmationLink);
+
+                        await emailSender.SendEmailAsync(appUser.Email, "Email Confirmation",
+                       "Your confirmation link: " + confirmationLink);
+
                         TempData["Success"] = "We send you an Email with reset password link.";
                     }
 
@@ -308,6 +334,9 @@ namespace GalileuszSchool.Controllers
                          new { email = forgotPassword.Email, token = token }, Request.Scheme);
 
                     logger.Log(LogLevel.Warning, passwordResetLink);
+
+                    await emailSender.SendEmailAsync(forgotPassword.Email, "Reset Password",
+                       "Your reset link: " + passwordResetLink);
 
                     TempData["Success"] = "We send you an Email with reset password link. Redirecting...";
 
