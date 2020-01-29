@@ -55,13 +55,22 @@ namespace GalileuszSchool.Controllers
                     ModelState.AddModelError("Email", "User with this email already exists");
                     return View(user);
                 }
+
+                var isNameAlreadyExists = context.Users.Any(x => x.UserName == user.UserName);
+
+                if (isNameAlreadyExists)
+                {
+                    ModelState.AddModelError("UserName", "User with this name already exists");
+                    return View(user);
+                }
+
                 AppUser appUser = new AppUser
                 {
                     UserName = user.UserName,
                     Email = user.Email
                 };
 
-                
+
 
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
                 if (result.Succeeded)
@@ -73,7 +82,7 @@ namespace GalileuszSchool.Controllers
 
                     logger.Log(LogLevel.Warning, confirmationLink);
 
-                    TempData["Success"] = "You succesufully registered your account!";
+                    TempData["Success"] = "You succesufully registered your account! We sent you email confirmation";
                     return RedirectToAction("Login");
                 }
                 else
@@ -85,7 +94,7 @@ namespace GalileuszSchool.Controllers
                 }
             }
 
-            return View(user); 
+            return View(user);
         }
 
         // /get/account/login
@@ -121,7 +130,7 @@ namespace GalileuszSchool.Controllers
                     {
                         return Redirect(login.ReturnUrl ?? "/account/edit");
                     }
-                    
+
                 }
 
                 ModelState.AddModelError("", "Login failed, wrong credentials or your email is not confirmed");
@@ -153,29 +162,68 @@ namespace GalileuszSchool.Controllers
 
         public async Task<IActionResult> Edit(UserEdit userEdit)
         {
+
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+            var oldEmail = appUser.Email;
             if (ModelState.IsValid)
             {
+                //email edit
+                var isEmailAlreadyExists = context.Users.Any(x => x.Email == userEdit.Email);
+
+                if (isEmailAlreadyExists)
+                {
+                    ModelState.AddModelError("Email", "User with this email already exists");
+                    return View(userEdit);
+                }
                 appUser.Email = userEdit.Email;
-                if(userEdit.Password != null)
+
+                //name edit
+                var isNameAlreadyExists = context.Users.Any(x => x.UserName == userEdit.UserName);
+
+                if (isNameAlreadyExists)
+                {
+                    ModelState.AddModelError("UserName", "User with this name already exists");
+                    return View(userEdit);
+                }
+                appUser.UserName = userEdit.UserName;
+
+                //password edit
+                if (userEdit.Password != null)
                 {
                     appUser.PasswordHash = passwordHasher.HashPassword(appUser, userEdit.Password);
+                }
+                if (oldEmail != appUser.Email)
+                {
+
+                    appUser.EmailConfirmed = false;
                 }
 
                 IdentityResult result = await userManager.UpdateAsync(appUser);
                 if (result.Succeeded)
                 {
+                    if (oldEmail != appUser.Email) {
+
+                        var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
+
+                        var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                                                new { userId = appUser.Id, token = token }, Request.Scheme);
+
+                        logger.Log(LogLevel.Warning, confirmationLink);
+                        TempData["Success"] = "We send you an Email with reset password link.";
+                    }
+
+
                     TempData["Success"] = "Your details have been changed!";
                     return Redirect("/");
                 }
-              
+                TempData["Error"] = "An error occures. Please try again.";
             }
 
             return View();
         }
 
         // post account/delete
-        
+
         public async Task<IActionResult> Delete()
         {
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
@@ -205,20 +253,20 @@ namespace GalileuszSchool.Controllers
                 }
                 return RedirectToAction("Register");
             }
-            
+
         }
 
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-            if(userId == null || token == null)
+            if (userId == null || token == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
             var user = await userManager.FindByIdAsync(userId);
 
-            if(user == null)
+            if (user == null)
             {
                 TempData["Error"] = $"The user Id {userId} is invalid";
                 return NotFound();
@@ -228,6 +276,7 @@ namespace GalileuszSchool.Controllers
 
             if (result.Succeeded)
             {
+                Response.Headers.Add("REFRESH", "3;URL=login");
                 return View();
             }
 
@@ -236,7 +285,85 @@ namespace GalileuszSchool.Controllers
 
         }
 
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
 
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPassword forgotPassword)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByEmailAsync(forgotPassword.Email);
+                if (user != null && await userManager.IsEmailConfirmedAsync(user))
+                {
+                    var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+                    var passwordResetLink = Url.Action("ResetPassword", "Account",
+                         new { email = forgotPassword.Email, token = token }, Request.Scheme);
+
+                    logger.Log(LogLevel.Warning, passwordResetLink);
+
+                    TempData["Success"] = "We send you an Email with reset password link. Redirecting...";
+
+                    Response.Headers.Add("REFRESH", "3;URL=login");
+                }
+                else { TempData["Error"] = "An error occures. Please try again."; }
+                
+
+            }
+            return View(forgotPassword);
+        }
+
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            if (token == null || email == null)
+            {
+                ModelState.AddModelError("", "Invalid password reset token");
+            }
+
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPassword resetPassword)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByEmailAsync(resetPassword.Email);
+
+                if (user != null)
+                {
+                    var result = await userManager.ResetPasswordAsync(user, resetPassword.Token, resetPassword.Password);
+
+                    if (result.Succeeded)
+                    {
+                        TempData["Success"] = "You have successfully changed your password. Redirecting...";
+                        Response.Headers.Add("REFRESH", "3;URL=login");
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+
+                    return View(resetPassword);
+                }
+                TempData["Error"] = "An error occures. Please try again.";
+
+            }
+            return View(resetPassword);
+        }
     }
+
+
 }
+
 

@@ -6,17 +6,14 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Models
 {
-    public class UserEdit
+    public class ResetPassword
     {
         [Required]
-        [MinLength(4, ErrorMessage = "Minimum lenght is 4")]
-        [Display(Name = "Name")]
-        public string UserName { get; set; }
-
-        [Required, EmailAddress]
+        [EmailAddress]
         public string Email { get; set; }
 
-        [DataType(DataType.Password), MinLength(4, ErrorMessage = "Minimum lenght is 4")]
+        [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
@@ -24,13 +21,8 @@ namespace GalileuszSchool.Models
         [Compare("Password",
             ErrorMessage = "Password and confrimation password do not match.")]
         public string ConfirmPassword { get; set; }
-        public UserEdit(){}
+        
 
-        public UserEdit(AppUser appUser)
-        {
-            UserName = appUser.UserName;
-            Email = appUser.Email;
-            Password = appUser.PasswordHash;
-        }
+        public string Token { get; set; }
     }
 }
