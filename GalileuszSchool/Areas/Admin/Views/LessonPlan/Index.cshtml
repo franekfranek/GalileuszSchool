@@ -12,59 +12,65 @@
 
 
 
+@foreach (var oneLesson in ViewBag.ListOfLessons)
+    {
+        
+    }
 
 
-
-@foreach (var CRoom in ViewBag.ClassRoomsList)
+    @foreach (var CRoom in ViewBag.ClassRoomsList)
 {
-
-
-
-    <table class="table">
-        <thead>
-            <tr>
-                @foreach (var day in Enum.GetNames(typeof(Days)))
-                {
-                    <th>
-                        @Html.DisplayName(day)
-                    </th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                @foreach (int day in Enum.GetValues(typeof(Days)))
-                {
-                    <td>
-                        <table>
-                            @foreach (var item in Model)
+       
+<table class="table">
+    <thead>
+        <tr>
+            @foreach (var day in Enum.GetNames(typeof(Days)))
+            {
+                <th>
+                    @Html.DisplayName(day)
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            @foreach (int day in Enum.GetValues(typeof(Days)))
+            {
+                <td>
+                    <table>
+                        @foreach (var item in Model)
+                        {
+                            @if (item.day == (Days)day && item.ClassRoomId == CRoom.Id)
                             {
-                                @if (item.day == (Days)day && item.ClassRoomId == CRoom.Id)
+                                if (item.isGap)
                                 {
-                                    <tr style="height: 30px">
+                                    <tr>
                                         <td>
-                                            @{string hStart = item.startTime.Hours.ToString();}
-                                            @{string mStart = item.startTime.Minutes.ToString("00");}
-                                            @{string hStop = item.stopTime.Hours.ToString();}
-                                            @{string mStop = item.stopTime.Minutes.ToString("00");}
-                                            <small>
-                                                @hStart:@mStart - @hStop:@mStop
-                                            </small>
-                                            <br />
-                                            <a asp-action="Details" asp-route-id="@item.Id">@item.Course.Name</a>
+                                            asd
                                         </td>
                                     </tr>
                                 }
+                                <tr style="height: 30px">
+                                    <td>
+                                        @{string hStart = item.startTime.Hours.ToString();}
+                                        @{string mStart = item.startTime.Minutes.ToString("00");}
+                                        @{string hStop = item.stopTime.Hours.ToString();}
+                                        @{string mStop = item.stopTime.Minutes.ToString("00");}
+                                        <small>
+                                            @hStart:@mStart - @hStop:@mStop
+                                        </small>
+                                        <br />
+                                        <a asp-action="Details" asp-route-id="@item.Id">@item.Course.Name</a>
+                                    </td>
+                                </tr>
                             }
-                        </table>
-                    </td>
-                }
-            </tr>
-        </tbody>
-    </table>
-
-
-
+                        }
+                    </table>
+                </td>
+            }
+        </tr>
+    </tbody>
+</table>
 }
 
 

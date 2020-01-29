@@ -164,6 +164,9 @@ namespace GalileuszSchool.Migrations
                     b.Property<int>("dayId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("isGap")
+                        .HasColumnType("bit");
+
                     b.Property<TimeSpan>("startTime")
                         .HasColumnType("time");
 
@@ -244,6 +247,8 @@ namespace GalileuszSchool.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("StudentId", "CourseId");
+
+                    b.HasIndex("CourseId");
 
                     b.ToTable("StudenCourseConnections");
                 });
@@ -426,6 +431,21 @@ namespace GalileuszSchool.Migrations
                     b.HasOne("GalileuszSchool.Models.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GalileuszSchool.Models.StudentCourseConnection", b =>
+                {
+                    b.HasOne("GalileuszSchool.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GalileuszSchool.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
