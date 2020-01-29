@@ -340,3 +340,5 @@ ASALocalRun/
 healthchecksdb
 /GalileuszSchool/Migrations/20200122181405_WholeCreate.cs
 /GalileuszSchool/Migrations/20200122181405_WholeCreate.Designer.cs
+/GalileuszSchool/Migrations/20200127194859_wholeMig.cs
+/GalileuszSchool/Migrations/20200127194859_wholeMig.Designer.cs
