@@ -36,8 +36,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             await _context.LessonPlan.Include(x => x.Course).ToListAsync();
             await _context.LessonPlan.Include(x => x.ClassRoom).ToListAsync();
-            lessonListGenerator();
-            return View(_context.LessonPlan.OrderBy(a => a.startTime));
+
+            List<List<List<LessonPlan>>> datas = new List<List<List<LessonPlan>>>();
+            lessonListGenerator(datas);
+            var model = new LessonPlanViewModel() { LessonsList = datas };
+            //return View(_context.LessonPlan.OrderBy(a => a.startTime));
+            return View(model);
 
 
             //return View(await context.Teachers.OrderByDescending(x => x.Id).Include(x => x.Course).ToListAsync());
@@ -219,14 +223,13 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return true;
         }
 
-        private void lessonListGenerator()
+        private void lessonListGenerator(List<List<List<LessonPlan>>> datas)
         {
             var sortedLessonContext =_context.Set<LessonPlan>().OrderBy(LessonPlan => LessonPlan.startTime);
 
-
             //_context.LessonPlan.OrderBy(p => p.startTime);
 
-            List<List<List<LessonPlan>>> datas = new List<List<List<LessonPlan>>>();
+
             int maxClassRoomId = 0;
 
             int numberOfDays = Enum.GetNames(typeof(Days)).Length;
@@ -235,9 +238,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 if (lesson.ClassRoomId > maxClassRoomId)
                 {
-                    maxClassRoomId = lesson.ClassRoomId;
+                    maxClassRoomId = lesson.ClassRoomId - 1;
                 }
             }
+
             for (int i = 0; i < maxClassRoomId + 1; i++)
             {
                 datas.Add(new List<List<LessonPlan>>());
@@ -247,11 +251,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 }
             }
 
-
-
             foreach (LessonPlan lesson in sortedLessonContext)
             {
-                datas[lesson.ClassRoomId][lesson.dayId].Add(lesson);
+                datas[lesson.ClassRoomId - 1][lesson.dayId].Add(lesson);
             }
             //ViewData
             datas = addBrake(datas, maxClassRoomId, numberOfDays);
@@ -261,12 +263,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         private List<List<List<LessonPlan>>> addBrake(List<List<List<LessonPlan>>> datas, int maxClassRoomId, int numberOfDays)
         {
-            List<int> test = new List<int> { 1, 2, 3, 4 };
             for (int roomId = 0; roomId <= maxClassRoomId; roomId++)
             {
                 TimeSpan? firstLessonInWeek = null;
                 firstLessonInWeek = checkFirstLessonInWeek(datas, firstLessonInWeek, numberOfDays, roomId);
                 datas = addFirstGap(datas, roomId, numberOfDays, firstLessonInWeek);
+                datas = addEveryNextGap(datas, roomId, numberOfDays);
             }
             return datas;
         }
@@ -296,12 +298,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 int indexOfLessonInDay = 0;
                 Boolean firstLessonCheck = true;
-
                 for (int lessonId = 0; lessonId < datas[roomId][dayId].Count; lessonId++)
                 {
                     if (firstLessonCheck)
                     {
-
                         firstLessonCheck = false;
                         if (datas[roomId][dayId][lessonId].startTime > firstLessonInWeek)
                         {
@@ -313,6 +313,28 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return datas;
         }
 
+        private List<List<List<LessonPlan>>> addEveryNextGap(List<List<List<LessonPlan>>> datas, int roomId, int numberOfDays)
+        {
+            for (int dayId = 0; dayId < numberOfDays; dayId++)
+            {
+                TimeSpan? tempStopTime = null;
+                for (int lessonId = 0; lessonId < datas[roomId][dayId].Count; lessonId++)
+                {
+                    if (tempStopTime == null)
+                    {
+                        tempStopTime = datas[roomId][dayId][lessonId].stopTime;
+                    } else
+                    {
+                        if (datas[roomId][dayId][lessonId].startTime > tempStopTime)
+                        {
+                            datas[roomId][dayId].Insert(lessonId, new LessonPlan { startTime = (TimeSpan)tempStopTime, stopTime = datas[roomId][dayId][lessonId].startTime , isGap = true });
+                            tempStopTime = datas[roomId][dayId][lessonId].stopTime;
+                        }
+                    }
 
+                }
+            }
+            return datas;
+        }
     }
 }
