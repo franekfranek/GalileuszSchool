@@ -26,10 +26,22 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             studentCourseConnection.CourseId = courseId;
             studentCourseConnection.StudentId= studentId;
 
+            try
+            {
+                context.Add(studentCourseConnection);
+                await context.SaveChangesAsync();
+                
 
-            context.Add(studentCourseConnection);
-            await context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Error ocurred!/The student is already enrolled for this course!";
+                return RedirectToAction("Index", "Courses");
+            }
+
+            TempData["Success"] = "The student has been added";
             return RedirectToAction("Index", "Courses");
+
         }
 
         // get /admin/StudentCourseConnection/ShowStudentForCourse

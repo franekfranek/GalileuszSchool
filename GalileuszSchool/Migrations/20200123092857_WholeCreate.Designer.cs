@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GalileuszSchool.Migrations
 {
     [DbContext(typeof(GalileuszSchoolContext))]
-    [Migration("20200128223716_WholeCreate")]
+    [Migration("20200123092857_WholeCreate")]
     partial class WholeCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

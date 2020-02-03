@@ -178,32 +178,5 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
-        // get admin/students/addstudent
-        public async Task<IActionResult> AddStudent(int id)
-        {
-            var studentInfo = context.Students.OrderBy(x => x.Id);
-            IEnumerable<SelectListItem> selectList = from s in studentInfo
-                                                     select new SelectListItem
-                                                     {
-                                                         Value = s.Id.ToString(),
-                                                         Text = s.FirstName + " " + s.LastName.ToString()
-                                                     };
-            ViewBag.StudentId = new SelectList(selectList, "Value", "Text");
-            ViewBag.CourseId = id;
-            Course course = await context.Courses.FindAsync(id);
-            ViewBag.Course = course.Name;
-            return View();
-        }
-
-        // post admin/students/addstudent
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddStudent(Student student, string CourseId)
-        {
-            var studentId = student.Id;
-            var courseId = CourseId;
-
-            return RedirectToAction("AddIds", "StudentCourseConnection", new { courseId , studentId});
-        }
     }
 }

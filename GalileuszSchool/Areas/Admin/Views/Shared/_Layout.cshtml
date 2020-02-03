@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Admin Area</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" href="/"  target="_blank">Home</a>
+                <a class="navbar-brand" href="/" target="_blank">Home</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -19,48 +20,52 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         @*@if (User?.Identity?.IsAuthenticated ?? false)
-                        {*@
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Pages" asp-action="Index">Pages</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Courses" asp-action="Index">Courses</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Teachers" asp-action="Index">Teachers</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Students" asp-action="Index">Students</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="LessonPlan" asp-action="Index">LessonPlan</a>
-                            </li>
-                            @*if (User.IsInRole("admin"))
+                            {*@
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Pages" asp-action="Index">Pages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Courses" asp-action="Index">Courses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Teachers" asp-action="Index">Teachers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Students" asp-action="Index">Students</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="LessonPlan" asp-action="Index">LessonPlan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="ClassRooms" asp-action="Index">Class rooms</a>
+                        </li>
+                        @*if (User.IsInRole("admin"))
                             {*@
 
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
-                            </li>
-
-                            
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
+                        </li>
 
 
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="StudentCourseConnection"
-                                   asp-action="ShowStudentForCourse">List of students</a>
-                            </li>
-                            
-                            <li class="nav-item ml-1 logout">
-                                <a asp-area="" asp-controller="Account" asp-action="Logout" class="btn btn-danger"> Log out</a>
-                            </li>
-                         
-                        </ul>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="StudentCourseConnection"
+                               asp-action="ShowStudentForCourse">List of students</a>
+                        </li>
+
+                        <li class="nav-item ml-1 logout">
+                            <a asp-area="" asp-controller="Account" asp-action="Logout" class="btn btn-danger"> Log out</a>
+                        </li>
+
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+
             <partial name="_NotificationPartial" />
             @RenderBody()
         </main>
@@ -75,5 +80,12 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
+    @*<script type="text/javascript">
+        $(document).ready(function () {
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+        });
+    </script>*@
 </body>
 </html>
