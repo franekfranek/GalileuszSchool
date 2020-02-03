@@ -76,10 +76,12 @@
                        data-course-id="@item.Id" data-course-name="@item.Name">
                         <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                     </a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">
+                    <a href="#detailsCourseModal" class="detailsModal" data-toggle="modal"
+                       data-course-id="@item.Id" data-course-name="@item.Name">
                         <i class="material-icons" data-toggle="tooltip" title="Details">&#xE8D2;</i>
                     </a> |
-                    <a class="confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">
+                    <a href="#deleteCourseModal" class="deleteModal" data-toggle="modal"
+                       data-course-id="@item.Id" data-course-name="@item.Name">
                         <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                     </a>
                 </td>
@@ -137,7 +139,7 @@
                     </button>
                 </div>
 
-                <div class="modal-body">
+                
                     <div class="modal-body">
 
                         <div class="form-group">
@@ -164,15 +166,17 @@
                             <label>Price</label>
                             <input type="number" class="form-control" required="required" name="price" />
                         </div>
+
+                        <div class="form-group">
+                            <label>Teacher</label>
+                            <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId">
+                            </select>
+                        </div>
+
                     </div>
 
-                    <div class="form-group">
-                        <label>Teacher</label>
-                        <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId">
-                            
-                        </select>
-                    </div>
-                </div>
+                    
+                
 
                 <div class="modal-footer">
                     <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
@@ -191,20 +195,20 @@
         <div class="modal-content">
             <form method="post" asp-controller="Courses" asp-action="Edit">
                 <div class="modal-header">
-                    <h4 class="modal-title">Create new course</h4>
+                    <h4 class="modal-title">Edit course</h4>
                     <button type="button" class="close" data-dismiss="modal"
                             aria-hidden="true">
                         &times;
                     </button>
                 </div>
 
-                <div class="modal-body">
+                
                     <div class="modal-body">
 
                         <div class="form-group">
                             <label>Course name</label>
                             <input type="text" class="form-control" required="required" name="courseName"
-                                   id="courseName"/>
+                                   id="courseName" />
                         </div>
 
                         <div class="form-group">
@@ -226,15 +230,17 @@
                             <label>Price</label>
                             <input type="number" class="form-control" required="required" name="price" id="price" />
                         </div>
+
+                        <div class="form-group">
+                            <label>Teacher</label>
+                            <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId" id="teacherId">
+                            </select>
+                        </div>
+
                     </div>
 
-                    <div class="form-group">
-                        <label>Teacher</label>
-                        <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId" id="teacherId">
-                            <option value="-1">--Choose teacher--</option>
-                        </select>
-                    </div>
-                </div>
+                    
+                
 
                 <div class="modal-footer">
                     <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
@@ -244,6 +250,114 @@
                 </div>
 
             </form>
+        </div>
+    </div>
+</div>
+    
+
+@*---------------->DETAILS COURSE MODAL------------*@
+<div id="detailsCourseModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="detailsModalTitle"></h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+                    <div class="modal-body">
+                        <div>
+                            <dl>
+                                <dt class="col-sm-2">
+                                    @Html.DisplayNameFor(model => model.Id)
+                                </dt>
+                                <dd class="col-sm-10" id="id">
+                                    
+                                </dd>
+                                <dt class="col-sm-2">
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </dt>
+                                <dd class="col-sm-10" id="name">
+                                    
+                                </dd>
+                                <dt class="col-sm-2">
+                                    @Html.DisplayNameFor(model => model.Level)
+                                </dt>
+                                <dd class="col-sm-10" id="level">
+                                    
+                                </dd>
+                                <dt class="col-sm-2">
+                                    @Html.DisplayNameFor(model => model.Description)
+                                </dt>
+                                <dd class="col-sm-10" id="description">
+                                    
+                                </dd>
+                                <dt class="col-sm-2">
+                                    Price
+                                </dt>
+                                <dd class="col-sm-10" id="price">
+                                   
+                                </dd>
+                                <dt class="col-sm-2">
+                                    @Html.DisplayNameFor(model => model.Slug)
+                                </dt>
+                                <dd class="col-sm-10" id="slug">
+                                    
+                                </dd>
+                                <dt class="col-sm-2">
+                                    @Html.DisplayNameFor(model => model.Sorting)
+                                </dt>
+                                <dd class="col-sm-10" id="sorting">
+                                    
+                                </dd>
+                                <dt class="col-sm-2">
+                                    Teacher Id
+                                </dt>
+                                <dd class="col-sm-10" id="teacherId">
+                                    
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+               
+
+                <div class="modal-footer">
+                    <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+                  
+                </div>
+
+        </div>
+    </div>
+</div>
+
+
+@*---------------->DELETE COURSE MODAL------------*@
+<div id="deleteCourseModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Courses" asp-action="Delete">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="deleteModalTitle"></h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Do you really want to delete this course?</p>
+                    <p class="text=warning"><small>This action cannot be undone.</small></p>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                    <input type="hidden" name="id" id="id" />
+                </div>
+
+            </form>
+
         </div>
     </div>
 </div>
@@ -271,14 +385,17 @@
             });
 
 
-            //$('table .delete').on('click', function () {
-            //    var id = $(this).parent().find('#id').val();
-            //    //alert(id)
-            //    $('#deleteEmployeeModal #id').val(id);
-            //});
-            //$('#editCourseModal').on('show.bs.modal', function(e) {
+            $('table .deleteModal').on('click', function () {
+                var courseId = $(this).data('course-id');
+                var courseName = $(this).data('course-name');
+
+                document.getElementById("deleteModalTitle").innerHTML = "Delete " + courseName + " course ?";
+                
+
+                $('#deleteCourseModal #id').val(courseId);
+            });
+
             $('table .editModal').on('click', function (e) {
-                //var id = $(this).parent().find('#id').val();
                 var courseId = $(this).data('course-id');
                 console.log(courseId);
                 
@@ -293,6 +410,31 @@
                         $('#editCourseModal #description').val(result.description);
                         $('#editCourseModal #price').val(result.price);
                         $('#editCourseModal #teacherId').val(result.teacherId);
+                    }
+                })
+            });
+
+            $('table .detailsModal').on('click', function () {
+                //var id = $(this).parent().find('#id').val();
+                var courseId = $(this).data('course-id');
+                var courseName = $(this).data('course-name');
+                console.log(courseId);
+                document.getElementById("detailsModalTitle").innerHTML = courseName + " course details";
+
+
+                $.ajax({
+                    type: 'Get',
+                    data: {id:courseId},
+                    url: '/admin/Courses/FindCourse',
+                    success: function (result) {
+                        $('#detailsCourseModal #id').text(result.id);
+                        $('#detailsCourseModal #name').text(result.name);
+                        $('#detailsCourseModal #level').text(result.level);
+                        $('#detailsCourseModal #description').text(result.description);
+                        $('#detailsCourseModal #price').text(result.price);
+                        $('#detailsCourseModal #slug').text(result.slug);
+                        $('#detailsCourseModal #sorting').text(result.sorting);
+                        $('#detailsCourseModal #teacherId').text(result.teacherId);
                     }
                 })
             });
