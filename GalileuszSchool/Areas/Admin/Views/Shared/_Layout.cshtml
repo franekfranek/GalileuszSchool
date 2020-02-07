@@ -4,8 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Admin Area</title>
+    <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    
+    <link href="~/css/DataTables/css/jquery.dataTables.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
@@ -64,9 +67,12 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
-
+        <main role="main" class="pb-3" id="mainContainer">
+            <div id="divNotification" class="alert alert-success notification" style="display:none">
+                
+            </div>
             <partial name="_NotificationPartial" />
+            @*<partial name="JQueryNotification" />*@
             @RenderBody()
         </main>
     </div>
@@ -76,16 +82,23 @@
             &copy; 2020 - GalileuszSchool - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/DataTables/jquery.dataTables.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/CoursesIndex.js"></script>
+
+
+
     @RenderSection("Scripts", required: false)
     @*<script type="text/javascript">
-        $(document).ready(function () {
+            $(document).ready(function () {
 
-            $('[data-toggle="tooltip"]').tooltip();
+                $('[data-toggle="tooltip"]').tooltip();
 
-        });
-    </script>*@
+            });
+        </script>*@
 </body>
 </html>

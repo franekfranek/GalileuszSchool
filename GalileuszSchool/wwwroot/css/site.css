@@ -76,3 +76,10 @@ li.nav-item.logout{
     right:10px;
     list-style: none;
 }
+
+.error {
+    color: red;
+    /*background-color: #f2dede;
+    border-color: #ebccd1;
+    padding: 1px 20px 1px 20px;*/
+}

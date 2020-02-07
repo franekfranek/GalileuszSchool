@@ -11,21 +11,21 @@
         <span>New course</span>
     </a>
 </p>
-<table class="table">
+<table id="myDataTable">
     <thead>
         <tr>
 
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Level)
+                Level
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                Description
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                Price
             </th>
 
             <th>
@@ -34,60 +34,25 @@
             <th>
 
             </th>
+            <th>
 
+            </th>
+            <th>
 
-            <th></th>
+            </th>
+            <th>
+
+            </th>
+
         </tr>
     </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Level)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @item.Price PLN
-                </td>
 
-                <td>
-                    @item.Teacher.FirstName @item.Teacher.LastName
-                </td>
 
-                <td>
-                    @*<a asp-action="AddStudent" asp-controller="Students"
-                        asp-route-id=@item.Id class="btn btn-primary">Add student</a>*@
-                    <a href="#addStudentModal" id="modal1" class="btn small btn-success" data-toggle="modal"
-                       data-course-id="@item.Id" data-course-name="@item.Name" >
-                        <i class="material-icons">&#xE147;</i>
-                        <span >New Student</span>
-                    </a>
-                </td>
 
-                <td>
-                    <a href="#editCourseModal" class="editModal" data-toggle="modal"
-                       data-course-id="@item.Id" data-course-name="@item.Name">
-                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-                    </a> |
-                    <a href="#detailsCourseModal" class="detailsModal" data-toggle="modal"
-                       data-course-id="@item.Id" data-course-name="@item.Name">
-                        <i class="material-icons" data-toggle="tooltip" title="Details">&#xE8D2;</i>
-                    </a> |
-                    <a href="#deleteCourseModal" class="deleteModal" data-toggle="modal"
-                       data-course-id="@item.Id" data-course-name="@item.Name">
-                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
+
+
+
 </table>
 
 
@@ -130,7 +95,7 @@
 <div id="createCourseModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" asp-controller="Courses" asp-action="Create">
+            <form method="post" name="create-new-course" id="create-course-form">
                 <div class="modal-header">
                     <h4 class="modal-title">Create new course</h4>
                     <button type="button" class="close" data-dismiss="modal"
@@ -139,48 +104,44 @@
                     </button>
                 </div>
 
-                
-                    <div class="modal-body">
+                <div class="modal-body">
 
-                        <div class="form-group">
-                            <label>Course name</label>
-                            <input type="text" class="form-control" required="required" name="courseName" />
-                        </div>
-
-                        <div class="form-group">
-                            <label>Level</label>
-                            <select class="form-control" name="level">
-                                <option selected="selected" disabled="disabled">---Select Level---</option>
-                                <option>Begginer</option>
-                                <option>Intermediate</option>
-                                <option>Advanced</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Description</label>
-                            <textarea class="form-control" required="required" name="description"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input type="number" class="form-control" required="required" name="price" />
-                        </div>
-
-                        <div class="form-group">
-                            <label>Teacher</label>
-                            <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId">
-                            </select>
-                        </div>
-
+                    <div class="form-group">
+                        <label>Course name</label>
+                        <input type="text" class="form-control" name="name" id="name" />
                     </div>
 
-                    
-                
+                    <div class="form-group">
+                        <label>Level</label>
+                        <select class="form-control" name="level">
+                            <option selected="selected" disabled="disabled">---Select Level---</option>
+                            <option>Begginer</option>
+                            <option>Intermediate</option>
+                            <option>Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" name="description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" class="form-control" name="price" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teacher</label>
+                        <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId">
+                        </select>
+                    </div>
+
+                </div>
 
                 <div class="modal-footer">
                     <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
-                    <input type="submit" value="Add" class="btn btn-success">
+                    <input type="submit" value="Add" class="btn btn-success" id="addCourse">
                 </div>
 
             </form>
@@ -193,7 +154,7 @@
 <div id="editCourseModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" asp-controller="Courses" asp-action="Edit">
+            <form method="post" name="edit-course" asp-controller="Courses" asp-action="Edit">
                 <div class="modal-header">
                     <h4 class="modal-title">Edit course</h4>
                     <button type="button" class="close" data-dismiss="modal"
@@ -202,49 +163,46 @@
                     </button>
                 </div>
 
-                
-                    <div class="modal-body">
 
-                        <div class="form-group">
-                            <label>Course name</label>
-                            <input type="text" class="form-control" required="required" name="courseName"
-                                   id="courseName" />
-                        </div>
+                <div class="modal-body">
 
-                        <div class="form-group">
-                            <label>Level</label>
-                            <select class="form-control" name="level" id="level">
-                                <option selected="selected" disabled="disabled">---Select Level---</option>
-                                <option>Begginer</option>
-                                <option>Intermediate</option>
-                                <option>Advanced</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Description</label>
-                            <textarea class="form-control" required="required" name="description" id="description"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input type="number" class="form-control" required="required" name="price" id="price" />
-                        </div>
-
-                        <div class="form-group">
-                            <label>Teacher</label>
-                            <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId" id="teacherId">
-                            </select>
-                        </div>
-
+                    <div class="form-group">
+                        <label>Course name</label>
+                        <input type="text" class="form-control" name="courseName" data-val="true"
+                               id="courseName" />
                     </div>
 
-                    
-                
+                    <div class="form-group">
+                        <label>Level</label>
+                        <select class="form-control" name="level" id="level">
+                            <option selected="selected" disabled="disabled">---Select Level---</option>
+                            <option>Begginer</option>
+                            <option>Intermediate</option>
+                            <option>Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" required="required" name="description" id="description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" class="form-control" required="required" name="price" id="price" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teacher</label>
+                        <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId" id="teacherId">
+                        </select>
+                    </div>
+
+                </div>
 
                 <div class="modal-footer">
                     <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
-                    <input type="submit" value="Add" class="btn btn-success">
+                    <input type="submit" value="Update" class="btn btn-success">
 
                     <input type="hidden" name="id" id="id" />
                 </div>
@@ -253,79 +211,79 @@
         </div>
     </div>
 </div>
-    
+
 
 @*---------------->DETAILS COURSE MODAL------------*@
 <div id="detailsCourseModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="detailsModalTitle"></h4>
-                    <button type="button" class="close" data-dismiss="modal"
-                            aria-hidden="true">
-                        &times;
-                    </button>
-                </div>
-                    <div class="modal-body">
-                        <div>
-                            <dl>
-                                <dt class="col-sm-2">
-                                    @Html.DisplayNameFor(model => model.Id)
-                                </dt>
-                                <dd class="col-sm-10" id="id">
-                                    
-                                </dd>
-                                <dt class="col-sm-2">
-                                    @Html.DisplayNameFor(model => model.Name)
-                                </dt>
-                                <dd class="col-sm-10" id="name">
-                                    
-                                </dd>
-                                <dt class="col-sm-2">
-                                    @Html.DisplayNameFor(model => model.Level)
-                                </dt>
-                                <dd class="col-sm-10" id="level">
-                                    
-                                </dd>
-                                <dt class="col-sm-2">
-                                    @Html.DisplayNameFor(model => model.Description)
-                                </dt>
-                                <dd class="col-sm-10" id="description">
-                                    
-                                </dd>
-                                <dt class="col-sm-2">
-                                    Price
-                                </dt>
-                                <dd class="col-sm-10" id="price">
-                                   
-                                </dd>
-                                <dt class="col-sm-2">
-                                    @Html.DisplayNameFor(model => model.Slug)
-                                </dt>
-                                <dd class="col-sm-10" id="slug">
-                                    
-                                </dd>
-                                <dt class="col-sm-2">
-                                    @Html.DisplayNameFor(model => model.Sorting)
-                                </dt>
-                                <dd class="col-sm-10" id="sorting">
-                                    
-                                </dd>
-                                <dt class="col-sm-2">
-                                    Teacher Id
-                                </dt>
-                                <dd class="col-sm-10" id="teacherId">
-                                    
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-               
+            <div class="modal-header">
+                <h4 class="modal-title" id="detailsModalTitle"></h4>
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <dl>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Id)
+                        </dt>
+                        <dd class="col-sm-10" id="id">
 
-                <div class="modal-footer">
-                    <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
-                  
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class="col-sm-10" id="name">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Level)
+                        </dt>
+                        <dd class="col-sm-10" id="level">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+                        <dd class="col-sm-10" id="description">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            Price
+                        </dt>
+                        <dd class="col-sm-10" id="price">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Slug)
+                        </dt>
+                        <dd class="col-sm-10" id="slug">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Sorting)
+                        </dt>
+                        <dd class="col-sm-10" id="sorting">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            Teacher Id
+                        </dt>
+                        <dd class="col-sm-10" id="teacherId">
+
+                        </dd>
+                    </dl>
                 </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+
+            </div>
 
         </div>
     </div>
@@ -352,7 +310,7 @@
 
                 <div class="modal-footer">
                     <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
-                    <input type="submit" value="Delete" class="btn btn-danger">
+                    <input type="submit" value="Delete" class="btn btn-danger" id="deleteCourse">
                     <input type="hidden" name="id" id="id" />
                 </div>
 
@@ -364,80 +322,6 @@
 
 
 @section Scripts{
+    
 
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            //console.log("checking...")
-            $('[data-toggle="tooltip"]').tooltip();
-
-            //passing data to modal
-            $('#addStudentModal').on('show.bs.modal', function(e) {
-
-
-            var courseId = $(e.relatedTarget).data('course-id');
-            var courseName = $(e.relatedTarget).data('course-name');
-
-
-             document.getElementById("modalTitle").innerHTML = "Add student to " + courseName + " course";
-
-            $(e.currentTarget).find('input[name="courseId"]').val(courseId);
-            });
-
-
-            $('table .deleteModal').on('click', function () {
-                var courseId = $(this).data('course-id');
-                var courseName = $(this).data('course-name');
-
-                document.getElementById("deleteModalTitle").innerHTML = "Delete " + courseName + " course ?";
-                
-
-                $('#deleteCourseModal #id').val(courseId);
-            });
-
-            $('table .editModal').on('click', function (e) {
-                var courseId = $(this).data('course-id');
-                console.log(courseId);
-                
-                $.ajax({
-                    type: 'Get',
-                    data: {id:courseId},
-                    url: '/admin/Courses/FindCourse',
-                    success: function (result) {
-                        $('#editCourseModal #id').val(result.id);
-                        $('#editCourseModal #courseName').val(result.name);
-                        $('#editCourseModal #level').val(result.level);
-                        $('#editCourseModal #description').val(result.description);
-                        $('#editCourseModal #price').val(result.price);
-                        $('#editCourseModal #teacherId').val(result.teacherId);
-                    }
-                })
-            });
-
-            $('table .detailsModal').on('click', function () {
-                //var id = $(this).parent().find('#id').val();
-                var courseId = $(this).data('course-id');
-                var courseName = $(this).data('course-name');
-                console.log(courseId);
-                document.getElementById("detailsModalTitle").innerHTML = courseName + " course details";
-
-
-                $.ajax({
-                    type: 'Get',
-                    data: {id:courseId},
-                    url: '/admin/Courses/FindCourse',
-                    success: function (result) {
-                        $('#detailsCourseModal #id').text(result.id);
-                        $('#detailsCourseModal #name').text(result.name);
-                        $('#detailsCourseModal #level').text(result.level);
-                        $('#detailsCourseModal #description').text(result.description);
-                        $('#detailsCourseModal #price').text(result.price);
-                        $('#detailsCourseModal #slug').text(result.slug);
-                        $('#detailsCourseModal #sorting').text(result.sorting);
-                        $('#detailsCourseModal #teacherId').text(result.teacherId);
-                    }
-                })
-            });
-        });
-    </script>
 }

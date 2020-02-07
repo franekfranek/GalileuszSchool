@@ -7,7 +7,10 @@ using GalileuszSchool.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
@@ -46,24 +49,25 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             ViewBag.StudentId = new SelectList(selectListStudents, "Value", "Text");
 
 
-            return View(await context.Courses.OrderByDescending(x => x.Sorting).Include(x => x.Teacher).ToListAsync());
+            return View();
 
         }
 
         //POST /admin/courses/create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string courseName, string level,
-                                                string description, int price, int teacherId)
+        public async Task<IActionResult> Create(Course course)
         {
-            var course = new Course
-            {
-                Name = courseName,
-                Level = level,
-                Description = description,
-                Price = price,
-                TeacherId = teacherId
-            };
+            //string courseName, string level,
+            //                                    string description, int price, int teacherId
+            //var course = new Course
+            //{
+            //    Name = courseName,
+            //    Level = level,
+            //    Description = description,
+            //    Price = price,
+            //    TeacherId = teacherId
+            //};
 
             if (ModelState.IsValid)
             {
@@ -180,13 +184,23 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 context.Courses.Remove(course);
                 await context.SaveChangesAsync();
-                TempData["Success"] = "The course has been deleted";
+                TempData["Error"] = "The course has been deleted";
 
             }
 
             return RedirectToAction("Index");
         }
 
-       
+        public IActionResult showTempData(string message)
+        {
+            return PartialView("JQueryNotification", message);
+        }
+
+        public JsonResult GetCourses()
+        {
+            List<Course> courses = context.Courses.OrderByDescending(x => x.Sorting).Include(x => x.Teacher)
+                                                                                          .ToList();
+            return Json(courses);
+        }
     }
 }
