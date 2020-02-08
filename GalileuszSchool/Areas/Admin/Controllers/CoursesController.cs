@@ -30,7 +30,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             //TODO refactoring needed
-            var teacherInfo = context.Teachers.OrderBy(x => x.Id);
+            var teacherInfo =  context.Teachers.OrderBy(x => x.Id);
             IEnumerable<SelectListItem> selectList = from s in teacherInfo
                                                      select new SelectListItem
                                                      {
@@ -98,49 +98,41 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         //get /admin/courses/edit/{id}
-        public async Task<IActionResult> Edit(int id)
-        {
-            var teacherInfo = context.Teachers.OrderBy(x => x.Id);
-            IEnumerable<SelectListItem> selectList = from s in teacherInfo
-                                                     select new SelectListItem
-                                                     {
-                                                         Value = s.Id.ToString(),
-                                                         Text = s.FirstName + " " + s.LastName.ToString()
-                                                     };
-            ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
+        //public async Task<IActionResult> Edit(int id)
+        //{
+        //    var teacherInfo = context.Teachers.OrderBy(x => x.Id);
+        //    IEnumerable<SelectListItem> selectList = from s in teacherInfo
+        //                                             select new SelectListItem
+        //                                             {
+        //                                                 Value = s.Id.ToString(),
+        //                                                 Text = s.FirstName + " " + s.LastName.ToString()
+        //                                             };
+        //    ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
 
-            Course course = await context.Courses.FindAsync(id);
+        //    Course course = await context.Courses.FindAsync(id);
 
-            if (course == null)
-            {
-                return NotFound();
-            }
+        //    if (course == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
+        //    //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
 
 
-            return View(course);
-        }
+        //    return View(course);
+        //}
 
         //POST /admin/courses/edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string courseName, string level,
-                                                string description, int price, int teacherId)
+        public async Task<IActionResult> Edit(Course course)
         {
-            var course = context.Courses.Find(id);
-            course.Name = courseName;
-            course.Level = level;
-            course.Description = description;
-            course.Price = price;
-            course.TeacherId = teacherId;
-
             if (ModelState.IsValid)
             {
                 course.Slug = course.Name.ToLower().Replace(" ", "-");
 
 
-                var slug = await context.Courses.Where(x => x.Id != id).FirstOrDefaultAsync(x => x.Slug == course.Slug);
+                var slug = await context.Courses.Where(x => x.Id != course.Id).FirstOrDefaultAsync(x => x.Slug == course.Slug);
                 if (slug != null)
                 {
                     TempData["Error"] = "The course already exists";
@@ -150,7 +142,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 context.Update(course);
                 await context.SaveChangesAsync();
 
-                TempData["Success"] = "The course has been edited";
+                //TempData["Success"] = "The course has been edited";
 
                 return RedirectToAction("Index");
             }
@@ -184,16 +176,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 context.Courses.Remove(course);
                 await context.SaveChangesAsync();
-                TempData["Error"] = "The course has been deleted";
-
             }
 
             return RedirectToAction("Index");
-        }
-
-        public IActionResult showTempData(string message)
-        {
-            return PartialView("JQueryNotification", message);
         }
 
         public JsonResult GetCourses()

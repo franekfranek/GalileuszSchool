@@ -154,7 +154,7 @@
 <div id="editCourseModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" name="edit-course" asp-controller="Courses" asp-action="Edit">
+            <form method="post" name="edit-course" asp-controller="Courses" asp-action="Edit" id="editCourseForm">
                 <div class="modal-header">
                     <h4 class="modal-title">Edit course</h4>
                     <button type="button" class="close" data-dismiss="modal"
@@ -168,8 +168,8 @@
 
                     <div class="form-group">
                         <label>Course name</label>
-                        <input type="text" class="form-control" name="courseName" data-val="true"
-                               id="courseName" />
+                        <input type="text" class="form-control" name="name" data-val="true"
+                               id="editCourseName" />
                     </div>
 
                     <div class="form-group">
@@ -202,9 +202,9 @@
 
                 <div class="modal-footer">
                     <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
-                    <input type="submit" value="Update" class="btn btn-success">
+                    <input type="submit" value="Update" class="btn btn-success" id="editCourse">
 
-                    <input type="hidden" name="id" id="id" />
+                    <input type="hidden" name="id" id="idEdit" />
                 </div>
 
             </form>
@@ -311,7 +311,8 @@
                 <div class="modal-footer">
                     <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
                     <input type="submit" value="Delete" class="btn btn-danger" id="deleteCourse">
-                    <input type="hidden" name="id" id="id" />
+                    <input type="hidden" name="id" id="deleteId" />
+                    <input type="hidden" name="courseName" id="deleteCourseName" />
                 </div>
 
             </form>
