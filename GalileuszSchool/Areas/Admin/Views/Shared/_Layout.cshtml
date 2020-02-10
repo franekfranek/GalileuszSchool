@@ -72,7 +72,7 @@
                 
             </div>
             <partial name="_NotificationPartial" />
-            @*<partial name="JQueryNotification" />*@
+            
             @RenderBody()
         </main>
     </div>
@@ -84,21 +84,15 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/DataTables/jquery.dataTables.js"></script>
     <script src="~/js/site.js"></script>
-    <script src="~/js/CoursesIndex.js"></script>
+    
+    
 
 
 
     @RenderSection("Scripts", required: false)
-    @*<script type="text/javascript">
-            $(document).ready(function () {
-
-                $('[data-toggle="tooltip"]').tooltip();
-
-            });
-        </script>*@
+    
 </body>
 </html>

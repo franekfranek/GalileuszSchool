@@ -126,6 +126,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-
+        public JsonResult GetTeachers()
+        {
+            List<Teacher> teachers= context.Teachers.OrderByDescending(x => x.Id).ToList();
+            return Json(teachers);
+        }
     }
 }
