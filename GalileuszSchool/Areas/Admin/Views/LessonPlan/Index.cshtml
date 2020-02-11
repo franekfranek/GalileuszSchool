@@ -1,4 +1,5 @@
-﻿@model IEnumerable<GalileuszSchool.Models.LessonPlan>
+﻿@*@model IEnumerable<GalileuszSchool.Models.LessonPlan>*@
+@model GalileuszSchool.Areas.Admin.ViewModels.LessonPlanViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -12,13 +13,10 @@
 
 
 
-
-
-
-@foreach (var CRoom in ViewBag.ClassRoomsList)
+@for (int i = 0; i < Model.LessonsList.Count; i++)
 {
-
-
+    var classRoom = Model.LessonsList[i];
+    <h2>@ViewBag.ClassRoomsList[i].ClassRoomName</h2>
 
     <table class="table">
         <thead>
@@ -37,21 +35,40 @@
                 {
                     <td>
                         <table>
-                            @foreach (var item in Model)
+                            @foreach (var lessonInDay in classRoom[day])
                             {
-                                @if (item.day == (Days)day && item.ClassRoomId == CRoom.Id)
+                                //int boxHeight = 5 * (lessonInDay.stopTime.Hours * 100 + ((lessonInDay.stopTime.Minutes * 100) / 60) -  lessonInDay.startTime.Hours * 100 + ((lessonInDay.startTime.Minutes * 100) / 60));
+                                double box = 60 * (lessonInDay.stopTime.Hours + ((double)lessonInDay.stopTime.Minutes / 60) - lessonInDay.startTime.Hours + ((double)lessonInDay.startTime.Minutes) / 60);
+                                int boxHeight = (int)box;
+
+                                @if (lessonInDay.isGap)
                                 {
-                                    <tr style="height: 30px">
-                                        <td>
-                                            @{string hStart = item.startTime.Hours.ToString();}
-                                            @{string mStart = item.startTime.Minutes.ToString("00");}
-                                            @{string hStop = item.stopTime.Hours.ToString();}
-                                            @{string mStop = item.stopTime.Minutes.ToString("00");}
-                                            <small>
-                                                @hStart:@mStart - @hStop:@mStop
-                                            </small>
-                                            <br />
-                                            <a asp-action="Details" asp-route-id="@item.Id">@item.Course.Name</a>
+                                    <tr>
+                                        <td style="padding-top: 0px; padding-bottom:0px">
+                                            <div style="height: @(boxHeight)px; overflow: hidden;">
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td style="padding-top: 0px; padding-bottom:0px">
+                                            <div style="height: @(boxHeight)px; overflow: hidden; background-color: #f5f7eb;">
+                                                @{string hStart = lessonInDay.startTime.Hours.ToString();}
+                                                @{string mStart = lessonInDay.startTime.Minutes.ToString("00");}
+                                                @{string hStop = lessonInDay.stopTime.Hours.ToString();}
+                                                @{string mStop = lessonInDay.stopTime.Minutes.ToString("00");}
+                                                <a asp-action="Details" asp-route-id="@lessonInDay.Id">@lessonInDay.Course.Name</a>
+                                                <br />
+                                                <small>
+                                                    @hStart:@mStart - @hStop:@mStop
+                                                </small>
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -63,9 +80,178 @@
         </tbody>
     </table>
 
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
+@*@classRoom
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (var day in Enum.GetNames(typeof(Days)))
+                {
+                    <th>
+                        @Html.DisplayName(day)
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                @foreach (int day in Enum.GetValues(typeof(Days)))
+                {
+                    <td>
+                        <table>
+                            @foreach (var lessonInDay in classRoom[day])
+                            {
+                                @lessonInDay.Course.Name;
+                            }
+                        </table>
+                    </td>
+                }
+            </tr>
+        </tbody>
+    </table>
+    }
+
+
+
+
+            @foreach (var CRoom in ViewBag.ClassRoomsList)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            @foreach (var day in Enum.GetNames(typeof(Days)))
+                            {
+                                <th>
+                                    @Html.DisplayName(day)
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @foreach (int day in Enum.GetValues(typeof(Days)))
+                            {
+                                <td>
+                                    <table>
+                                        @foreach (var item in Model)
+                                        {
+                                            @if (item.day == (Days)day && item.ClassRoomId == CRoom.Id)
+                                            {
+                                                if (item.isGap)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            asd
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                <tr style="height: 30px">
+                                                    <td>
+                                                        @{string hStart = item.startTime.Hours.ToString();}
+                                                        @{string mStart = item.startTime.Minutes.ToString("00");}
+                                                        @{string hStop = item.stopTime.Hours.ToString();}
+                                                        @{string mStop = item.stopTime.Minutes.ToString("00");}
+                                                        <small>
+                                                            @hStart:@mStart - @hStop:@mStop
+                                                        </small>
+                                                        <br />
+                                                        <a asp-action="Details" asp-route-id="@item.Id">@item.Course.Name</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            @foreach (var CRoom in ViewBag.ClassRoomsList)
+            {
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            @foreach (var day in Enum.GetNames(typeof(Days)))
+                            {
+                                <th>
+                                    @Html.DisplayName(day)
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @foreach (int day in Enum.GetValues(typeof(Days)))
+                            {
+                                <td>
+                                    <table>
+                                        @foreach (var item in Model)
+                                        {
+                                            @if (item.day == (Days)day && item.ClassRoomId == CRoom.Id)
+                                            {
+                                                if (item.isGap)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            asd
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                <tr style="height: 30px">
+                                                    <td>
+                                                        @{string hStart = item.startTime.Hours.ToString();}
+                                                        @{string mStart = item.startTime.Minutes.ToString("00");}
+                                                        @{string hStop = item.stopTime.Hours.ToString();}
+                                                        @{string mStop = item.stopTime.Minutes.ToString("00");}
+                                                        <small>
+                                                            @hStart:@mStart - @hStop:@mStop
+                                                        </small>
+                                                        <br />
+                                                        <a asp-action="Details" asp-route-id="@item.Id">@item.Course.Name</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+
+            }*@
 
 
 

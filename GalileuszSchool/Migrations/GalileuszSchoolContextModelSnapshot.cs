@@ -164,6 +164,9 @@ namespace GalileuszSchool.Migrations
                     b.Property<int>("dayId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("isGap")
+                        .HasColumnType("bit");
+
                     b.Property<TimeSpan>("startTime")
                         .HasColumnType("time");
 

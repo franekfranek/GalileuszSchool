@@ -25,6 +25,8 @@ namespace GalileuszSchool.Models
     {
         public int Id { get; set; }
 
+        public Boolean isGap { get; set; }
+
         [Required(ErrorMessage = "--")]
         public int ClassRoomId { get; set; }
 
