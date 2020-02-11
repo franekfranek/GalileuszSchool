@@ -47,74 +47,73 @@
     });
 
     //------------->EDIT
-    //$(document).on('click', '#editModal', function () {
-    //    var courseId = $(this).data('course-id');
+    $(document).on('click', '#editTeacher', function () {
+        var teacherId = $(this).data('teacher-id');
 
-    //    $.ajax({
-    //        type: 'Get',
-    //        data: { id: courseId },
-    //        url: '/admin/Courses/FindCourse',
-    //        success: function (result) {
-    //            $('#editCourseModal #idEdit').val(result.id);
-    //            $('#editCourseModal #editCourseName').val(result.name);
-    //            $('#editCourseModal #level').val(result.level);
-    //            $('#editCourseModal #description').val(result.description);
-    //            $('#editCourseModal #price').val(result.price);
-    //            $('#editCourseModal #teacherId').val(result.teacherId);
-    //        }
-    //    })
-    //});
+        $.ajax({
+            type: 'Get',
+            data: { id: teacherId },
+            url: '/admin/Teachers/FindTeacher',
+            success: function (result) {
+                $('#editTeacherModal #idTeacherEdit').val(result.id);
+                $('#editTeacherModal #editTeacherFirstName').val(result.firstName);
+                $('#editTeacherModal #editTeacherLastName').val(result.lastName);
+                $('#editTeacherModal #editTeacherPhone').val(result.phoneNumber);
+            }
+        })
+    });
 
-    //$('#editCourse').on('click', function (e) {
+    $('#editTeacherPost').on('click', function (e) {
 
-    //    $("form[name='edit-course']").validate({
+        $.validator.addMethod('customphone', function (value, element) {
+            return this.optional(element) || /^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$/.test(value);
+        }, "Pattern is 000-000-000");
 
-    //        rules: {
-    //            editCourseName: "required",
-    //            level: "required",
-    //            description: "required",
-    //            price: "required",
-    //            teacherId: "required"
+        $("form[name='edit-teacher']").validate({
 
-    //        },
+            rules: {
+                FirstName: "required",
+                LastName: "required",
+                PhoneNumber: {
+                    required: true,
+                    customphone: true,
+                }
+            },
 
-    //        messages: {
-    //            editCourseName: "Please enter course name",
-    //            level: "Please select level",
-    //            description: "Please write description",
-    //            teacherId: "Plase select a teacher"
+            messages: {
+                FirstName: "Please enter first name",
+                LastName: "Please enter last name",
+                //PhoneNumber: "Pattern is 000-000-000"
+            }
+        });
 
+        var isValidate = $("form[name='edit-teacher']").valid();
 
-    //        }
-    //    });
+        if (isValidate) {
+            e.preventDefault();
+            var data = $('#editTeacherForm').serialize();
+            var name = $('#editTeacherFirstName').val();
+            var lastName = $('#editTeacherLastName').val();
+            
 
-    //    var isValidate = $("form[name='edit-course']").valid();
+            $.ajax({
+                type: 'POST',
+                data: data,
+                url: '/admin/Teachers/Edit',
+                success: function () {
 
-    //    if (isValidate) {
-    //        e.preventDefault();
-    //        var data = $('#editCourseForm').serialize();
-    //        var name = $('#editCourseName').val();
-    //        var idEdit = $('#idEdit').val();
-    //        console.log(data);
+                    $('#editTeacherModal').modal('hide');
 
-    //        $.ajax({
-    //            type: 'POST',
-    //            data: data,
-    //            url: '/admin/Courses/Edit',
-    //            success: function () {
-
-    //                $('#editCourseModal').modal('hide');
-
-    //                var notf = $(document).find('#divNotification');
-    //                notf.html("You edited " + name + " course!").show();
-    //                setTimeout(function () {
-    //                    notf.hide("slow");
-    //                }, 2000);
-    //                GetCourses();
-    //            }
-    //        })
-    //    }
-    //});
+                    var notf = $(document).find('#divNotification');
+                    notf.html("You edited " + name + " " + lastName + " !").show();
+                    setTimeout(function () {
+                        notf.hide("slow");
+                    }, 2000);
+                    GetTeachers();
+                }
+            })
+        }
+    });
 
     //------------->CREATE TEACHER
     $('#createTeacher').on('click', function (e) {
@@ -210,8 +209,8 @@ var bindDataTable = function (data) {
                 
                 {
                     data: null, render: function (data, type, row) {
-                        return '<a href="#editCourseModal" id="editModal" data-toggle="modal" data-course-id="' + data.id + '"data-course-name='
-                            + data.name + '><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>';
+                        return '<a href="#editTeacherModal" id="editTeacher" data-toggle="modal" data-teacher-id="' + data.id + '"data-teacher-name="'
+                            + data.firstName + '"data-teacher-lastname=' + data.lastName + '><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>';
                     }
                 },
                 {

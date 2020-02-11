@@ -28,12 +28,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         // /admin/teachers/create
-        public IActionResult Create()
-        {
-            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name");
+        //public IActionResult Create()
+        //{
+        //    //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name");
 
-            return View();
-        }
+        //    return View();
+        //}
 
         //POST /admin/teacher/create
         [HttpPost]
@@ -63,25 +63,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         //admin/teachers/edit/{id}
-        public async Task<IActionResult> Edit(int id)
-        {
-            Teacher teacher = await context.Teachers.FindAsync(id);
-            if (teacher == null)
-            {
-                return NotFound();
-            }
-
-            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", teacher.CourseId);
-
-
-            return View(teacher);
-        }
-
-        //admin/teachers/edit/{id}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Teacher teacher)
+        public async Task<IActionResult> Edit(Teacher teacher)
         {
             //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", teacher.CourseId);
 
@@ -89,7 +74,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 teacher.Slug = teacher.FirstName.ToLower().Replace(" ", "-") + teacher.LastName.ToLower().Replace(" ", "-");
 
-                var slug = await context.Teachers.Where(x => x.Id != id).FirstOrDefaultAsync(x => x.Slug == teacher.Slug);
+                var slug = await context.Teachers.Where(x => x.Id != teacher.Id).FirstOrDefaultAsync(x => x.Slug == teacher.Slug);
                 if (slug != null)
                 {
                     ModelState.AddModelError("", "That teacher is already in the database");
@@ -130,6 +115,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         {
             List<Teacher> teachers= context.Teachers.OrderByDescending(x => x.Id).ToList();
             return Json(teachers);
+        }
+
+        public IActionResult FindTeacher(int id)
+        {
+            var teacher = context.Teachers.Find(id);
+            return new JsonResult(teacher);
         }
     }
 }
