@@ -7,57 +7,179 @@
 <h1>Students</h1>
 
 <p>
-    <a asp-action="Create">Add new student</a>
+    <a href="#createStudentModal" class="btn btn-primary" data-toggle="modal">
+        <span>New student</span>
+    </a>
 </p>
-<table class="table">
+<table id="studentTable">
     <thead>
         <tr>
-            
+
             <th>
-                @Html.DisplayNameFor(model => model.Image)
+                Image
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                First name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                Last name
+            </th>
+
+            <th>
+                Phone number
+            </th>
+
+            <th>
+
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Slug)
+
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-           
-            <th></th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-           
-            <td>
-                <img src="~/media/students/@item.Image" width="70" height="60" alt="" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Slug)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-           
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a class="confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
 
-            </td>
-        </tr>
-}
-    </tbody>
 </table>
+
+
+@*---------------->CREATE STUDENT MODAL------------*@
+<div id="createStudentModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" name="create-new-student" id="create-student-form">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create new student</h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label>Image</label>
+                        <input type="file" onchange="previewFile(this)" class="form-control" name="image" id="studentCreateImg" /><br>
+                        @*<div id="imagePreview" class="img-thumbnail">*@
+                        <img src="" height="200" id="targetImg" alt="" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>First name</label>
+                        <input type="text" class="form-control" name="FirstName" id="studentFirstName" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last name</label>
+                        <input type="text" class="form-control" name="LastName" id="studentLastName" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone number</label>
+                        <input type="text" class="form-control" name="PhoneNumber" id="phoneNumber" />
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+                    <input type="submit" value="Add" class="btn btn-success" id="createNewStudent">
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@*---------------->EDIT STUDENT MODAL------------*@
+<div id="editStudentModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" name="edit-student" asp-controller="Students" asp-action="Edit" id="editStudentForm">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit student</h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label>Image</label>
+                        <input type="file" onchange="previewFile()" class="form-control" name="image" id="studentImageEdit" /><br>
+                        @*<div id="imagePreview" class="img-thumbnail">*@
+                        <img src="" height="200" id="targetImgStudentEdit" alt="" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>First name</label>
+                        <input type="text" class="form-control" name="FirstName" id="editStudentFirstName" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last name</label>
+                        <input type="text" class="form-control" name="LastName" id="editStudentLastName" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone number</label>
+                        <input type="text" class="form-control" name="PhoneNumber" id="editStudentPhone" />
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+                    <input type="submit" value="Update" class="btn btn-success" id="editStudentPost">
+
+                    <input type="hidden" name="id" id="idStudentEdit" />
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@*---------------->DELETE STUDENT MODAL------------*@
+<div id="deleteStudentModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Students" asp-action="Delete">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="deleteModalTitleStudent"></h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Do you really want to delete this course?</p>
+                    <p class="text=warning"><small>This action cannot be undone.</small></p>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+                    <input type="submit" value="Delete" class="btn btn-danger" id="deleteStudent">
+
+                    <input type="hidden" name="id" id="deleteStudentId" />
+                    <input type="hidden" name="studentName" id="deleteStudentName" />
+                    <input type="hidden" name="studentLastName" id="deleteStudentLastName" />
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/studentIndex.js"></script>
+    <script src="~/js/site.js"></script>
+}

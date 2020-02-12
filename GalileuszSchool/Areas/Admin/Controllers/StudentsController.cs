@@ -36,12 +36,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         // /admin/students/create
-        public IActionResult Create()
-        {
+        //public IActionResult Create()
+        //{
             //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
 
-            return View();
-        }
+        //    return View();
+        //}
 
         //POST /admin/students/create
         [HttpPost]
@@ -177,6 +177,16 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+        public JsonResult GetStudents()
+        {
+            List<Student> students = context.Students.OrderByDescending(x => x.Id).ToList();
+            return Json(students);
+        }
+        public IActionResult FindStudent(int id)
+        {
+            var student = context.Students.Find(id);
+            return new JsonResult(student);
         }
     }
 }

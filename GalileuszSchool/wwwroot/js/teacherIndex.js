@@ -4,7 +4,7 @@
     $('[data-toggle="tooltip"]').tooltip();
 
     ////------------->DELETE
-    $(document).on('click', '#deleteTeacher', function () {
+    $(document).on('click', '#deleteTeacherLink', function () {
 
         var teacherId = $(this).data('teacher-id');
         var teacherFirstName = $(this).data('teacher-name');
@@ -36,7 +36,7 @@
                 $('#deleteTeacherModal').modal('hide');
 
                 var notf = $(document).find('#divNotification');
-                notf.html("You removed" + teacherName + " " + teacherLastName + " !").show();
+                notf.html("You removed " + teacherName + " " + teacherLastName + " !").show();
                 setTimeout(function () {
                     notf.hide("slow");
                 }, 2000);
@@ -215,7 +215,7 @@ var bindDataTable = function (data) {
                 },
                 {
                     data: null, render: function (data, type, row) {
-                        return '<a href="#deleteTeacherModal" id="deleteTeacher" data-toggle="modal" data-teacher-id="' + data.id + '"data-teacher-name="'
+                        return '<a href="#deleteTeacherModal" id="deleteTeacherLink" data-toggle="modal" data-teacher-id="' + data.id + '"data-teacher-name="'
                             + data.firstName + '"data-teacher-lastname=' + data.lastName + '><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>';
                     }
                 },
