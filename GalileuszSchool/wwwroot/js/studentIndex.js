@@ -1,36 +1,13 @@
-﻿//$(document).ready(function () {
-//    $('#studentImage').change(function () {
-//        var File = this.files;
-
-//        if(File && File[0])
-//        ReadImage(File[0])
-//    })
-//})
-
-//var ReadImage = function (file) {
-//    var reader = FileReader();
-//    var image = new Image;
-
-//    reader.readAsDataUrl(file);
-//    reader.onload = function (_file) {
-//        image.src = _file.target.result;
-//        image.onload = function () {
-
-//            var height = this.height;
-//            var width = this.width;
-//            var type = this.type;
-//            var size = ~~(file.size / 1024) + "KB";
-
-//            $('#targetImg').attr('src', _file.target.result);
-//        }
-//    }
-//}
-
-function previewFile(element) {
-    console.log(element);
+﻿function previewFile(element) {
+    let preview;
+    if (element.id === "studentCreateImg") {
+        preview = document.getElementById("targetImg");
+    } else {
+        preview = document.getElementById("targetImgStudentEdit");
+        preview.src = "";
+    };
     
-    let preview = document.getElementById(element);
-    let file = document.querySelector("input[type=file").files[0];
+    let file = document.getElementById(element.id).files[0];
     const reader = new FileReader();
 
     reader.addEventListener("load", function () {
@@ -44,7 +21,7 @@ function previewFile(element) {
 
 $(document).ready(function () {
     GetStudents();
-    //console.log("checking...")
+
     $('[data-toggle="tooltip"]').tooltip();
 
     //------------->DELETE
@@ -70,7 +47,6 @@ $(document).ready(function () {
         var studentName = $('#deleteStudentName').val();
         var studentLastName = $('#deleteStudentLastName').val();
 
-
         $.ajax({
             type: 'GET',
             data: { id: studentId },
@@ -84,8 +60,18 @@ $(document).ready(function () {
                     notf.hide("slow");
                 }, 2000);
                 GetStudents();
-            }
+            },
+            error: function () {
+                $('#deleteStudentModal').modal('hide');
 
+                var notf = $(document).find('#divNotification');
+                notf.attr("class", "alert alert-danger notification");
+                notf.html("An error occurred! Please try again").show();
+                setTimeout(function () {
+                    notf.hide("slow");
+                }, 2000);
+                GetStudents();
+            }
         })
     });
 
@@ -98,7 +84,6 @@ $(document).ready(function () {
             data: { id: studentId },
             url: '/admin/Students/FindStudent',
             success: function (result) {
-                console.log(result )
                 $('#editStudentModal #idStudentEdit').val(result.id);
                 $('#editStudentModal #targetImgStudentEdit').attr('src', '/media/students/'+ result.image);
                 $('#editStudentModal #editStudentFirstName').val(result.firstName);
@@ -108,56 +93,85 @@ $(document).ready(function () {
         })
     });
 
-    //$('#editCourse').on('click', function (e) {
+    $('#editStudentPost').on('click', function (e) {
 
-    //    $("form[name='edit-course']").validate({
+        $.validator.addMethod('customphone', function (value, element) {
+            return this.optional(element) || /^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$/.test(value);
+        }, "Pattern is 000-000-000");
 
-    //        rules: {
-    //            editCourseName: "required",
-    //            level: "required",
-    //            description: "required",
-    //            price: "required",
-    //            teacherId: "required"
+        $("form[name='edit-student']").validate({
 
-    //        },
+            rules: {
+                FirstName: "required",
+                LastName: "required",
+                PhoneNumber: {
+                    required: true,
+                    customphone: true,
+                }
+            },
 
-    //        messages: {
-    //            editCourseName: "Please enter course name",
-    //            level: "Please select level",
-    //            description: "Please write description",
-    //            teacherId: "Plase select a teacher"
+            messages: {
+                FirstName: "Please enter first name",
+                LastName: "Please enter last name",
+            }
+        });
 
+        var isValidate = $("form[name='edit-student']").valid();
 
-    //        }
-    //    });
+        if (isValidate) {
+            e.preventDefault();
+            debugger
+            var studentId = $('#idStudentEdit').val();
+            var studnetFirstName = $('#editStudentFirstName').val();
+            var studentLastName = $('#editStudentLastName').val();
+            var studentPhone = $('#editStudentPhone').val();
+            var studentPic = $('#studentImageEdit').prop('files')[0];
 
-    //    var isValidate = $("form[name='edit-course']").valid();
+            var data = new FormData();
+            data.append('Id', studentId);
+            data.append('FirstName', studnetFirstName);
+            data.append('LastName', studentLastName);
+            data.append('PhoneNumber', studentPhone);
+            data.append('ImageUpload', studentPic);
+            for (var key of data.entries()) {
+                console.log(key[0] + ', ' + key[1]);
+            }
+            $.ajax({
+                type: 'POST',
+                data: data,
+                url: '/admin/Students/Edit',
+                cache: false,
+                contentType: false,
+                processData: false,
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function () {
 
-    //    if (isValidate) {
-    //        e.preventDefault();
-    //        var data = $('#editCourseForm').serialize();
-    //        var name = $('#editCourseName').val();
-    //        var idEdit = $('#idEdit').val();
-    //        console.log(data);
+                    $('#editStudentModal').modal('hide');
 
-    //        $.ajax({
-    //            type: 'POST',
-    //            data: data,
-    //            url: '/admin/Courses/Edit',
-    //            success: function () {
+                    var notf = $(document).find('#divNotification');
+                    notf.html("You edited " + studnetFirstName + " " + studentLastName + " !").show();
+                    setTimeout(function () {
+                        notf.hide("slow");
+                    }, 2000);
+                    GetStudents();
+                },
+                error: function () {
+                    $('#editStudentModal').modal('hide');
 
-    //                $('#editCourseModal').modal('hide');
-
-    //                var notf = $(document).find('#divNotification');
-    //                notf.html("You edited " + name + " course!").show();
-    //                setTimeout(function () {
-    //                    notf.hide("slow");
-    //                }, 2000);
-    //                GetCourses();
-    //            }
-    //        })
-    //    }
-    //});
+                    var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-danger notification");
+                    notf.html("An error occurred! Please try again").show();
+                    setTimeout(function () {
+                        notf.hide("slow");
+                    }, 2000);
+                    GetStudents();
+                }
+            })
+        }
+    });
 
     //------------->CREATE STUDENT
     $('#createNewStudent').on('click', function (e) {
@@ -175,13 +189,11 @@ $(document).ready(function () {
                     required: true,
                     customphone: true,
                 }
-
             },
 
             messages: {
                 FirstName: "Please enter first name",
                 LastName: "Please enter last name",
-
             }
         });
 
@@ -189,13 +201,15 @@ $(document).ready(function () {
 
         if (isValidate) {
             e.preventDefault();
-
+            debugger
+            
             var studnetFirstName = $('#studentFirstName').val();
             var studentLastName = $('#studentLastName').val();
             var studentPhone = $('#phoneNumber').val();
             var studentPic = $('#studentCreateImg').prop('files')[0];
 
             var data = new FormData();
+            
             data.append('FirstName', studnetFirstName);
             data.append('LastName', studentLastName);
             data.append('PhoneNumber', studentPhone);
@@ -204,7 +218,7 @@ $(document).ready(function () {
             for (var key of data.entries()) {
                 console.log(key[0] + ', ' + key[1]);
             }
-            debugger
+            
             $.ajax({
                 type: 'POST',
                 data: data,
@@ -229,8 +243,22 @@ $(document).ready(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetStudents();
+                },
+                error: function () {
+                    $('#createStudentModal').modal('hide');
+
+                    $('#createStudentModal').on('hidden.bs.modal', function () {
+                        $(this).find('form').trigger('reset');
+                    })
+
+                    var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-danger notification");
+                    notf.html("An error occurred! Please try again").show();
+                    setTimeout(function () {
+                        notf.hide("slow");
+                    }, 2000);
+                    GetStudents();
                 }
-                
             })
         }
     });

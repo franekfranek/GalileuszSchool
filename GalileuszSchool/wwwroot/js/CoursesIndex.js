@@ -51,7 +51,20 @@
                     notf.hide("slow");
                 }, 2000);
                 GetCourses();
+            },
+            error: function () {
+                $('#deleteCourseModal').modal('hide');
+
+                var notf = $(document).find('#divNotification');
+                notf.attr("class", "alert alert-danger notification");
+                notf.html("An error occurred! Please try again").show();
+                setTimeout(function () {
+                    notf.hide("slow");
+                }, 2000);
+                GetCourses();
             }
+
+
             
         })
     });
@@ -117,6 +130,17 @@
 
                     var notf = $(document).find('#divNotification');
                     notf.html("You edited " + name + " course!").show();
+                    setTimeout(function () {
+                        notf.hide("slow");
+                    }, 2000);
+                    GetCourses();
+                },
+                error: function () {
+                    $('#editCourseModal').modal('hide');
+
+                    var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-danger notification");
+                    notf.html("An error occurred! Please try again").show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
@@ -194,8 +218,24 @@
                     $('#createCourseModal').on('hidden.bs.modal', function () {
                         $(this).find('form').trigger('reset');
                     })
+
                     var notf = $(document).find('#divNotification');
                     notf.html("You added " + name + " course!").show();
+                    setTimeout(function () {
+                        notf.hide("slow");
+                    }, 2000);
+                    GetCourses();
+                },
+                error: function () {
+                    $('#createCourseModal').modal('hide');
+
+                    $('#createCourseModal').on('hidden.bs.modal', function () {
+                        $(this).find('form').trigger('reset');
+                    })
+
+                    var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-danger notification");
+                    notf.html("An error occurred! Please try again").show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
@@ -221,7 +261,6 @@ var GetCourses = function () {
 
     })
 };
-
 
 var table;
 var bindDataTable = function (data) {

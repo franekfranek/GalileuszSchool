@@ -11,7 +11,7 @@
         <span>New student</span>
     </a>
 </p>
-<table id="studentTable">
+<table id="studentTable" >
     <thead>
         <tr>
 
@@ -104,12 +104,11 @@
                     </button>
                 </div>
 
-
                 <div class="modal-body">
 
                     <div class="form-group">
                         <label>Image</label>
-                        <input type="file" onchange="previewFile()" class="form-control" name="image" id="studentImageEdit" /><br>
+                        <input type="file" onchange="previewFile(this)" class="form-control" name="image" id="studentImageEdit" /><br>
                         @*<div id="imagePreview" class="img-thumbnail">*@
                         <img src="" height="200" id="targetImgStudentEdit" alt="" />
                     </div>
@@ -128,7 +127,6 @@
                         <label>Phone number</label>
                         <input type="text" class="form-control" name="PhoneNumber" id="editStudentPhone" />
                     </div>
-
 
                 </div>
 
@@ -159,7 +157,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <p>Do you really want to delete this course?</p>
+                    <p>Do you really want to remove this student?</p>
                     <p class="text=warning"><small>This action cannot be undone.</small></p>
                 </div>
 

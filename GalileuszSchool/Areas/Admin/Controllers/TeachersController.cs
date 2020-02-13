@@ -111,15 +111,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        public JsonResult GetTeachers()
+        public async Task<JsonResult> GetTeachers()
         {
-            List<Teacher> teachers= context.Teachers.OrderByDescending(x => x.Id).ToList();
+            List<Teacher> teachers = await context.Teachers.OrderByDescending(x => x.Id).ToListAsync();
             return Json(teachers);
         }
 
-        public IActionResult FindTeacher(int id)
+        public async Task<IActionResult> FindTeacher(int id)
         {
-            var teacher = context.Teachers.Find(id);
+            var teacher = await context.Teachers.FindAsync(id);
             return new JsonResult(teacher);
         }
     }

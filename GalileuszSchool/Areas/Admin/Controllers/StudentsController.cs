@@ -103,7 +103,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Student student)
+        public async Task<IActionResult> Edit(Student student)
         {
             //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", student.CourseId);
 
@@ -111,7 +111,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 student.Slug = student.FirstName.ToLower().Replace(" ", "-") + student.LastName.ToLower().Replace(" ", "-");
 
-                var slug = await context.Students.Where(x => x.Id != id).FirstOrDefaultAsync(x => x.Slug == student.Slug);
+                var slug = await context.Students.Where(x => x.Id != student.Id).FirstOrDefaultAsync(x => x.Slug == student.Slug);
                 if (slug != null)
                 {
                     ModelState.AddModelError("", "That student is already in the database");
@@ -124,11 +124,11 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                     string uploadsDir = Path.Combine(webHostEnvironment.WebRootPath, "media/students");
                     if (!string.Equals(student.Image, "noimage.jpg"))
                     {
-                        string oldImagePath = Path.Combine(uploadsDir, student.Image);
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
+                        //string oldImagePath = Path.Combine(uploadsDir, student.Image);
+                        //if (System.IO.File.Exists(oldImagePath))
+                        //{
+                        //    System.IO.File.Delete(oldImagePath);
+                        //}
                     }
 
                     string imageName = Guid.NewGuid().ToString() + "_" + student.ImageUpload.FileName;
@@ -178,14 +178,14 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
-        public JsonResult GetStudents()
+        public async Task<JsonResult> GetStudents()
         {
-            List<Student> students = context.Students.OrderByDescending(x => x.Id).ToList();
+            List<Student> students = await context.Students.OrderByDescending(x => x.Id).ToListAsync();
             return Json(students);
         }
-        public IActionResult FindStudent(int id)
+        public async Task<IActionResult> FindStudent(int id)
         {
-            var student = context.Students.Find(id);
+            var student = await context.Students.FindAsync(id);
             return new JsonResult(student);
         }
     }

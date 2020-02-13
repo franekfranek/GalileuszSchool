@@ -91,9 +91,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult FindCourse(int id)
+        public async Task<IActionResult> FindCourse(int id)
         {
-            var course = context.Courses.Find(id);
+            var course = await context.Courses.FindAsync(id);
             return new JsonResult(course);
         }
 
@@ -181,10 +181,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        public JsonResult GetCourses()
+        public async Task<JsonResult> GetCourses()
         {
-            List<Course> courses = context.Courses.OrderByDescending(x => x.Sorting).Include(x => x.Teacher)
-                                                                                          .ToList();
+            List<Course> courses = await context.Courses.OrderByDescending(x => x.Sorting).Include(x => x.Teacher)
+                                                                                          .ToListAsync();
             return Json(courses);
         }
     }

@@ -18,7 +18,7 @@
     var classRoom = Model.LessonsList[i];
     <h2>@ViewBag.ClassRoomsList[i].ClassRoomName</h2>
 
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
                 @foreach (var day in Enum.GetNames(typeof(Days)))

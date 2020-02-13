@@ -83,3 +83,8 @@ li.nav-item.logout{
     border-color: #ebccd1;
     padding: 1px 20px 1px 20px;*/
 }
+
+thead {
+    background-color: #006DCC;
+    color: white;
+}

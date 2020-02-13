@@ -41,6 +41,17 @@
                     notf.hide("slow");
                 }, 2000);
                 GetTeachers();
+            },
+            error: function () {
+                $('#deleteTeacherModal').modal('hide');
+
+                var notf = $(document).find('#divNotification');
+                notf.attr("class", "alert alert-danger notification");
+                notf.html("An error occurred! Please try again").show();
+                setTimeout(function () {
+                    notf.hide("slow");
+                }, 2000);
+                GetTeachers();
             }
 
         })
@@ -110,6 +121,17 @@
                         notf.hide("slow");
                     }, 2000);
                     GetTeachers();
+                },
+                error: function () {
+                    $('#editTeacherModal').modal('hide');
+
+                    var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-danger notification");
+                    notf.html("An error occurred! Please try again").show();
+                    setTimeout(function () {
+                        notf.hide("slow");
+                    }, 2000);
+                    GetTeachers();
                 }
             })
         }
@@ -162,6 +184,21 @@
                     })
                     var notf = $(document).find('#divNotification');
                     notf.html("You added " + firstName+ " " + lastName + " to the database!").show();
+                    setTimeout(function () {
+                        notf.hide("slow");
+                    }, 2000);
+                    GetTeachers();
+                },
+                error: function () {
+                    $('#createTeacherModal').modal('hide');
+
+                    $('#createTeacherModal').on('hidden.bs.modal', function () {
+                        $(this).find('form').trigger('reset');
+                    })
+
+                    var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-danger notification");
+                    notf.html("An error occurred! Please try again").show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
