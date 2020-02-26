@@ -74,6 +74,7 @@ namespace GalileuszSchool.Controllers
                 {
                     UserName = user.UserName,
                     Email = user.Email
+                    
                 };
 
 
@@ -84,7 +85,7 @@ namespace GalileuszSchool.Controllers
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
                     var confirmationLink = Url.Action("ConfirmEmail", "Account",
-                                            new { userId = appUser.Id, token = token }, Request.Scheme);
+                                            new { userId = appUser.Id, token = token}, Request.Scheme);
 
                     logger.Log(LogLevel.Warning, confirmationLink);
 
@@ -92,7 +93,7 @@ namespace GalileuszSchool.Controllers
                     await emailSender.SendEmailAsync(appUser.Email, "Email Confirmation",
                         "Your confirmation link: "+ confirmationLink);
 
-                    TempData["Success"] = "You succesufully registered your account! We sent you email confirmation";
+                    TempData["Success"] = "You succesufully registered your account! We sent you email confirmation. Now you can wait for verification";
                     return RedirectToAction("Login");
                 }
                 else
