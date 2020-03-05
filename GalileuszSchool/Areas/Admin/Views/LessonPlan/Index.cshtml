@@ -44,7 +44,7 @@
                                 @if (lessonInDay.isGap)
                                 {
                                     <tr>
-                                        <td style="padding-top: 0px; padding-bottom:0px">
+                                        <td style="padding-top: 0px; padding-bottom:0px; background-color: #ebeced;">
                                             <div style="height: @(boxHeight)px; overflow: hidden;">
 
                                             </div>
@@ -57,8 +57,8 @@
                                 else
                                 {
                                     <tr>
-                                        <td style="padding-top: 0px; padding-bottom:0px">
-                                            <div style="height: @(boxHeight)px; overflow: hidden; background-color: #f5f7eb;">
+                                        <td style="padding-top: 0px; padding-bottom:0px; background-color: #ebeced;">
+                                            <div style="height: @(boxHeight)px; overflow: hidden; background-color: #c4e2ff;">
                                                 @{string hStart = lessonInDay.startTime.Hours.ToString();}
                                                 @{string mStart = lessonInDay.startTime.Minutes.ToString("00");}
                                                 @{string hStop = lessonInDay.stopTime.Hours.ToString();}

@@ -10,14 +10,16 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">                
+            <div class="container">
+
+
                 @if (User?.Identity?.IsAuthenticated ?? false)
                 {
                     <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Edit">GalileuszSchool</a>
                 }
-                else 
+                else
                 {
-                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Register">GalileuszSchool</a> 
+                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Register">GalileuszSchool</a>
                 }
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -25,31 +27,51 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
+
                         @*@if (User?.Identity?.IsAuthenticated ?? false)*@
-                        
-                            <p class="p-1">Welcome @User.Identity.Name   </p>
+
+                        <p class="p-1">Welcome @User.Identity.Name   </p>
+
+
+
+                        @*@if (User.IsInRole("admin") || User.IsInRole("editor"))*@
+                        @if (User?.Identity?.Name != null)
+
+                        {
+
+                            if (User.IsInRole("admin") || User.IsInRole("editor"))
+                            {
+                                <li class="nav-item ml-1">
+                                    <a asp-area="Admin" asp-controller="Teachers" asp-action="Index" class="btn
+                                    btn-secondary"> Admin area</a>
+                                </li>
+                            }
+                            else if (User.IsInRole("student"))
+                            {
+
+                                <li class="nav-item ml-1">
+                                    <a asp-area="Admin" asp-controller="Teachers" asp-action="Index" class="btn
+                                    btn-secondary"> Student area</a>
+                                </li>
+                            }
 
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Edit" class="btn btn-primary"> My account</a>
                             </li>
+
                             <li class="nav-item ml-1">
                                 <a asp-controller="Account" asp-action="Logout" class="btn btn-danger"> Log out</a>
                             </li>
-                            //if (User.IsInRole("admin")|| User.IsInRole("editor"))
-                            
-                                <li class="nav-item ml-1">
-                                    <a asp-area="Admin" asp-controller="Teachers" asp-action="Index" class="btn
-                                       btn-secondary"> Admin area</a>
-                                </li>
-
-                            //}
-                            //else
-                            //{
-                            //user is not authenticated
+                        }
+                        else
+                        {
+                            <p>＼(｀0´)／</p>
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Login" class="btn btn-success">Log in</a>
                             </li>
-                        
+
+
+                        }
 
 
                     </ul>
@@ -66,7 +88,7 @@
     </header>
     <div class="container bg-light">
         <main role="main" class="pb-3">
-            <partial name="_NotificationPartial"/>
+            <partial name="_NotificationPartial" />
             @RenderBody()
         </main>
     </div>
@@ -81,4 +103,9 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
+
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+
 </html>

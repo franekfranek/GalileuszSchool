@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    
+
     <link href="~/css/DataTables/css/jquery.dataTables.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/SideBar.css" />
 </head>
 <body>
     <header>
@@ -64,15 +65,57 @@
                     </ul>
                 </div>
             </div>
+
+
         </nav>
     </header>
+
+
+
+    <div class="sidebar">
+        <div class="container">
+            <div class="row">&nbsp;</div>
+            <div>
+                <div class="col-2">User:</div>
+            </div>
+            <div>
+                <div class="col-4"><input type="text" id="userInput" value="@User.Identity.Name" disabled /></div>
+            </div><br />
+            <div>
+                <div class="col-2">Message</div>
+            </div>
+            <div>
+                <div class="col-4"><input type="text" id="messageInput" /></div>
+            </div>
+            <div class="row">&nbsp;</div>
+            <div class="row">
+                <div class="col-6">
+                    <input type="button" id="sendButton" value="Send Message" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <ul id="messagesList"></ul>
+            </div>
+        </div>
+
+    </div>
+
+
+
     <div class="container bg-light">
         <main role="main" class="pb-3" id="mainContainer">
             <div id="divNotification" class="alert alert-success notification" style="display:none">
-                
+
             </div>
             <partial name="_NotificationPartial" />
-            
+
             @RenderBody()
         </main>
     </div>
@@ -87,12 +130,14 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/DataTables/jquery.dataTables.js"></script>
     <script src="~/js/site.js"></script>
-    
-    
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
+
+
 
 
 
     @RenderSection("Scripts", required: false)
-    
+
 </body>
 </html>

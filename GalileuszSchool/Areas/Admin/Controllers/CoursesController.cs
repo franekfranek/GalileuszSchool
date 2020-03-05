@@ -31,12 +31,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         {
             //TODO refactoring needed
             var teacherInfo =  context.Teachers.OrderBy(x => x.Id);
-            IEnumerable<SelectListItem> selectList = from s in teacherInfo
-                                                     select new SelectListItem
-                                                     {
-                                                         Value = s.Id.ToString(),
-                                                         Text = s.FirstName + " " + s.LastName.ToString()
-                                                     };
+            IEnumerable<SelectListItem> selectList = teacherInfo.Select(s => new SelectListItem($"{s.FirstName} {s.LastName}", s.Id.ToString()));
             ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
 
             var studentInfo = context.Students.OrderBy(x => x.Id);
@@ -48,9 +43,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                                                      };
             ViewBag.StudentId = new SelectList(selectListStudents, "Value", "Text");
 
-
             return View();
-
+            // TODO
+            // Most useful LINQ methods: Select, Where, Any, All, FirstOrDefault, SelectMany
+            // Nullable Types, null propagation, null coalesing, null coalesing assignment operator
+            // Property vs Field, auto-property, get-only property, get-only property vs readonly field
+            // Singleton pattern
         }
 
         //POST /admin/courses/create

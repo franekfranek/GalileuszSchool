@@ -101,7 +101,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 if (!TimeValidation(lessonPlan))
                 {
-                    ModelState.AddModelError("", "The course already exists co to tu robi");
+                    ModelState.AddModelError("", "Tak się nie da");
                     return View(lessonPlan);
                 }
                 

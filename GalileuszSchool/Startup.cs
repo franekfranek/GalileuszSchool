@@ -16,6 +16,10 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using WebPWrecover.Services;
 using GalileuszSchool.Services;
 
+using SignalRChat.Hubs;
+
+
+
 namespace GalileuszSchool
 {
     public class Startup
@@ -30,6 +34,7 @@ namespace GalileuszSchool
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddControllersWithViews();
 
             services.AddSession(options =>
@@ -87,6 +92,7 @@ namespace GalileuszSchool
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<ChatHub>("/chatHub");
                 endpoints.MapControllerRoute(
                     name: "areas",
                     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"

@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\DataTables\" />
     <Folder Include="wwwroot\js\DataTables\" />
   </ItemGroup>
 
