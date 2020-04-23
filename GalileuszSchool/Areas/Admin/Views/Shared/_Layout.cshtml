@@ -15,15 +15,15 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" href="/" target="_blank">Home</a>
+                <a class="navbar-brand" href="/" target="_blank"><img src="~/media/logo2.png" alt="" height="40" width="160" /></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        @*@if (User?.Identity?.IsAuthenticated ?? false)
-                            {*@
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Admin" asp-controller="Pages" asp-action="Index">Pages</a>
                         </li>
@@ -42,13 +42,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Admin" asp-controller="ClassRooms" asp-action="Index">Class rooms</a>
                         </li>
-                        @*if (User.IsInRole("admin"))
-                            {*@
+                            if (User.IsInRole("admin"))
+                            {
 
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
                         </li>
-
+                            }
 
 
 
@@ -60,7 +60,7 @@
                         <li class="nav-item ml-1 logout">
                             <a asp-area="" asp-controller="Account" asp-action="Logout" class="btn btn-danger"> Log out</a>
                         </li>
-
+                    }
                     </ul>
                 </div>
             </div>

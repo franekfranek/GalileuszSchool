@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Models
 {
-    public class Teacher
+    public class Teacher : IListItem
     {
         public int Id { get; set; }
 

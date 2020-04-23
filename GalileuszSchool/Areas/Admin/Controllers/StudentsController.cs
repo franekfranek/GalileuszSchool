@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
-    //[Authorize(Roles = "admin, editor")]
+    //[Authorize(Roles = "admin")]
     [Area("Admin")]
     public class StudentsController : Controller
     {

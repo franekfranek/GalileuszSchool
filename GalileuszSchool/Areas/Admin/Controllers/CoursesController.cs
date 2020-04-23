@@ -14,7 +14,7 @@ using System.Text.Json;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
-    //[Authorize(Roles = "admin, editor")]
+    //[Authorize(Roles = "admin")]
     [Area("Admin")]
 
     public class CoursesController : Controller
@@ -53,6 +53,17 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         }
 
+        //private async Task<IEnumerable<SelectListItem>> GetSelectListItem<IListItem>(IOrderedQueryable<IListItem> dbData)
+        //{
+        //    IEnumerable<SelectListItem> selectList = from s in dbData 
+        //                                             select new SelectListItem
+        //                                             {
+        //                                                 Value = s.Id.ToString(),
+        //                                                 Text = s.FirstName + " " + s.LastName.ToString()
+        //                                             };
+        //    return selectList;
+        //}
+
         //POST /admin/courses/create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -78,7 +89,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 if (slug != null)
                 {
                     TempData["Error"] = "The course already exists";
-                    return RedirectToAction("Index");
+                    return new JsonResult("error");
                 }
 
                 context.Add(course);
@@ -136,6 +147,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 if (slug != null)
                 {
                     TempData["Error"] = "The course already exists";
+                    var r = new JsonResult("The course name already exists!"); ;
+                    return r;
+
                     return RedirectToAction("Index");
                 }
 
@@ -147,7 +161,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
 
-            return RedirectToAction("Index");
+            return new JsonResult("All good");
         }
 
         // /admin/courses/details/{id}

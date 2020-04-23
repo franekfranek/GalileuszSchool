@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
-    //[Authorize(Roles = "admin, editor")]
+    //[Authorize(Roles = "admin")]
     [Area("Admin")]
     public class LessonPlanController : Controller
     {

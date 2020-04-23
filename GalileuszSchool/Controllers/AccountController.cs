@@ -39,6 +39,7 @@ namespace GalileuszSchool.Controllers
             this.logger = logger;
             this.emailSender = emailSender;
         }
+
         // get account/register
         [AllowAnonymous]
         public IActionResult Register()
@@ -169,7 +170,6 @@ namespace GalileuszSchool.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> Edit(UserEdit userEdit)
         {
 

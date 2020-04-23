@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Models
 {
-    public class Student
+    public class Student : IListItem
     {
         public int Id { get; set; }
 

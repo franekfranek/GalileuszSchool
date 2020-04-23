@@ -30,7 +30,7 @@ namespace GalileuszSchool.Infrastructure
 
         
 
-        public DbSet<GalileuszSchool.Models.ClassRoom> ClassRoom { get; set; }
+        public DbSet<ClassRoom> ClassRoom { get; set; }
 
     }
 }

@@ -13,11 +13,15 @@
             <div class="container">                
                 @if (User?.Identity?.IsAuthenticated ?? false)
                 {
-                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Edit">GalileuszSchool</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Edit">
+                        <img src="~/media/logo2.png" alt="" height="40" width="160"/>
+                    </a>
                 }
                 else 
                 {
-                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Register">GalileuszSchool</a> 
+                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Register">
+                        <img src="~/media/logo2.png" alt="" height="40" width="160" />
+                    </a> 
                 }
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -25,8 +29,9 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
-                        @*@if (User?.Identity?.IsAuthenticated ?? false)*@
-                        
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+
                             <p class="p-1">Welcome @User.Identity.Name   </p>
 
                             <li class="nav-item">
@@ -35,29 +40,30 @@
                             <li class="nav-item ml-1">
                                 <a asp-controller="Account" asp-action="Logout" class="btn btn-danger"> Log out</a>
                             </li>
-                            //if (User.IsInRole("admin")|| User.IsInRole("editor"))
-                            
+                            if (User.IsInRole("admin") || User.IsInRole("editor"))
+                            {
+
                                 <li class="nav-item ml-1">
-                                    <a asp-area="Admin" asp-controller="Teachers" asp-action="Index" class="btn
+                                    <a asp-area="Admin" asp-controller="Courses" asp-action="Index" class="btn
                                        btn-secondary"> Admin area</a>
                                 </li>
 
-                            //}
-                            //else
-                            //{
+                            }
+
+                        }
+                        else
+                        {
                             //user is not authenticated
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Login" class="btn btn-success">Log in</a>
                             </li>
-                        
+                        }
 
 
                     </ul>
                     <ul class="navbar-nav flex-grow-1">
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                       
                     </ul>
 
                 </div>

@@ -211,8 +211,8 @@
                 type: 'POST',
                 data: data,
                 url: '/admin/Courses/Create',
-                success: function () {
-
+                success: function (res) {
+                    console.log(res);
                     $('#createCourseModal').modal('hide');
 
                     $('#createCourseModal').on('hidden.bs.modal', function () {
@@ -220,13 +220,19 @@
                     })
 
                     var notf = $(document).find('#divNotification');
-                    notf.html("You added " + name + " course!").show();
+                    if (res == "error") {
+                        notf.attr("class", "alert alert-danger notification");
+                        notf.html("Course already exists!").show();
+                    } else {
+                        notf.html("You added " + name + " course!").show();
+                    }
+                    
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetCourses();
                 },
-                error: function () {
+                error: function (response) {
                     $('#createCourseModal').modal('hide');
 
                     $('#createCourseModal').on('hidden.bs.modal', function () {
@@ -235,7 +241,7 @@
 
                     var notf = $(document).find('#divNotification');
                     notf.attr("class", "alert alert-danger notification");
-                    notf.html("An error occurred! Please try again").show();
+                    notf.html("An error " + response.status + " occurred! Please try again").show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
@@ -269,7 +275,6 @@ var bindDataTable = function (data) {
             .clear()
             .rows.add(data)
             .draw();
-        debugger
     } else {
 
 

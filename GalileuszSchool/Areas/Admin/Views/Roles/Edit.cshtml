@@ -36,32 +36,31 @@
                             }
                         }
                     </table>
-                </div>          
-                <h2>Remove users from <span class="badge badge-primary">@Model.Role.Name</span> role</h2>
-                <table class="table table-bordered">
-                    @if (Model.Memmbers.Count() == 0)
-                    {
-                        <tr><td>No user are members</td></tr>
-                    }
-                    else
-                    {
-                        foreach (AppUser user in Model.Memmbers)
-                        {
-                            <tr>
-                                <td>@user.UserName</td>
-                                <td>
-                                    <input type="checkbox" value="@user.Id" name="DeleteIds" />
-                                </td>
-                            </tr>
-
-                        }
-                    }
-                </table>
-
+                </div> 
                 <div class="col-6">
+                    <h2>Remove users from <span class="badge badge-primary">@Model.Role.Name</span> role</h2>
+                    <table class="table table-bordered">
+                        @if (Model.Memmbers.Count() == 0)
+                        {
+                            <tr><td>No user are members</td></tr>
+                        }
+                        else
+                        {
+                            foreach (AppUser user in Model.Memmbers)
+                            {
+                                <tr>
+                                    <td>@user.UserName</td>
+                                    <td>
+                                        <input type="checkbox" value="@user.Id" name="DeleteIds" />
+                                    </td>
+                                </tr>
+
+                            }
+                        }
+                    </table>
+                </div>
 
                 </div>
-            </div>
 
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
+    //[Authorize(Roles = "admin")]
     [Area("Admin")]
     public class ClassRoomsController : Controller
     {
