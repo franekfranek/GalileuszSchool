@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
+using GalileuszSchool.Repository.Teachers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,16 +16,16 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     [Area("Admin")]
     public class TeachersController : Controller
     {
-        private readonly GalileuszSchoolContext context;
+        private readonly ITeachersRepository _repository;
 
-        public TeachersController(GalileuszSchoolContext context)
+        public TeachersController(ITeachersRepository repository)
         {
-            this.context = context;
+            this._repository = repository;
         }
         //get Admin/Teachers
         public async Task<IActionResult> Index()
         {
-            return View(await context.Teachers.OrderByDescending(x => x.Id).ToListAsync());
+            return View(await _repository.GetAll().ToListAsync());
         }
 
         // /admin/teachers/create
@@ -44,16 +45,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 teacher.Slug = teacher.FirstName.ToLower().Replace(" ", "-") + teacher.LastName.ToLower().Replace(" ", "-");
 
+                var slug = await _repository.GetBySlug(teacher.Slug);
 
-                var slug = await context.Teachers.FirstOrDefaultAsync(x => x.Slug == teacher.Slug);
                 if (slug != null)
                 {
                     ModelState.AddModelError("", "That teacher is already in the database");
                     return View(teacher);
                 }
 
-                context.Add(teacher);
-                await context.SaveChangesAsync();
+                await _repository.Create(teacher);
 
                 TempData["Success"] = "Teacher has been added";
 
@@ -74,15 +74,14 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 teacher.Slug = teacher.FirstName.ToLower().Replace(" ", "-") + teacher.LastName.ToLower().Replace(" ", "-");
 
-                var slug = await context.Teachers.Where(x => x.Id != teacher.Id).FirstOrDefaultAsync(x => x.Slug == teacher.Slug);
+                var slug = await _repository.GetModelByCondition(x => x.Id != teacher.Id, x => x.Slug == teacher.Slug);
+
                 if (slug != null)
                 {
                     ModelState.AddModelError("", "That teacher is already in the database");
                     return View(teacher);
                 }
-
-                context.Update(teacher);
-                await context.SaveChangesAsync();
+                await _repository.Update(teacher);
 
                 TempData["Success"] = "Teacher has been edited";
 
@@ -94,7 +93,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get/admin/teachers/delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
-            Teacher teacher = await context.Teachers.FindAsync(id);
+            Teacher teacher = await _repository.GetById(id);
 
             if (teacher == null)
             {
@@ -102,10 +101,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             }
             else
             {
-                context.Teachers.Remove(teacher);
-                await context.SaveChangesAsync();
+                await _repository.Delete(teacher.Id);
                 TempData["Success"] = "The teacher has been removed";
-
             }
 
             return RedirectToAction("Index");
@@ -113,13 +110,13 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         public async Task<JsonResult> GetTeachers()
         {
-            List<Teacher> teachers = await context.Teachers.OrderByDescending(x => x.Id).ToListAsync();
+            List<Teacher> teachers = await _repository.GetAll().OrderByDescending(x => x.Id).ToListAsync();
             return Json(teachers);
         }
 
         public async Task<IActionResult> FindTeacher(int id)
         {
-            var teacher = await context.Teachers.FindAsync(id);
+            var teacher = await _repository.GetById(id);
             return new JsonResult(teacher);
         }
     }

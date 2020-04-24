@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using WebPWrecover.Services;
 using GalileuszSchool.Services;
+using GalileuszSchool.Repository.Teachers;
 
 namespace GalileuszSchool
 {
@@ -60,6 +61,8 @@ namespace GalileuszSchool
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
             services.AddRazorPages();
+
+            services.AddScoped<ITeachersRepository, TeacherRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

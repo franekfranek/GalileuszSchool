@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalileuszSchool.Repository.Teachers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Models
 {
-    public class Teacher : IListItem
+    public class Teacher : IListItem, IEntity
     {
         public int Id { get; set; }
 
