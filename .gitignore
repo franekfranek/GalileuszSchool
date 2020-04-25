@@ -9,6 +9,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+**/wwwroot/lib
+**/wwwroot/fontawesome-free-5.13.0-web
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
