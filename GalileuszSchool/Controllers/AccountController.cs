@@ -154,7 +154,7 @@ namespace GalileuszSchool.Controllers
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
-            return Redirect("/");
+            return Redirect("/account/login");
         }
 
         // /get/account/edit

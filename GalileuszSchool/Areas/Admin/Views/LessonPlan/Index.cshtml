@@ -38,7 +38,8 @@
                             @foreach (var lessonInDay in classRoom[day])
                             {
                                 //int boxHeight = 5 * (lessonInDay.stopTime.Hours * 100 + ((lessonInDay.stopTime.Minutes * 100) / 60) -  lessonInDay.startTime.Hours * 100 + ((lessonInDay.startTime.Minutes * 100) / 60));
-                                double box = 60 * (lessonInDay.stopTime.Hours + ((double)lessonInDay.stopTime.Minutes / 60) - lessonInDay.startTime.Hours + ((double)lessonInDay.startTime.Minutes) / 60);
+                                double box = 60 * (lessonInDay.stopTime.Hours + ((double)lessonInDay.stopTime.Minutes / 60)
+                                        - lessonInDay.startTime.Hours + ((double)lessonInDay.startTime.Minutes) / 60);
                                 int boxHeight = (int)box;
 
                                 @if (lessonInDay.isGap)

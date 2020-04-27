@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Models
 {
-    public class UserEdit
+    public class UserEdit : AppUser
     {
         [Required]
         [MinLength(4, ErrorMessage = "Minimum lenght is 4")]
