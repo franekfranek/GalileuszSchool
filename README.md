@@ -14,8 +14,12 @@ attendance, students payments etc.
 * [Contact](#contact)
 
 ## Screenshots
-![Example screenshot](./img/screenshot.png)
-
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs1.png)
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs2.png)
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs3.png)
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs4.png)
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs5.png)
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs6.png)
 ## Technologies
 * Entity Framework 3.1.0 
 * SqlServer 3.1.0
