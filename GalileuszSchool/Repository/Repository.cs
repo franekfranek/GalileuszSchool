@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace GalileuszSchool.Repository.Teachers
+namespace GalileuszSchool.Repository
 {
     public class Repository<TModel> : IRepository<TModel>
         where TModel : class, IEntity

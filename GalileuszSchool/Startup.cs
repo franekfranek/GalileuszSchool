@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using WebPWrecover.Services;
 using GalileuszSchool.Services;
 using GalileuszSchool.Repository.Teachers;
+using GalileuszSchool.Repository.Students;
 
 namespace GalileuszSchool
 {
@@ -57,12 +58,14 @@ namespace GalileuszSchool
             })
                     .AddEntityFrameworkStores<GalileuszSchoolContext>()
                     .AddDefaultTokenProviders();
+
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
             services.AddRazorPages();
 
             services.AddScoped<ITeachersRepository, TeacherRepository>();
+            services.AddScoped<IStudentsRepository, StudentsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

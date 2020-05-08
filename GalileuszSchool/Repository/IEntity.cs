@@ -1,4 +1,4 @@
-﻿namespace GalileuszSchool.Repository.Teachers
+﻿namespace GalileuszSchool.Repository
 {
     public interface IEntity
     {
