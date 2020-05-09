@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-
+using GalileuszSchool.Repository.Courses;
+using SQLitePCL;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
@@ -20,10 +21,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     public class CoursesController : Controller
     {
         private readonly GalileuszSchoolContext context;
+        private readonly ICoursesRepository _repository;
 
-        public CoursesController(GalileuszSchoolContext context)
+        public CoursesController(GalileuszSchoolContext context, ICoursesRepository repository)
         {
             this.context = context;
+            this._repository = repository;
         }
 
         //get Admin/Courses
@@ -69,31 +72,19 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Course course)
         {
-            //string courseName, string level,
-            //                                    string description, int price, int teacherId
-            //var course = new Course
-            //{
-            //    Name = courseName,
-            //    Level = level,
-            //    Description = description,
-            //    Price = price,
-            //    TeacherId = teacherId
-            //};
-
             if (ModelState.IsValid)
             {
                 course.Slug = course.Name.ToLower().Replace(" ", "-");
                 course.Sorting = 100;
 
-                var slug = await context.Courses.FirstOrDefaultAsync(x => x.Slug == course.Slug);
+                var slug = await _repository.GetBySlug(course.Slug);
                 if (slug != null)
                 {
                     TempData["Error"] = "The course already exists";
                     return new JsonResult("error");
                 }
 
-                context.Add(course);
-                await context.SaveChangesAsync();
+                await _repository.Create(course);
 
                 TempData["Success"] = "The course has been added";
 
@@ -104,7 +95,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         public async Task<IActionResult> FindCourse(int id)
         {
-            var course = await context.Courses.FindAsync(id);
+            var course = await _repository.GetById(id);
             return new JsonResult(course);
         }
 
@@ -143,7 +134,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 course.Slug = course.Name.ToLower().Replace(" ", "-");
 
 
-                var slug = await context.Courses.Where(x => x.Id != course.Id).FirstOrDefaultAsync(x => x.Slug == course.Slug);
+                var slug = await _repository.GetModelByCondition(x => x.Id != course.Id, x => x.Slug == course.Slug);
                 if (slug != null)
                 {
                     TempData["Error"] = "The course already exists";
@@ -153,8 +144,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                context.Update(course);
-                await context.SaveChangesAsync();
+                await _repository.Update(course);
 
                 //TempData["Success"] = "The course has been edited";
 
@@ -167,7 +157,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         // /admin/courses/details/{id}
         public async Task<IActionResult> Details(int id)
         {
-            Course course = await context.Courses.FirstOrDefaultAsync(x => x.Id == id);
+            Course course = await _repository.GetById(id);
 
             if (course == null)
             {
@@ -180,7 +170,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get /admin/pages/delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
-            Course course = await context.Courses.FindAsync(id);
+            Course course = await _repository.GetById(id);
 
             if (course == null)
             {
@@ -188,8 +178,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             }
             else
             {
-                context.Courses.Remove(course);
-                await context.SaveChangesAsync();
+                await _repository.Delete(id);
             }
 
             return RedirectToAction("Index");
@@ -197,8 +186,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         public async Task<JsonResult> GetCourses()
         {
-            List<Course> courses = await context.Courses.OrderByDescending(x => x.Sorting).Include(x => x.Teacher)
-                                                                                          .ToListAsync();
+            List<Course> courses = await _repository.GetAll().OrderByDescending(x => x.Sorting)
+                                                            .Include(x => x.Teacher).ToListAsync();
             return Json(courses);
         }
     }
