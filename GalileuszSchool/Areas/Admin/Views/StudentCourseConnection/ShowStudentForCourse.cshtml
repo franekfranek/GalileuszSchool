@@ -11,15 +11,17 @@
         @await Component.InvokeAsync("Courses")
     </div>
     <div class="col">
-    @foreach (var item in Model)
-    {
-        <div class="col-4">
-            <img src="~/media/students/@item.Image" height="90" width="80" />
-            <h4>@item.FirstName @item.LastName</h4>
-            <div>
-                Telephone number @item.PhoneNumber
-            </div>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-4">
+                    <img src="~/media/students/@item.Image" height="90" width="80" />
+                    <h4>@item.FirstName @item.LastName</h4>
+                    <div>
+                        Telephone: @item.PhoneNumber
+                    </div>
+                </div>
+            }
         </div>
-    }
     </div>
 </div>

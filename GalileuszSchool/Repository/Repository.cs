@@ -35,8 +35,8 @@ namespace GalileuszSchool.Repository
         public async Task<TModel> GetModelByCondition(Expression<Func<TModel, bool>> expression,
                                                         Expression<Func<TModel, bool>> secondExpression)
         {
-            return _context.Set<TModel>().Where(expression).AsNoTracking()
-                .FirstOrDefault(secondExpression);
+            return await _context.Set<TModel>().Where(expression).AsNoTracking()
+                .FirstOrDefaultAsync(secondExpression);
         }
 
         public IQueryable<TModel> GetAll()
@@ -60,6 +60,11 @@ namespace GalileuszSchool.Repository
         {
             _context.Set<TModel>().Update(model);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsInDB(int id)
+        {
+            return await _context.Set<TModel>().AnyAsync(e => e.Id == id);
         }
     }
 }

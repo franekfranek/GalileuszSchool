@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
-using GalileuszSchool.Repository.Teachers;
+using GalileuszSchool.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,9 +16,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     [Area("Admin")]
     public class TeachersController : Controller
     {
-        private readonly ITeachersRepository _repository;
+        private readonly IRepository<Teacher> _repository;
 
-        public TeachersController(ITeachersRepository repository)
+        public TeachersController(IRepository<Teacher> repository)
         {
             this._repository = repository;
         }
@@ -27,14 +27,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         {
             return View(await _repository.GetAll().ToListAsync());
         }
-
-        // /admin/teachers/create
-        //public IActionResult Create()
-        //{
-        //    //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name");
-
-        //    return View();
-        //}
 
         //POST /admin/teacher/create
         [HttpPost]

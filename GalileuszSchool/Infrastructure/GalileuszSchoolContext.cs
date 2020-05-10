@@ -10,11 +10,10 @@ namespace GalileuszSchool.Infrastructure
 {
     public class GalileuszSchoolContext : IdentityDbContext<AppUser>
     {
-        public GalileuszSchoolContext(DbContextOptions<GalileuszSchoolContext> options) : base(options)
+        public GalileuszSchoolContext(DbContextOptions<GalileuszSchoolContext> options)
+            : base(options)
         {
         }
-
-
         public DbSet<Page> Pages { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
@@ -27,8 +26,6 @@ namespace GalileuszSchool.Infrastructure
             modelBuilder.Entity<StudentCourseConnection>()
                 .HasKey(o => new { o.StudentId, o.CourseId });
         }
-
-        
 
         public DbSet<ClassRoom> ClassRoom { get; set; }
 

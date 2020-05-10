@@ -18,8 +18,6 @@ namespace GalileuszSchool.Models
         Saturday,
         Sunday
 
-
-                  
     }
     public class LessonPlan
     {

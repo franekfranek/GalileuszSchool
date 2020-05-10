@@ -10,20 +10,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using GalileuszSchool.Repository.Courses;
 using SQLitePCL;
+using Microsoft.VisualBasic;
+using GalileuszSchool.Repository;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
     //[Authorize(Roles = "admin")]
     [Area("Admin")]
-
     public class CoursesController : Controller
     {
         private readonly GalileuszSchoolContext context;
-        private readonly ICoursesRepository _repository;
+        private readonly IRepository<Course> _repository;
 
-        public CoursesController(GalileuszSchoolContext context, ICoursesRepository repository)
+        public CoursesController(GalileuszSchoolContext context, IRepository<Course> repository)
         {
             this.context = context;
             this._repository = repository;
@@ -32,40 +32,27 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get Admin/Courses
         public async Task<IActionResult> Index()
         {
-            //TODO refactoring needed
+            //TODO refactoring needed: how to move db queries to GetSelectListItem or/and use _repository
             var teacherInfo =  context.Teachers.OrderBy(x => x.Id);
-            IEnumerable<SelectListItem> selectList = from s in teacherInfo
-                                                     select new SelectListItem
-                                                     {
-                                                         Value = s.Id.ToString(),
-                                                         Text = s.FirstName + " " + s.LastName.ToString()
-                                                     };
-            ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
+            var selectListTeachers = await GetSelectListItem(teacherInfo);
+            ViewBag.TeacherId = new SelectList(selectListTeachers, "Value", "Text");
 
             var studentInfo = context.Students.OrderBy(x => x.Id);
-            IEnumerable<SelectListItem> selectListStudents = from s in studentInfo
-                                                     select new SelectListItem
+            var selectListStudents = await GetSelectListItem(studentInfo);
+            ViewBag.StudentId = new SelectList(selectListStudents, "Value", "Text");
+
+            return View();
+        }
+
+        private async Task<IEnumerable<SelectListItem>> GetSelectListItem(IOrderedQueryable<IListItem> dbData)
+        {
+            IEnumerable<SelectListItem> selectList = await dbData.Select(s => new SelectListItem
                                                      {
                                                          Value = s.Id.ToString(),
                                                          Text = s.FirstName + " " + s.LastName.ToString()
-                                                     };
-            ViewBag.StudentId = new SelectList(selectListStudents, "Value", "Text");
-
-
-            return View();
-
+                                                     }).ToListAsync();
+            return selectList;
         }
-
-        //private async Task<IEnumerable<SelectListItem>> GetSelectListItem<IListItem>(IOrderedQueryable<IListItem> dbData)
-        //{
-        //    IEnumerable<SelectListItem> selectList = from s in dbData 
-        //                                             select new SelectListItem
-        //                                             {
-        //                                                 Value = s.Id.ToString(),
-        //                                                 Text = s.FirstName + " " + s.LastName.ToString()
-        //                                             };
-        //    return selectList;
-        //}
 
         //POST /admin/courses/create
         [HttpPost]
@@ -98,31 +85,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             var course = await _repository.GetById(id);
             return new JsonResult(course);
         }
-
-        //get /admin/courses/edit/{id}
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    var teacherInfo = context.Teachers.OrderBy(x => x.Id);
-        //    IEnumerable<SelectListItem> selectList = from s in teacherInfo
-        //                                             select new SelectListItem
-        //                                             {
-        //                                                 Value = s.Id.ToString(),
-        //                                                 Text = s.FirstName + " " + s.LastName.ToString()
-        //                                             };
-        //    ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
-
-        //    Course course = await context.Courses.FindAsync(id);
-
-        //    if (course == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
-
-
-        //    return View(course);
-        //}
 
         //POST /admin/courses/edit/{id}
         [HttpPost]

@@ -116,8 +116,6 @@ namespace GalileuszSchool.Controllers
             {
                 ReturnUrl = returnUrl
             };
-
-
             return View(login);
         }
 

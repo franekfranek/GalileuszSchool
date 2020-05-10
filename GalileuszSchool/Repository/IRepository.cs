@@ -16,6 +16,7 @@ namespace GalileuszSchool.Repository
         Task<TModel> GetBySlug(string slug);
         Task<TModel> GetModelByCondition(Expression<Func<TModel, bool>> expression,
                                                 Expression<Func<TModel, bool>> secondExpression);
+        Task<bool> IsInDB(int id);
     }
 
 }

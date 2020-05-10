@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
 using GalileuszSchool.Repository;
-using GalileuszSchool.Repository.Students;
-using GalileuszSchool.Repository.Teachers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +18,11 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     [Area("Admin")]
     public class StudentsController : Controller
     {
-        private readonly IStudentsRepository _repository;
+        private readonly IRepository<Student> _repository;
         private readonly IWebHostEnvironment webHostEnvironment;
 
         public StudentsController(IWebHostEnvironment env,
-                                    IStudentsRepository repository)
+                                    IRepository<Student> repository)
         {
             this.webHostEnvironment = env;
             _repository = repository;
@@ -37,14 +35,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return View(await _repository.GetAll().OrderByDescending(x => x.Id).ToListAsync());
             
         }
-
-        // /admin/students/create
-        //public IActionResult Create()
-        //{
-            //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
-
-        //    return View();
-        //}
 
         //POST /admin/students/create
         [HttpPost]
@@ -86,23 +76,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return View(student);
         }
 
-        //admin/students/edit/{id}
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    Student student = await _repository.GetById(id);
-        //    if (student == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", student.CourseId);
-
-
-        //    return View(student);
-        //}
-
         //admin/teachers/edit/{id}
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Student student)
@@ -130,7 +104,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                         //if (System.IO.File.Exists(oldImagePath))
                         //{
                         //    System.IO.File.Delete(oldImagePath);
-                        //}
+                        //todo clean
                     }
 
                     string imageName = Guid.NewGuid().ToString() + "_" + student.ImageUpload.FileName;
@@ -172,7 +146,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 }
                 await _repository.Delete(id);
                 TempData["Success"] = "The student has been removed";
-
             }
 
             return RedirectToAction("Index");

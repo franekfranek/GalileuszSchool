@@ -15,9 +15,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using WebPWrecover.Services;
 using GalileuszSchool.Services;
-using GalileuszSchool.Repository.Teachers;
 using GalileuszSchool.Repository.Students;
 using GalileuszSchool.Repository.Courses;
+using GalileuszSchool.Repository.Pages;
+using GalileuszSchool.Repository.Classrooms;
+using GalileuszSchool.Repository;
 
 namespace GalileuszSchool
 {
@@ -65,9 +67,9 @@ namespace GalileuszSchool
 
             services.AddRazorPages();
 
-            services.AddScoped<ITeachersRepository, TeacherRepository>();
-            services.AddScoped<IStudentsRepository, StudentsRepository>();
-            services.AddScoped<ICoursesRepository, CoursesRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            //services.AddScoped<ICoursesRepository, CoursesRepository>();
+            //it here in case specific modifications have to be made to any model
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
