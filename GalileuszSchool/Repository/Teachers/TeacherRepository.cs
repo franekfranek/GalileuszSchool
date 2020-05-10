@@ -13,7 +13,7 @@ namespace GalileuszSchool.Repository.Teachers
         public TeacherRepository(GalileuszSchoolContext context)
             : base(context)
         {
-           
+
         }
 
         public int GetNumber()

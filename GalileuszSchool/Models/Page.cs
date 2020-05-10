@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalileuszSchool.Repository;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Models
 {
-    public class Page
+    public class Page: IEntity
     {
         public int Id { get; set; }
         [Required, MinLength(2, ErrorMessage = "Minimal length is 2")]

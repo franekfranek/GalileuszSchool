@@ -1,4 +1,4 @@
-﻿using GalileuszSchool.Repository.Teachers;
+﻿using GalileuszSchool.Repository;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

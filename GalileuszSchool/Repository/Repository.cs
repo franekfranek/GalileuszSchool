@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace GalileuszSchool.Repository.Teachers
+namespace GalileuszSchool.Repository
 {
     public class Repository<TModel> : IRepository<TModel>
         where TModel : class, IEntity
@@ -35,8 +35,8 @@ namespace GalileuszSchool.Repository.Teachers
         public async Task<TModel> GetModelByCondition(Expression<Func<TModel, bool>> expression,
                                                         Expression<Func<TModel, bool>> secondExpression)
         {
-            return _context.Set<TModel>().Where(expression).AsNoTracking()
-                .FirstOrDefault(secondExpression);
+            return await _context.Set<TModel>().Where(expression).AsNoTracking()
+                .FirstOrDefaultAsync(secondExpression);
         }
 
         public IQueryable<TModel> GetAll()
@@ -60,6 +60,11 @@ namespace GalileuszSchool.Repository.Teachers
         {
             _context.Set<TModel>().Update(model);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsInDB(int id)
+        {
+            return await _context.Set<TModel>().AnyAsync(e => e.Id == id);
         }
     }
 }

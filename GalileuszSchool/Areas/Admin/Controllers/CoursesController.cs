@@ -10,90 +10,68 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-
+using SQLitePCL;
+using Microsoft.VisualBasic;
+using GalileuszSchool.Repository;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
     //[Authorize(Roles = "admin")]
     [Area("Admin")]
-
     public class CoursesController : Controller
     {
         private readonly GalileuszSchoolContext context;
+        private readonly IRepository<Course> _repository;
 
-        public CoursesController(GalileuszSchoolContext context)
+        public CoursesController(GalileuszSchoolContext context, IRepository<Course> repository)
         {
             this.context = context;
+            this._repository = repository;
         }
 
         //get Admin/Courses
         public async Task<IActionResult> Index()
         {
-            //TODO refactoring needed
+            //TODO refactoring needed: how to move db queries to GetSelectListItem or/and use _repository
             var teacherInfo =  context.Teachers.OrderBy(x => x.Id);
-            IEnumerable<SelectListItem> selectList = from s in teacherInfo
-                                                     select new SelectListItem
-                                                     {
-                                                         Value = s.Id.ToString(),
-                                                         Text = s.FirstName + " " + s.LastName.ToString()
-                                                     };
-            ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
+            var selectListTeachers = await GetSelectListItem(teacherInfo);
+            ViewBag.TeacherId = new SelectList(selectListTeachers, "Value", "Text");
 
             var studentInfo = context.Students.OrderBy(x => x.Id);
-            IEnumerable<SelectListItem> selectListStudents = from s in studentInfo
-                                                     select new SelectListItem
+            var selectListStudents = await GetSelectListItem(studentInfo);
+            ViewBag.StudentId = new SelectList(selectListStudents, "Value", "Text");
+
+            return View();
+        }
+
+        private async Task<IEnumerable<SelectListItem>> GetSelectListItem(IOrderedQueryable<IListItem> dbData)
+        {
+            IEnumerable<SelectListItem> selectList = await dbData.Select(s => new SelectListItem
                                                      {
                                                          Value = s.Id.ToString(),
                                                          Text = s.FirstName + " " + s.LastName.ToString()
-                                                     };
-            ViewBag.StudentId = new SelectList(selectListStudents, "Value", "Text");
-
-
-            return View();
-
+                                                     }).ToListAsync();
+            return selectList;
         }
-
-        //private async Task<IEnumerable<SelectListItem>> GetSelectListItem<IListItem>(IOrderedQueryable<IListItem> dbData)
-        //{
-        //    IEnumerable<SelectListItem> selectList = from s in dbData 
-        //                                             select new SelectListItem
-        //                                             {
-        //                                                 Value = s.Id.ToString(),
-        //                                                 Text = s.FirstName + " " + s.LastName.ToString()
-        //                                             };
-        //    return selectList;
-        //}
 
         //POST /admin/courses/create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Course course)
         {
-            //string courseName, string level,
-            //                                    string description, int price, int teacherId
-            //var course = new Course
-            //{
-            //    Name = courseName,
-            //    Level = level,
-            //    Description = description,
-            //    Price = price,
-            //    TeacherId = teacherId
-            //};
-
             if (ModelState.IsValid)
             {
                 course.Slug = course.Name.ToLower().Replace(" ", "-");
                 course.Sorting = 100;
 
-                var slug = await context.Courses.FirstOrDefaultAsync(x => x.Slug == course.Slug);
+                var slug = await _repository.GetBySlug(course.Slug);
                 if (slug != null)
                 {
                     TempData["Error"] = "The course already exists";
                     return new JsonResult("error");
                 }
 
-                context.Add(course);
-                await context.SaveChangesAsync();
+                await _repository.Create(course);
 
                 TempData["Success"] = "The course has been added";
 
@@ -104,34 +82,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         public async Task<IActionResult> FindCourse(int id)
         {
-            var course = await context.Courses.FindAsync(id);
+            var course = await _repository.GetById(id);
             return new JsonResult(course);
         }
-
-        //get /admin/courses/edit/{id}
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    var teacherInfo = context.Teachers.OrderBy(x => x.Id);
-        //    IEnumerable<SelectListItem> selectList = from s in teacherInfo
-        //                                             select new SelectListItem
-        //                                             {
-        //                                                 Value = s.Id.ToString(),
-        //                                                 Text = s.FirstName + " " + s.LastName.ToString()
-        //                                             };
-        //    ViewBag.TeacherId = new SelectList(selectList, "Value", "Text");
-
-        //    Course course = await context.Courses.FindAsync(id);
-
-        //    if (course == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
-
-
-        //    return View(course);
-        //}
 
         //POST /admin/courses/edit/{id}
         [HttpPost]
@@ -143,7 +96,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 course.Slug = course.Name.ToLower().Replace(" ", "-");
 
 
-                var slug = await context.Courses.Where(x => x.Id != course.Id).FirstOrDefaultAsync(x => x.Slug == course.Slug);
+                var slug = await _repository.GetModelByCondition(x => x.Id != course.Id, x => x.Slug == course.Slug);
                 if (slug != null)
                 {
                     TempData["Error"] = "The course already exists";
@@ -153,8 +106,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                context.Update(course);
-                await context.SaveChangesAsync();
+                await _repository.Update(course);
 
                 //TempData["Success"] = "The course has been edited";
 
@@ -167,7 +119,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         // /admin/courses/details/{id}
         public async Task<IActionResult> Details(int id)
         {
-            Course course = await context.Courses.FirstOrDefaultAsync(x => x.Id == id);
+            Course course = await _repository.GetById(id);
 
             if (course == null)
             {
@@ -180,7 +132,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get /admin/pages/delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
-            Course course = await context.Courses.FindAsync(id);
+            Course course = await _repository.GetById(id);
 
             if (course == null)
             {
@@ -188,8 +140,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             }
             else
             {
-                context.Courses.Remove(course);
-                await context.SaveChangesAsync();
+                await _repository.Delete(id);
             }
 
             return RedirectToAction("Index");
@@ -197,8 +148,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         public async Task<JsonResult> GetCourses()
         {
-            List<Course> courses = await context.Courses.OrderByDescending(x => x.Sorting).Include(x => x.Teacher)
-                                                                                          .ToListAsync();
+            List<Course> courses = await _repository.GetAll().OrderByDescending(x => x.Sorting)
+                                                            .Include(x => x.Teacher).ToListAsync();
             return Json(courses);
         }
     }

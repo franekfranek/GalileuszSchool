@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GalileuszSchool.Repository;
+using Microsoft.AspNetCore.Http;
 using ShopCart.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Models
 {
-    public class Student : IListItem
+    public class Student : IListItem, IEntity
     {
         public int Id { get; set; }
 

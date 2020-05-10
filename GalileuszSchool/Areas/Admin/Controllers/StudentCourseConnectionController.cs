@@ -21,7 +21,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             this.context = context;
         }
 
-        public async Task<IActionResult> AddIds(StudentCourseConnection studentCourseConnection, int courseId, int studentId)
+        public async Task<IActionResult> AddIds(StudentCourseConnection studentCourseConnection,
+                                                    int courseId, int studentId)
         {
             studentCourseConnection.CourseId = courseId;
             studentCourseConnection.StudentId= studentId;
@@ -30,8 +31,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 context.Add(studentCourseConnection);
                 await context.SaveChangesAsync();
-                
-
             }
             catch (Exception)
             {
@@ -58,9 +57,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         {
             Course course = await context.Courses.Where(x => x.Id == id).FirstOrDefaultAsync();
 
-            var studentsByCourse = await context.StudenCourseConnections.OrderByDescending(x => x.CourseId)
-                                                                .Where(x =>x.CourseId == id)
-                                                                .Include("Student").ToListAsync();
+            var studentsByCourse = await context.StudenCourseConnections
+                                                .OrderByDescending(x => x.CourseId)
+                                                .Where(x =>x.CourseId == id)
+                                                .Include("Student").ToListAsync();
 
             ViewBag.CourseName = course.Name;
 

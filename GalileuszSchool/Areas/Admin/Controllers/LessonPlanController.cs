@@ -79,29 +79,21 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             ViewBag.Test = new SelectList(_context.ClassRoom.OrderBy(x => x.ClassRoomNumber), "Id", "ClassRoomName");
             ViewBag.CourseId = new SelectList(_context.Courses.OrderBy(x => x.Id), "Id", "Name");
             
-
-
-
             return View();
         }
 
         // POST: Admin/LessonPlans/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create( LessonPlan lessonPlan)
-            //[Bind("classroom,dayId,startTime,stopTime, course")]
         {
-
-
             if (ModelState.IsValid)
             {
             lessonPlan.day = (Days)lessonPlan.dayId;
 
                 if (!TimeValidation(lessonPlan))
                 {
-                    ModelState.AddModelError("", "The course already exists co to tu robi");
+                    ModelState.AddModelError("", "The course already exists");
                     return View(lessonPlan);
                 }
                 
@@ -134,8 +126,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         // POST: Admin/LessonPlans/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,  LessonPlan lessonPlan)
@@ -213,7 +203,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             }
             foreach (LessonPlan existingLesson in _context.LessonPlan)
             {
-                if(!(existingLesson.startTime >= lessonPlan.stopTime || existingLesson.stopTime <= lessonPlan.startTime) && existingLesson.dayId == lessonPlan.dayId && existingLesson.ClassRoomId == lessonPlan.ClassRoomId)
+                if(!(existingLesson.startTime >= lessonPlan.stopTime ||
+                    existingLesson.stopTime <= lessonPlan.startTime) &&
+                    existingLesson.dayId == lessonPlan.dayId &&
+                    existingLesson.ClassRoomId == lessonPlan.ClassRoomId)
                 {
 
                     return false;
@@ -261,7 +254,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             Debug.WriteLine("55");
         }
 
-        private List<List<List<LessonPlan>>> addBrake(List<List<List<LessonPlan>>> datas, int maxClassRoomId, int numberOfDays)
+        private List<List<List<LessonPlan>>> addBrake(List<List<List<LessonPlan>>> datas,
+                                                            int maxClassRoomId, int numberOfDays)
         {
             for (int roomId = 0; roomId <= maxClassRoomId; roomId++)
             {
@@ -273,7 +267,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return datas;
         }
 
-        private TimeSpan? checkFirstLessonInWeek(List<List<List<LessonPlan>>> datas, TimeSpan? firstLessonInWeek, int numberOfDays, int roomId)
+        private TimeSpan? checkFirstLessonInWeek(List<List<List<LessonPlan>>> datas,
+                                    TimeSpan? firstLessonInWeek, int numberOfDays, int roomId)
         {
             for (int dayId = 0; dayId < numberOfDays; dayId++)
             {
@@ -292,7 +287,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return firstLessonInWeek;
         }
 
-        private List<List<List<LessonPlan>>> addFirstGap(List<List<List<LessonPlan>>> datas, int roomId, int numberOfDays, TimeSpan? firstLessonInWeek)
+        private List<List<List<LessonPlan>>> addFirstGap(List<List<List<LessonPlan>>> datas,
+                                    int roomId, int numberOfDays, TimeSpan? firstLessonInWeek)
         {
             for (int dayId = 0; dayId < numberOfDays; dayId++)
             {
@@ -305,7 +301,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                         firstLessonCheck = false;
                         if (datas[roomId][dayId][lessonId].startTime > firstLessonInWeek)
                         {
-                            datas[roomId][dayId].Insert(indexOfLessonInDay, new LessonPlan { startTime = (TimeSpan)firstLessonInWeek, stopTime = datas[roomId][dayId][lessonId].startTime, isGap = true });
+                            datas[roomId][dayId].Insert(indexOfLessonInDay, new LessonPlan { startTime =
+                                (TimeSpan)firstLessonInWeek,
+                                stopTime = datas[roomId][dayId][lessonId].startTime, isGap = true });
                         }
                     }
                 }
@@ -313,7 +311,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return datas;
         }
 
-        private List<List<List<LessonPlan>>> addEveryNextGap(List<List<List<LessonPlan>>> datas, int roomId, int numberOfDays)
+        private List<List<List<LessonPlan>>> addEveryNextGap(List<List<List<LessonPlan>>> datas,
+                                                                        int roomId, int numberOfDays)
         {
             for (int dayId = 0; dayId < numberOfDays; dayId++)
             {
@@ -327,7 +326,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                     {
                         if (datas[roomId][dayId][lessonId].startTime > tempStopTime)
                         {
-                            datas[roomId][dayId].Insert(lessonId, new LessonPlan { startTime = (TimeSpan)tempStopTime, stopTime = datas[roomId][dayId][lessonId].startTime , isGap = true });
+                            datas[roomId][dayId].Insert(lessonId, new LessonPlan { startTime = (TimeSpan)tempStopTime,
+                                stopTime = datas[roomId][dayId][lessonId].startTime , isGap = true });
                             tempStopTime = datas[roomId][dayId][lessonId].stopTime;
                         }
                     }

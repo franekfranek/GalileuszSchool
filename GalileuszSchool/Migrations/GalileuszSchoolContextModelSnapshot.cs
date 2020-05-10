@@ -103,6 +103,9 @@ namespace GalileuszSchool.Migrations
                     b.Property<int>("ClassRoomNumber")
                         .HasColumnType("int");
 
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("ClassRoom");

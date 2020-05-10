@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
 using Microsoft.AspNetCore.Authorization;
+using GalileuszSchool.Repository;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
@@ -15,29 +16,24 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     [Area("Admin")]
     public class ClassRoomsController : Controller
     {
-        private readonly GalileuszSchoolContext _context;
+        private readonly IRepository<ClassRoom> _repository;
 
-        public ClassRoomsController(GalileuszSchoolContext context)
+        public ClassRoomsController(IRepository<ClassRoom> repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: Admin/ClassRooms
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ClassRoom.ToListAsync());
+            return View(await _repository.GetAll().ToListAsync());
         }
 
         // GET: Admin/ClassRooms/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            ClassRoom classRoom = await _repository.GetById(id);
 
-            var classRoom = await _context.ClassRoom
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (classRoom == null)
             {
                 return NotFound();
@@ -53,30 +49,23 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         // POST: Admin/ClassRooms/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClassRoomNumber,ClassRoomName,ClassRoomCapacity")] ClassRoom classRoom)
+        public async Task<IActionResult> Create(
+                [Bind("Id,ClassRoomNumber,ClassRoomName,ClassRoomCapacity")] ClassRoom classRoom)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(classRoom);
-                await _context.SaveChangesAsync();
+                await _repository.Create(classRoom);
                 return RedirectToAction(nameof(Index));
             }
             return View(classRoom);
         }
 
         // GET: Admin/ClassRooms/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var classRoom = await _context.ClassRoom.FindAsync(id);
+            var classRoom = await _repository.GetById(id);
             if (classRoom == null)
             {
                 return NotFound();
@@ -85,11 +74,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         // POST: Admin/ClassRooms/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ClassRoomNumber,ClassRoomName,ClassRoomCapacity")] ClassRoom classRoom)
+        public async Task<IActionResult> Edit(int id,
+             [Bind("Id,ClassRoomNumber,ClassRoomName,ClassRoomCapacity")] ClassRoom classRoom)
         {
             if (id != classRoom.Id)
             {
@@ -100,12 +88,11 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(classRoom);
-                    await _context.SaveChangesAsync();
+                    await _repository.Update(classRoom);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClassRoomExists(classRoom.Id))
+                    if (!(await ClassRoomExists(classRoom.Id)))
                     {
                         return NotFound();
                     }
@@ -120,15 +107,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         // GET: Admin/ClassRooms/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var classRoom = await _context.ClassRoom
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var classRoom = await _repository.GetById(id);
             if (classRoom == null)
             {
                 return NotFound();
@@ -142,15 +123,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var classRoom = await _context.ClassRoom.FindAsync(id);
-            _context.ClassRoom.Remove(classRoom);
-            await _context.SaveChangesAsync();
+            var classRoom = await _repository.GetById(id);
+            await _repository.Delete(id);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ClassRoomExists(int id)
+        private async Task<bool> ClassRoomExists(int id)
         {
-            return _context.ClassRoom.Any(e => e.Id == id);
+            return await _repository.IsInDB(id);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
+using GalileuszSchool.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -17,31 +18,23 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     [Area("Admin")]
     public class StudentsController : Controller
     {
-        private readonly GalileuszSchoolContext context;
-
+        private readonly IRepository<Student> _repository;
         private readonly IWebHostEnvironment webHostEnvironment;
 
-        public StudentsController(GalileuszSchoolContext context, IWebHostEnvironment env)
+        public StudentsController(IWebHostEnvironment env,
+                                    IRepository<Student> repository)
         {
-            this.context = context;
             this.webHostEnvironment = env;
+            _repository = repository;
         }
 
         //get admin/students
         public async Task<IActionResult> Index()
         {
             
-            return View(await context.Students.OrderByDescending(x => x.Id).ToListAsync());
+            return View(await _repository.GetAll().OrderByDescending(x => x.Id).ToListAsync());
             
         }
-
-        // /admin/students/create
-        //public IActionResult Create()
-        //{
-            //ViewBag.TeacherId = new SelectList(context.Teachers.OrderBy(x => x.Id), "Id", "LastName");
-
-        //    return View();
-        //}
 
         //POST /admin/students/create
         [HttpPost]
@@ -55,7 +48,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 student.Slug = student.FirstName.ToLower().Replace(" ", "-") + student.LastName.ToLower().Replace(" ", "-");
 
 
-                var slug = await context.Students.FirstOrDefaultAsync(x => x.Slug == student.Slug);
+                var slug = await _repository.GetBySlug(student.Slug);
                 if (slug != null)
                 {
                     ModelState.AddModelError("", "That student is already in the database");
@@ -74,8 +67,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 }
                 student.Image = imageName;
 
-                context.Add(student);
-                await context.SaveChangesAsync();
+                await _repository.Create(student);
 
                 TempData["Success"] = "Student has been added";
 
@@ -84,23 +76,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             return View(student);
         }
 
-        //admin/students/edit/{id}
-        public async Task<IActionResult> Edit(int id)
-        {
-            Student student = await context.Students.FindAsync(id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", student.CourseId);
-
-
-            return View(student);
-        }
-
         //admin/teachers/edit/{id}
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Student student)
@@ -111,7 +87,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 student.Slug = student.FirstName.ToLower().Replace(" ", "-") + student.LastName.ToLower().Replace(" ", "-");
 
-                var slug = await context.Students.Where(x => x.Id != student.Id).FirstOrDefaultAsync(x => x.Slug == student.Slug);
+                var slug = await _repository.GetModelByCondition(x => x.Id != student.Id, x => x.Slug == student.Slug);
                 if (slug != null)
                 {
                     ModelState.AddModelError("", "That student is already in the database");
@@ -128,7 +104,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                         //if (System.IO.File.Exists(oldImagePath))
                         //{
                         //    System.IO.File.Delete(oldImagePath);
-                        //}
+                        //todo clean
                     }
 
                     string imageName = Guid.NewGuid().ToString() + "_" + student.ImageUpload.FileName;
@@ -139,9 +115,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                     student.Image = imageName;
                 }
 
-
-                context.Update(student);
-                await context.SaveChangesAsync();
+                await _repository.Update(student);
 
                 TempData["Success"] = "Student has been edited";
 
@@ -153,7 +127,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //get/admin/students/delete/{id}
         public async Task<IActionResult> Delete(int id)
         {
-            Student student = await context.Students.FindAsync(id);
+            Student student = await _repository.GetById(id);
 
             if (student == null)
             {
@@ -170,22 +144,20 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                         System.IO.File.Delete(oldImagePath);
                     }
                 }
-                context.Students.Remove(student);
-                await context.SaveChangesAsync();
+                await _repository.Delete(id);
                 TempData["Success"] = "The student has been removed";
-
             }
 
             return RedirectToAction("Index");
         }
         public async Task<JsonResult> GetStudents()
         {
-            List<Student> students = await context.Students.OrderByDescending(x => x.Id).ToListAsync();
+            List<Student> students = await _repository.GetAll().OrderByDescending(x => x.Id).ToListAsync();
             return Json(students);
         }
         public async Task<IActionResult> FindStudent(int id)
         {
-            var student = await context.Students.FindAsync(id);
+            var student = await _repository.GetById(id);
             return new JsonResult(student);
         }
     }
