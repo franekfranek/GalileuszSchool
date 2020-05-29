@@ -55,18 +55,19 @@ $(document).ready(function () {
                 $('#deleteStudentModal').modal('hide');
 
                 var notf = $(document).find('#divNotification');
+                notf.attr("class", "alert alert-warning notification");
                 notf.html("You removed " + studentName + " " + studentLastName + " !").show();
                 setTimeout(function () {
                     notf.hide("slow");
                 }, 2000);
                 GetStudents();
             },
-            error: function () {
+            error: function (response) {
                 $('#deleteStudentModal').modal('hide');
 
                 var notf = $(document).find('#divNotification');
                 notf.attr("class", "alert alert-danger notification");
-                notf.html("An error occurred! Please try again").show();
+                notf.html(response.responseJSON.text).show();
                 setTimeout(function () {
                     notf.hide("slow");
                 }, 2000);
@@ -120,7 +121,6 @@ $(document).ready(function () {
 
         if (isValidate) {
             e.preventDefault();
-            debugger
             var studentId = $('#idStudentEdit').val();
             var studnetFirstName = $('#editStudentFirstName').val();
             var studentLastName = $('#editStudentLastName').val();
@@ -152,18 +152,19 @@ $(document).ready(function () {
                     $('#editStudentModal').modal('hide');
 
                     var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-success notification");
                     notf.html("You edited " + studnetFirstName + " " + studentLastName + " !").show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetStudents();
                 },
-                error: function () {
+                error: function (response) {
                     $('#editStudentModal').modal('hide');
 
                     var notf = $(document).find('#divNotification');
                     notf.attr("class", "alert alert-danger notification");
-                    notf.html("An error occurred! Please try again").show();
+                    notf.html(response.responseJSON.text).show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
@@ -201,8 +202,7 @@ $(document).ready(function () {
 
         if (isValidate) {
             e.preventDefault();
-            debugger
-            
+
             var studnetFirstName = $('#studentFirstName').val();
             var studentLastName = $('#studentLastName').val();
             var studentPhone = $('#phoneNumber').val();
@@ -238,13 +238,15 @@ $(document).ready(function () {
                         $(this).find('form').trigger('reset');
                     })
                     var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-success notification");
                     notf.html("You added " + studnetFirstName + " " + studentLastName).show();
+
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetStudents();
                 },
-                error: function () {
+                error: function (response) {
                     $('#createStudentModal').modal('hide');
 
                     $('#createStudentModal').on('hidden.bs.modal', function () {
@@ -253,7 +255,8 @@ $(document).ready(function () {
 
                     var notf = $(document).find('#divNotification');
                     notf.attr("class", "alert alert-danger notification");
-                    notf.html("An error occurred! Please try again").show();
+                    notf.html(response.responseJSON.text).show();
+
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);

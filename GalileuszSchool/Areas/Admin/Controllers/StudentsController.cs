@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
@@ -32,7 +33,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             
-            return View(await _repository.GetAll().OrderByDescending(x => x.Id).ToListAsync());
+            return View();
             
         }
 
@@ -51,8 +52,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 var slug = await _repository.GetBySlug(student.Slug);
                 if (slug != null)
                 {
-                    ModelState.AddModelError("", "That student is already in the database");
-                    return View(student);
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { text = "Student already exists!" });
                 }
 
                 string imageName = "noimage.jpg";
@@ -69,11 +70,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 await _repository.Create(student);
 
-                TempData["Success"] = "Student has been added";
-
-                return RedirectToAction("Index");
+                return Ok();
             }
-            return View(student);
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
         }
 
         //admin/teachers/edit/{id}
@@ -90,8 +90,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 var slug = await _repository.GetModelByCondition(x => x.Id != student.Id, x => x.Slug == student.Slug);
                 if (slug != null)
                 {
-                    ModelState.AddModelError("", "That student is already in the database");
-                    return View(student);
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { text = "Student already exists!" });
                 }
 
 
@@ -117,11 +117,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 await _repository.Update(student);
 
-                TempData["Success"] = "Student has been edited";
-
-                return RedirectToAction("Index");
+                return Ok();
             }
-            return View(student);
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
         }
 
         //get/admin/students/delete/{id}
@@ -131,7 +130,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             if (student == null)
             {
-                TempData["Error"] = "Student does not exist";
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { text = "Student does not exists!" });
             }
             else
             {
@@ -145,10 +145,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                     }
                 }
                 await _repository.Delete(id);
-                TempData["Success"] = "The student has been removed";
             }
 
-            return RedirectToAction("Index");
+            return Ok();
         }
         public async Task<JsonResult> GetStudents()
         {

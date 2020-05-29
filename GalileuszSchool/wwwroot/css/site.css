@@ -181,3 +181,13 @@ div.fa-linkedin-in:hover {
     background: #fff;
     border: 1px solid #55acee;
 }
+
+/*noblack background form modal*/
+.modal-backdrop {
+    /* bug fix - no overlay */
+    display: none;
+}
+
+.modal-content {
+    border: blue 6px solid;
+}

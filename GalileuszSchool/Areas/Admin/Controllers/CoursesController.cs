@@ -13,6 +13,8 @@ using System.Text.Json;
 using SQLitePCL;
 using Microsoft.VisualBasic;
 using GalileuszSchool.Repository;
+using System.Net;
+
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
@@ -48,8 +50,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         {
             IEnumerable<SelectListItem> selectList = await dbData.Select(s => new SelectListItem
                                                      {
-                                                         Value = s.Id.ToString(),
-                                                         Text = s.FirstName + " " + s.LastName.ToString()
+                                                        Value = s.Id.ToString(),
+                                                        Text = s.FirstName + " " + s.LastName.ToString()
                                                      }).ToListAsync();
             return selectList;
         }
@@ -59,7 +61,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Course course)
         {
-            if (ModelState.IsValid)
+            //ModelState.AddModelError("key", "hej");
+            if (ModelState.IsValid) //should try block be here
             {
                 course.Slug = course.Name.ToLower().Replace(" ", "-");
                 course.Sorting = 100;
@@ -67,23 +70,16 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 var slug = await _repository.GetBySlug(course.Slug);
                 if (slug != null)
                 {
-                    TempData["Error"] = "The course already exists";
-                    return new JsonResult("error");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { text = "Course already exists!" });
                 }
 
                 await _repository.Create(course);
 
-                TempData["Success"] = "The course has been added";
-
-                return RedirectToAction("Index");
+                return StatusCode(200);
             }
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> FindCourse(int id)
-        {
-            var course = await _repository.GetById(id);
-            return new JsonResult(course);
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
         }
 
         //POST /admin/courses/edit/{id}
@@ -99,34 +95,17 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 var slug = await _repository.GetModelByCondition(x => x.Id != course.Id, x => x.Slug == course.Slug);
                 if (slug != null)
                 {
-                    TempData["Error"] = "The course already exists";
-                    var r = new JsonResult("The course name already exists!"); ;
-                    return r;
-
-                    return RedirectToAction("Index");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { text = "Course already exists!" });
                 }
 
                 await _repository.Update(course);
 
-                //TempData["Success"] = "The course has been edited";
-
-                return RedirectToAction("Index");
+                return StatusCode(200);
             }
 
-            return new JsonResult("All good");
-        }
-
-        // /admin/courses/details/{id}
-        public async Task<IActionResult> Details(int id)
-        {
-            Course course = await _repository.GetById(id);
-
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            return View(course);
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
         }
 
         //get /admin/pages/delete/{id}
@@ -136,14 +115,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             if (course == null)
             {
-                TempData["Error"] = "The course does not exist";
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { text = "Course does not exists!" });
             }
             else
             {
                 await _repository.Delete(id);
             }
 
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         public async Task<JsonResult> GetCourses()
@@ -151,6 +131,11 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             List<Course> courses = await _repository.GetAll().OrderByDescending(x => x.Sorting)
                                                             .Include(x => x.Teacher).ToListAsync();
             return Json(courses);
+        }
+        public async Task<IActionResult> FindCourse(int id)
+        {
+            var course = await _repository.GetById(id);
+            return new JsonResult(course);
         }
     }
 }

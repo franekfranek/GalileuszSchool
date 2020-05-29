@@ -36,18 +36,19 @@
                 $('#deleteTeacherModal').modal('hide');
 
                 var notf = $(document).find('#divNotification');
+                notf.attr("class", "alert alert-warning notification");
                 notf.html("You removed " + teacherName + " " + teacherLastName + " !").show();
                 setTimeout(function () {
                     notf.hide("slow");
                 }, 2000);
                 GetTeachers();
             },
-            error: function () {
+            error: function (response) {
                 $('#deleteTeacherModal').modal('hide');
 
                 var notf = $(document).find('#divNotification');
                 notf.attr("class", "alert alert-danger notification");
-                notf.html("An error occurred! Please try again").show();
+                notf.html(response.responseJSON.text).show();
                 setTimeout(function () {
                     notf.hide("slow");
                 }, 2000);
@@ -114,20 +115,22 @@
                 success: function () {
 
                     $('#editTeacherModal').modal('hide');
+                    $("#editTeacherModal").appendTo("body");
 
                     var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-success notification");
                     notf.html("You edited " + name + " " + lastName + " !").show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetTeachers();
                 },
-                error: function () {
+                error: function (response) {
                     $('#editTeacherModal').modal('hide');
 
                     var notf = $(document).find('#divNotification');
                     notf.attr("class", "alert alert-danger notification");
-                    notf.html("An error occurred! Please try again").show();
+                    notf.html(response.responseJSON.text).show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
@@ -169,7 +172,6 @@
             var data = $('#create-teacher-form').serialize();
             var firstName = $('#teacherFirstName').val();
             var lastName = $('#teacherLastName').val();
-            console.log(data);
 
             $.ajax({
                 type: 'POST',
@@ -181,15 +183,16 @@
 
                     $('#createTeacherModal').on('hidden.bs.modal', function () {
                         $(this).find('form').trigger('reset');
-                    })
+                    });
                     var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-success notification");
                     notf.html("You added " + firstName+ " " + lastName + " to the database!").show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetTeachers();
                 },
-                error: function () {
+                error: function (response) {
                     $('#createTeacherModal').modal('hide');
 
                     $('#createTeacherModal').on('hidden.bs.modal', function () {
@@ -198,7 +201,7 @@
 
                     var notf = $(document).find('#divNotification');
                     notf.attr("class", "alert alert-danger notification");
-                    notf.html("An error occurred! Please try again").show();
+                    notf.html(response.responseJSON.text).show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
@@ -216,7 +219,6 @@ var GetTeachers = function () {
         url: "/Admin/Teachers/GetTeachers",
         dataType: 'json',
         success: function (data) {
-            console.log(data);
             bindDataTable(data);
 
         }
@@ -231,7 +233,6 @@ var bindDataTable = function (data) {
             .clear()
             .rows.add(data)
             .draw();
-        debugger
     } else {
 
 

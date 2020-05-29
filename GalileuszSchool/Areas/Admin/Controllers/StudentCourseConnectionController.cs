@@ -44,7 +44,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         }
 
         // get /admin/StudentCourseConnection/ShowStudentForCourse
-        public async Task<IActionResult> ShowStudentForCourse()
+        public async Task<IActionResult> ShowAllStudents()
         {
 
             var students = await context.Students.OrderByDescending(x => x.Id).ToListAsync();

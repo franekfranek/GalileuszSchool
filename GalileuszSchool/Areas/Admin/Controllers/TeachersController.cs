@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
@@ -41,17 +42,16 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 if (slug != null)
                 {
-                    ModelState.AddModelError("", "That teacher is already in the database");
-                    return View(teacher);
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { text = "Teacher already exists!" });
                 }
 
                 await _repository.Create(teacher);
 
-                TempData["Success"] = "Teacher has been added";
-
-                return RedirectToAction("Index");
+                return Ok();
             }
-            return View(teacher);
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
         }
 
         //admin/teachers/edit/{id}
@@ -70,16 +70,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 if (slug != null)
                 {
-                    ModelState.AddModelError("", "That teacher is already in the database");
-                    return View(teacher);
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { text = "Teacher already exists!" });
                 }
                 await _repository.Update(teacher);
 
-                TempData["Success"] = "Teacher has been edited";
-
-                return RedirectToAction("Index");
+                return Ok();
             }
-            return View(teacher);
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
         }
 
         //get/admin/teachers/delete/{id}
@@ -89,15 +88,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             if (teacher == null)
             {
-                TempData["Error"] = "Teacher does not exist";
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { text = "Teacher does not exists!" });
             }
             else
             {
                 await _repository.Delete(teacher.Id);
-                TempData["Success"] = "The teacher has been removed";
             }
 
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         public async Task<JsonResult> GetTeachers()

@@ -22,10 +22,7 @@
         var courseId = $(this).data('course-id');
         var courseName = $(this).data('course-name');
         
-        
-
         document.getElementById("deleteModalTitle").innerHTML = "Delete " + courseName + " course ?";
-
 
         $('#deleteCourseModal #deleteId').val(courseId);
         $('#deleteCourseModal #deleteCourseName').val(courseName);
@@ -46,18 +43,19 @@
                 $('#deleteCourseModal').modal('hide');
 
                 var notf = $(document).find('#divNotification');
+                notf.attr("class", "alert alert-warning notification");
                 notf.html("You deleted " + courseName + " course!").show();
                 setTimeout(function () {
                     notf.hide("slow");
                 }, 2000);
                 GetCourses();
             },
-            error: function () {
+            error: function (response) {
                 $('#deleteCourseModal').modal('hide');
 
                 var notf = $(document).find('#divNotification');
                 notf.attr("class", "alert alert-danger notification");
-                notf.html("An error occurred! Please try again").show();
+                notf.html(response.responseJSON.text).show();
                 setTimeout(function () {
                     notf.hide("slow");
                 }, 2000);
@@ -129,18 +127,19 @@
                     $('#editCourseModal').modal('hide');
 
                     var notf = $(document).find('#divNotification');
+                    notf.attr("class", "alert alert-success notification");
                     notf.html("You edited " + name + " course!").show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetCourses();
                 },
-                error: function () {
+                error: function (response) {
                     $('#editCourseModal').modal('hide');
 
                     var notf = $(document).find('#divNotification');
                     notf.attr("class", "alert alert-danger notification");
-                    notf.html("An error occurred! Please try again").show();
+                    notf.html(response.responseJSON.text).show();
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
@@ -175,7 +174,7 @@
         })
     });
 
-    //------------->ADD COURSE
+    //------------->CREATE COURSE
     $('#addCourse').on('click', function (e) {
 
         $("form[name='create-new-course']").validate({
@@ -205,7 +204,6 @@
             e.preventDefault();
             var data = $('#create-course-form').serialize();
             var name = $('#name').val();
-            console.log(data);
 
             $.ajax({
                 type: 'POST',
@@ -220,12 +218,8 @@
                     })
 
                     var notf = $(document).find('#divNotification');
-                    if (res == "error") {
-                        notf.attr("class", "alert alert-danger notification");
-                        notf.html("Course already exists!").show();
-                    } else {
-                        notf.html("You added " + name + " course!").show();
-                    }
+                    notf.attr("class", "alert alert-success notification");
+                    notf.html("You added " + name + " course!").show();
                     
                     setTimeout(function () {
                         notf.hide("slow");
@@ -233,6 +227,7 @@
                     GetCourses();
                 },
                 error: function (response) {
+                    console.log(response);
                     $('#createCourseModal').modal('hide');
 
                     $('#createCourseModal').on('hidden.bs.modal', function () {
@@ -241,7 +236,8 @@
 
                     var notf = $(document).find('#divNotification');
                     notf.attr("class", "alert alert-danger notification");
-                    notf.html("An error " + response.status + " occurred! Please try again").show();
+                    notf.html(response.responseJSON.text).show();
+
                     setTimeout(function () {
                         notf.hide("slow");
                     }, 2000);
