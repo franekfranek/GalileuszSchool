@@ -8,6 +8,6 @@ namespace GalileuszSchool.Models
 {
     public class AppUser : IdentityUser
     {
-        public string Occupation { get; set; }
+        public bool IsStudent { get; set; } = false;
     }
 }

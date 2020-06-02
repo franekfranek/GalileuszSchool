@@ -68,6 +68,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         {
             IdentityRole role = await roleManager.FindByIdAsync(id);
 
+            IdentityRole role1 = await roleManager.FindByNameAsync("student");
+
             List<AppUser> members = new List<AppUser>();
             List<AppUser> nonMembers = new List<AppUser>();
 

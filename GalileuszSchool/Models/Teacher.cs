@@ -23,7 +23,10 @@ namespace GalileuszSchool.Models
         [Display(Name = "Phone Number")]
         [RegularExpression(@"^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$", ErrorMessage = "Pattern is 000-000-000")]
         public string PhoneNumber { get; set; }
-        
+
+        [EmailAddress]
+        public string Email { get; set; }
+
 
     }
 }

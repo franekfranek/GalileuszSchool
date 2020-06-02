@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GalileuszSchool.Areas.Admin.Controllers;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
 using GalileuszSchool.Services;
@@ -24,13 +25,15 @@ namespace GalileuszSchool.Controllers
         private readonly GalileuszSchoolContext context;
         private readonly ILogger<AccountController> logger;
         private readonly IEmailSender emailSender;
+        private readonly StudentsController studentsController;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
                                 IPasswordHasher<AppUser> passwordHasher,
                                 GalileuszSchoolContext context,
                                 ILogger<AccountController> logger,
-                                IEmailSender emailSender)
+                                IEmailSender emailSender,
+                                StudentsController studentsController)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -38,6 +41,7 @@ namespace GalileuszSchool.Controllers
             this.context = context;
             this.logger = logger;
             this.emailSender = emailSender;
+            this.studentsController = studentsController;
         }
 
         // get account/register
@@ -74,9 +78,20 @@ namespace GalileuszSchool.Controllers
                 AppUser appUser = new AppUser
                 {
                     UserName = user.UserName,
-                    Email = user.Email
+                    Email = user.Email,
+                    IsStudent = user.IsStudent
                 };
 
+                if (user.IsStudent)
+                {
+                    await studentsController.Create(new Student
+                    {
+                        FirstName = appUser.UserName,
+                        LastName = appUser.UserName,
+                        PhoneNumber = "000-000-000",
+                        Email = user.Email
+                    });
+                }
 
 
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
@@ -129,7 +144,7 @@ namespace GalileuszSchool.Controllers
             {
                 AppUser appUser = await userManager.FindByEmailAsync(login.Email);
                 //if (appUser != null && appUser.EmailConfirmed)
-
+                
                 if (appUser != null)
                 {
                     Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync

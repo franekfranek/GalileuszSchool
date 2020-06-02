@@ -364,3 +364,5 @@ healthchecksdb
 /GalileuszSchool/wwwroot/media/students/ccca0ede-d95a-4adb-9a9e-ae2fb502d4f6_cabbage.jpg
 /GalileuszSchool/wwwroot/media/students/ae443055-4b06-4701-8c4f-f8f7f87eb070_cabbage.jpg
 /GalileuszSchool/wwwroot/media/students/2861e3ef-1d0d-4081-a791-fb0c12982ed5_cabbage.jpg
+/GalileuszSchool/Migrations/20200602210043_ExtendedModels.cs
+/GalileuszSchool/Migrations/20200602210043_ExtendedModels.Designer.cs

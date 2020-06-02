@@ -20,6 +20,7 @@ using GalileuszSchool.Repository.Courses;
 using GalileuszSchool.Repository.Pages;
 using GalileuszSchool.Repository.Classrooms;
 using GalileuszSchool.Repository;
+using GalileuszSchool.Areas.Admin.Controllers;
 
 namespace GalileuszSchool
 {
@@ -68,6 +69,7 @@ namespace GalileuszSchool
             services.AddRazorPages();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<StudentsController>();
             //services.AddScoped<ICoursesRepository, CoursesRepository>();
             //it here in case specific modifications have to be made to any model
         }
