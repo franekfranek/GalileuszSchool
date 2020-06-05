@@ -8,13 +8,16 @@ namespace GalileuszSchool.Models
 {
     public class UserEdit : AppUser
     {
-        [Required]
-        [MinLength(4, ErrorMessage = "Minimum lenght is 4")]
-        [Display(Name = "Name")]
-        public string UserName { get; set; }
+        [Required, MinLength(2, ErrorMessage = "Minimum lenght is 2")]
+        [Display(Name = "First name")]
+        public string FirstName { get; set; }
+
+        [Required, MinLength(2, ErrorMessage = "Minimum lenght is 2")]
+        [Display(Name = "Last name")]
+        public string LastName { get; set; }
 
         [Required, EmailAddress]
-        public string Email { get; set; }
+        public override string Email { get; set; }
 
         [DataType(DataType.Password), MinLength(4, ErrorMessage = "Minimum lenght is 4")]
         public string Password { get; set; }
@@ -24,12 +27,20 @@ namespace GalileuszSchool.Models
         [Compare("Password",
             ErrorMessage = "Password and confrimation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required(ErrorMessage = "You must provide a phone number.")]
+        [Display(Name = "Phone Number")]
+        [RegularExpression(@"^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$", ErrorMessage = "Pattern is 000-000-000")]
+        public override string PhoneNumber { get; set; }
         public UserEdit(){}
 
         public UserEdit(AppUser appUser)
         {
-            UserName = appUser.UserName;
+            var splitUserName = appUser.UserName.Split('-');
+            FirstName = splitUserName[0];
+            LastName = splitUserName[1];
             Email = appUser.Email;
+            PhoneNumber = appUser.PhoneNumber;
             Password = appUser.PasswordHash;
         }
     }

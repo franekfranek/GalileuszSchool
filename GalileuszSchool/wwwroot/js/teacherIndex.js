@@ -3,6 +3,18 @@
     //console.log("checking...")
     $('[data-toggle="tooltip"]').tooltip();
 
+
+    //-----------VALIDATIONS
+    $.validator.addMethod('customphone', function (value, element) {
+        return this.optional(element) || /^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$/.test(value);
+    }, "Pattern is 000-000-000"); 
+
+    $.validator.addMethod("laxEmail", function (value, element) {
+        // allow any non-whitespace characters as the host part
+        return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(?:\S{1,63})$/.test(value);
+    }, 'Please enter a valid email address.');
+
+
     ////------------->DELETE
     $(document).on('click', '#deleteTeacherLink', function () {
 
@@ -71,15 +83,12 @@
                 $('#editTeacherModal #editTeacherFirstName').val(result.firstName);
                 $('#editTeacherModal #editTeacherLastName').val(result.lastName);
                 $('#editTeacherModal #editTeacherPhone').val(result.phoneNumber);
+                $('#editTeacherModal #editTeacherEmail').val(result.email);
             }
         })
     });
 
     $('#editTeacherPost').on('click', function (e) {
-
-        $.validator.addMethod('customphone', function (value, element) {
-            return this.optional(element) || /^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$/.test(value);
-        }, "Pattern is 000-000-000");
 
         $("form[name='edit-teacher']").validate({
 
@@ -89,13 +98,16 @@
                 PhoneNumber: {
                     required: true,
                     customphone: true,
+                },
+                Email: {
+                    required: true,
+                    laxEmail: true,
                 }
             },
 
             messages: {
                 FirstName: "Please enter first name",
                 LastName: "Please enter last name",
-                //PhoneNumber: "Pattern is 000-000-000"
             }
         });
 
@@ -139,13 +151,9 @@
             })
         }
     });
-
+    
     //------------->CREATE TEACHER
     $('#createTeacher').on('click', function (e) {
-
-        $.validator.addMethod('customphone', function (value, element) {
-            return this.optional(element) || /^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$/.test(value);
-        }, "Pattern is 000-000-000"); 
 
         $("form[name='create-new-teacher']").validate({
 
@@ -155,13 +163,16 @@
                 PhoneNumber: {
                     required: true,
                     customphone: true,
-                    }
+                },
+                Email: {
+                    required: true,
+                    laxEmail: true
+                }
             },
 
             messages: {
                 FirstName: "Please enter first name",
                 LastName: "Please enter last name",
-                //PhoneNumber: "Pattern is 000-000-000"
             }
         });
 
@@ -244,6 +255,7 @@ var bindDataTable = function (data) {
                 { 'data': 'firstName' },
                 { 'data': 'lastName' },
                 { 'data': 'phoneNumber' },
+                { 'data': 'email' },
                 
                 {
                     data: null, render: function (data, type, row) {

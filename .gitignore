@@ -11,6 +11,11 @@
 *.sln.docstates
 **/wwwroot/lib
 **/wwwroot/fontawesome-free-5.13.0-web
+**/wwwroot/media/students
+
+
+
+/GalileuszSchool/Migrations
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -340,29 +345,4 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/GalileuszSchool/Migrations/20200122181405_WholeCreate.cs
-/GalileuszSchool/Migrations/20200122181405_WholeCreate.Designer.cs
-/GalileuszSchool/Migrations/20200127194859_wholeMig.cs
-/GalileuszSchool/Migrations/20200127194859_wholeMig.Designer.cs
-/GalileuszSchool/Migrations/20200211091249_wholeMig.cs
-/GalileuszSchool/Migrations/20200211091249_wholeMig.Designer.cs
-/GalileuszSchool/wwwroot/media/students/735722a0-96d0-482b-925f-2431c1d3a851_fries.jpg
-/GalileuszSchool/wwwroot/media/students/e5c5f7ae-6d21-4a02-a4e2-6b870c3c8fe8_face2.jpg
-/GalileuszSchool/wwwroot/media/students/e9b4a66c-5464-4ee7-8349-4e25e7f04502_face3.jpg
-/GalileuszSchool/wwwroot/media/students/125c1d46-d0fa-49e4-b6bf-7d98f5b3db1e_face3.jpg
-/GalileuszSchool/wwwroot/fontawesome-free-5.13.0-web
-/GalileuszSchool/Migrations/20200510144119_AddSlugForClassrooms.Designer.cs
-/GalileuszSchool/Migrations/20200510144119_AddSlugForClassrooms.cs
-/GalileuszSchool/wwwroot/media/students/4978e78f-8ddd-445b-976d-ddf6de0aa80f_face.jpg
-/GalileuszSchool/wwwroot/media/students/5d85fb6c-0028-4f82-bf92-05e0b90d6d48_face2.jpg
-/GalileuszSchool/wwwroot/media/students/bca16cfc-5a7c-4cc2-b26a-55366232498e_face2.jpg
 
-/GalileuszSchool/wwwroot/media/students/2b33ea75-bfb7-4839-aa22-441a9a3434b1_bananas.jpg
-/GalileuszSchool/wwwroot/media/students/6745523e-dd63-44f5-91ff-308fdc47f0aa_cabbage.jpg
-/GalileuszSchool/wwwroot/media/students/04edc130-97a7-43c9-97e1-7789a449b648_cabbage.jpg
-/GalileuszSchool/wwwroot/media/students/5da8d5cb-2cf6-40c7-8bf9-d5267fc44d2a_cabbage.jpg
-/GalileuszSchool/wwwroot/media/students/ccca0ede-d95a-4adb-9a9e-ae2fb502d4f6_cabbage.jpg
-/GalileuszSchool/wwwroot/media/students/ae443055-4b06-4701-8c4f-f8f7f87eb070_cabbage.jpg
-/GalileuszSchool/wwwroot/media/students/2861e3ef-1d0d-4081-a791-fb0c12982ed5_cabbage.jpg
-/GalileuszSchool/Migrations/20200602210043_ExtendedModels.cs
-/GalileuszSchool/Migrations/20200602210043_ExtendedModels.Designer.cs

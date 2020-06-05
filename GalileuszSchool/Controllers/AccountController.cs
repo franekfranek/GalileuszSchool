@@ -67,36 +67,40 @@ namespace GalileuszSchool.Controllers
                     return View(user);
                 }
 
-                var isNameAlreadyExists = context.Users.Any(x => x.UserName == user.UserName);
+                var userName = user.FirstName.ToLower() + "-" + user.LastName.ToLower();
 
-                if (isNameAlreadyExists)
+                var isUserExists = context.Users.Any(x => x.UserName == userName);
+
+                if (isUserExists)
                 {
-                    ModelState.AddModelError("UserName", "User with this name already exists");
+                    ModelState.AddModelError("LastName", "User with this credentials already exists");
                     return View(user);
                 }
 
                 AppUser appUser = new AppUser
                 {
-                    UserName = user.UserName,
+                    UserName = user.FirstName.ToLower() + "-" + user.LastName.ToLower(),
                     Email = user.Email,
-                    IsStudent = user.IsStudent
+                    IsStudent = user.IsStudent,
+                    PhoneNumber = user.PhoneNumber
                 };
-
-                if (user.IsStudent)
-                {
-                    await studentsController.Create(new Student
-                    {
-                        FirstName = appUser.UserName,
-                        LastName = appUser.UserName,
-                        PhoneNumber = "000-000-000",
-                        Email = user.Email
-                    });
-                }
-
-
+               
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
+
                 if (result.Succeeded)
                 {
+                    if (appUser.IsStudent)
+                    {
+                        var currentStudent = await userManager.FindByNameAsync(appUser.UserName);
+                        await userManager.AddToRoleAsync(currentStudent, "student");
+                        await studentsController.Create(new Student
+                        {
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            PhoneNumber = "000-000-000",
+                            Email = user.Email
+                        });
+                    }
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
                     var confirmationLink = Url.Action("ConfirmEmail", "Account",
@@ -189,6 +193,7 @@ namespace GalileuszSchool.Controllers
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
             var oldEmail = appUser.Email;
             var oldName = appUser.UserName;
+            var fullNameFromModel = userEdit.FirstName.ToLower() + "-" + userEdit.LastName.ToLower();
 
             if (ModelState.IsValid)
             {
@@ -206,18 +211,23 @@ namespace GalileuszSchool.Controllers
                 else { appUser.Email = oldEmail; }
 
                 //name edit
-                var isNameAlreadyExists = context.Users.Any(x => x.UserName == userEdit.UserName);
-                if(oldName != userEdit.UserName)
+                var isNameAlreadyExists = context.Users.Any(x => x.UserName == fullNameFromModel);
+                if(oldName != fullNameFromModel)
                 {
                     if (isNameAlreadyExists)
                     {
-                        ModelState.AddModelError("UserName", "User with this name already exists");
+                        ModelState.AddModelError("LastName", "User with this name already exists");
                         return View(userEdit);
                     }
-                    appUser.UserName = userEdit.UserName;
+                    appUser.UserName = fullNameFromModel;
                 }
                 else { appUser.UserName = oldName; }
 
+                //telephone number edit
+                if(userEdit.PhoneNumber != null)
+                {
+                    appUser.PhoneNumber = userEdit.PhoneNumber;
+                }
 
 
                 //password edit

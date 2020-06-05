@@ -24,6 +24,16 @@ $(document).ready(function () {
 
     $('[data-toggle="tooltip"]').tooltip();
 
+    //-----------VALIDATIONS
+    $.validator.addMethod('customphone', function (value, element) {
+        return this.optional(element) || /^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$/.test(value);
+    }, "Pattern is 000-000-000");
+
+    $.validator.addMethod("laxEmail", function (value, element) {
+        // allow any non-whitespace characters as the host part
+        return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(?:\S{1,63})$/.test(value);
+    }, 'Please enter a valid email address.');
+
     //------------->DELETE
     $(document).on('click', '#deleteStudentLink', function () {
 
@@ -90,15 +100,12 @@ $(document).ready(function () {
                 $('#editStudentModal #editStudentFirstName').val(result.firstName);
                 $('#editStudentModal #editStudentLastName').val(result.lastName);
                 $('#editStudentModal #editStudentPhone').val(result.phoneNumber);
+                $('#editStudentModal #editStudentEmail').val(result.email);
             }
         })
     });
 
     $('#editStudentPost').on('click', function (e) {
-
-        $.validator.addMethod('customphone', function (value, element) {
-            return this.optional(element) || /^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$/.test(value);
-        }, "Pattern is 000-000-000");
 
         $("form[name='edit-student']").validate({
 
@@ -107,7 +114,11 @@ $(document).ready(function () {
                 LastName: "required",
                 PhoneNumber: {
                     required: true,
-                    customphone: true,
+                    customphone: true
+                },
+                Email: {
+                    required: true,
+                    laxEmail: true
                 }
             },
 
@@ -125,6 +136,7 @@ $(document).ready(function () {
             var studnetFirstName = $('#editStudentFirstName').val();
             var studentLastName = $('#editStudentLastName').val();
             var studentPhone = $('#editStudentPhone').val();
+            var studentEmail = $('#editStudentEmail').val();
             var studentPic = $('#studentImageEdit').prop('files')[0];
 
             var data = new FormData();
@@ -132,6 +144,7 @@ $(document).ready(function () {
             data.append('FirstName', studnetFirstName);
             data.append('LastName', studentLastName);
             data.append('PhoneNumber', studentPhone);
+            data.append('Email', studentEmail);
             data.append('ImageUpload', studentPic);
             for (var key of data.entries()) {
                 console.log(key[0] + ', ' + key[1]);
@@ -177,10 +190,6 @@ $(document).ready(function () {
     //------------->CREATE STUDENT
     $('#createNewStudent').on('click', function (e) {
 
-        $.validator.addMethod('customphone', function (value, element) {
-            return this.optional(element) || /^(\([0-9]{3}\)|[0-9]{3}-)[0-9]{3}-[0-9]{3}$/.test(value);
-        }, "Pattern is 000-000-000"); 
-
         $("form[name='create-new-student']").validate({
 
             rules: {
@@ -188,7 +197,11 @@ $(document).ready(function () {
                 LastName: "required",
                 PhoneNumber: {
                     required: true,
-                    customphone: true,
+                    customphone: true
+                },
+                Email: {
+                    required: true,
+                    laxEmail: true
                 }
             },
 
@@ -206,6 +219,7 @@ $(document).ready(function () {
             var studnetFirstName = $('#studentFirstName').val();
             var studentLastName = $('#studentLastName').val();
             var studentPhone = $('#phoneNumber').val();
+            var studentEmail = $('#studentEmail').val();
             var studentPic = $('#studentCreateImg').prop('files')[0];
 
             var data = new FormData();
@@ -213,6 +227,7 @@ $(document).ready(function () {
             data.append('FirstName', studnetFirstName);
             data.append('LastName', studentLastName);
             data.append('PhoneNumber', studentPhone);
+            data.append('Email', studentEmail);
             data.append('ImageUpload', studentPic);
 
             for (var key of data.entries()) {
@@ -274,7 +289,6 @@ var GetStudents = function () {
         url: "/Admin/Students/GetStudents",
         dataType: 'json',
         success: function (data) {
-            //console.log(data);
             bindDataTable(data);
         }
     })
@@ -302,6 +316,7 @@ var bindDataTable = function (data) {
                 { 'data': 'firstName' },
                 { 'data': 'lastName' },
                 { 'data': 'phoneNumber' },
+                { 'data': 'email' },
                 {
                     data: null, render: function (data, type, row) {
                         return '<a href="#editStudentModal" id="editStudentLink" data-toggle="modal" data-student-id="' + data.id + '"data-student-name="'
