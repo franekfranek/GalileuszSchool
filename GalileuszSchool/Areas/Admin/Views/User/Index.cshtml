@@ -1,0 +1,137 @@
+﻿@model IEnumerable<GalileuszSchool.Models.AppUser>
+
+@{
+    ViewData["Title"] = "Users";
+}
+<h1>Users</h1>
+
+<p>
+    <a href="#createTeacherModal" class="btn btn-primary" data-toggle="modal">
+        <span>New user</span>
+    </a>
+</p>
+<table id="usersTable">
+    <thead>
+        <tr>
+
+            <th>
+                User Name
+            </th>
+
+            <th>
+                Student status
+            </th>
+
+            <th>
+                Phone number
+            </th>
+            <th>
+                Email
+            </th>
+
+            <th>
+                Confirmed Email
+            </th>
+
+            <th>
+
+            </th>
+
+            <th>
+
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+</table>
+
+@*---------------->DETAILS USER MODAL------------*@
+<div id="detailsUserModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="detailsModalTitle"></h4>
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <dl>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Id)
+                        </dt>
+                        <dd class="col-sm-10" id="id">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
+                        </dt>
+                        <dd class="col-sm-10" id="phoneNumberConfirmed">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.AccessFailedCount)
+                        </dt>
+                        <dd class="col-sm-10" id="accessFailedCount">
+
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.SecurityStamp)
+                        </dt>
+                        <dd class="col-sm-10" id="securityStamp">
+
+                        </dd>
+
+                    </dl>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*---------------->DELETE USER MODAL------------*@
+<div id="deleteUserModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="User" asp-action="Delete">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="userModal"></h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Do you really want to remove this user?</p>
+                    <p class="text=warning"><small>This action cannot be undone.</small></p>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+                    <input type="submit" value="Delete" class="btn btn-danger" id="deleteUser">
+
+                    <input type="hidden" name="id" id="deleteUserId" />
+                    <input type="hidden" name="teacherName" id="deleteUserName" />
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/userIndex.js"></script>
+
+}
