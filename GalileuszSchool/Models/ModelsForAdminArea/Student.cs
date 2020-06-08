@@ -1,4 +1,5 @@
-﻿using GalileuszSchool.Repository;
+﻿using GalileuszSchool.Models.ModelsForNormalUsers;
+using GalileuszSchool.Repository;
 using Microsoft.AspNetCore.Http;
 using ShopCart.Infrastructure;
 using System;
@@ -8,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GalileuszSchool.Models
+namespace GalileuszSchool.Models.ModelsForAdminArea
 {
     public class Student : IListItem, IEntity
     {
@@ -33,10 +34,16 @@ namespace GalileuszSchool.Models
         [EmailAddress]
         public string Email { get; set; }
 
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Enrollment Date")]
+        public DateTime EnrollmentDate { get; set; }
+
         [NotMapped]
         [FileExtension]
         public IFormFile ImageUpload { get; set; }
 
+        public virtual ICollection<Homework> Homeworks { get; set; }
 
 
     }

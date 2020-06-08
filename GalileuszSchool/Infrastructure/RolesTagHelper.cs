@@ -1,4 +1,4 @@
-﻿using GalileuszSchool.Models;
+﻿using GalileuszSchool.Models.ModelsForNormalUsers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;

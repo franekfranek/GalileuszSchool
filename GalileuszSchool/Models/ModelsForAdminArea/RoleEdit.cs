@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using GalileuszSchool.Models.ModelsForNormalUsers;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GalileuszSchool.Models
+namespace GalileuszSchool.Models.ModelsForAdminArea
 {
     public class RoleEdit
     {

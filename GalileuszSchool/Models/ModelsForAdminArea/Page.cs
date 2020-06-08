@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GalileuszSchool.Models
+namespace GalileuszSchool.Models.ModelsForAdminArea
 {
     public class Page: IEntity
     {

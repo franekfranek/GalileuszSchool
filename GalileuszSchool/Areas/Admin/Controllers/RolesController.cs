@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using GalileuszSchool.Models;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using GalileuszSchool.Models.ModelsForNormalUsers;
+using GalileuszSchool.Models.ModelsForAdminArea;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {
@@ -67,8 +69,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             IdentityRole role = await roleManager.FindByIdAsync(id);
-
-            IdentityRole role1 = await roleManager.FindByNameAsync("student");
 
             List<AppUser> members = new List<AppUser>();
             List<AppUser> nonMembers = new List<AppUser>();

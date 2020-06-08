@@ -1,10 +1,11 @@
-﻿using System;
+﻿using GalileuszSchool.Models.ModelsForNormalUsers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GalileuszSchool.Models
+namespace GalileuszSchool.Models.ModelsForNormalUsers
 {
     public class UserEdit : AppUser
     {

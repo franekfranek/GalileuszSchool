@@ -1,4 +1,5 @@
-﻿@model GalileuszSchool.Models.ClassRoom
+﻿@model GalileuszSchool.Models.ModelsForAdminArea.ClassRoom
+
 
 @{
     ViewData["Title"] = "Details";
@@ -10,22 +11,22 @@
     <h4>ClassRoom</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ClassRoomNumber)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ClassRoomNumber)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ClassRoomName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ClassRoomName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ClassRoomCapacity)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ClassRoomCapacity)
         </dd>
     </dl>

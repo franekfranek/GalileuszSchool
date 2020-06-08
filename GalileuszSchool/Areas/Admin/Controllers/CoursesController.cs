@@ -14,7 +14,7 @@ using SQLitePCL;
 using Microsoft.VisualBasic;
 using GalileuszSchool.Repository;
 using System.Net;
-
+using GalileuszSchool.Models.ModelsForAdminArea;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {

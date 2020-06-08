@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
-using GalileuszSchool.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -21,6 +20,7 @@ using GalileuszSchool.Repository.Pages;
 using GalileuszSchool.Repository.Classrooms;
 using GalileuszSchool.Repository;
 using GalileuszSchool.Areas.Admin.Controllers;
+using GalileuszSchool.Models.ModelsForNormalUsers;
 
 namespace GalileuszSchool
 {

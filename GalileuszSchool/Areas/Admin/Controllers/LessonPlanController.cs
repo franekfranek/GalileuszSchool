@@ -10,6 +10,7 @@ using GalileuszSchool.Models;
 using GalileuszSchool.Areas.Admin.ViewModels;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using GalileuszSchool.Models.ModelsForAdminArea;
 
 namespace GalileuszSchool.Areas.Admin.Controllers
 {

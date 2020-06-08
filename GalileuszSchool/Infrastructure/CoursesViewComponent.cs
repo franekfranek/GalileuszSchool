@@ -1,4 +1,5 @@
 ﻿using GalileuszSchool.Models;
+using GalileuszSchool.Models.ModelsForAdminArea;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;

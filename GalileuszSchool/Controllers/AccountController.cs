@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using GalileuszSchool.Areas.Admin.Controllers;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
+using GalileuszSchool.Models.ModelsForAdminArea;
+using GalileuszSchool.Models.ModelsForNormalUsers;
 using GalileuszSchool.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

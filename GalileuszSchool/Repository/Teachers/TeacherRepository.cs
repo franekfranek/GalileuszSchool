@@ -1,5 +1,6 @@
 ﻿using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
+using GalileuszSchool.Models.ModelsForAdminArea;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

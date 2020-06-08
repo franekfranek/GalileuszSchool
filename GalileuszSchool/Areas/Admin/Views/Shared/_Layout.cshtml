@@ -80,7 +80,7 @@
                             <li class="nav-item dropdown">
 
 
-                                @if(User?.Identity?.IsAuthenticated ?? false)
+                                @if (User?.Identity?.IsAuthenticated ?? false)
                                 {
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                                        aria-haspopup="true" aria-expanded="false">
@@ -140,6 +140,7 @@
             $("#wrapper").toggleClass("toggled");
         });
     </script>
+    <script type="text/javascript" src="~/js/knockout-3.5.1.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

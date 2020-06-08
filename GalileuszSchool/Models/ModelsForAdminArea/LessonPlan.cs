@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GalileuszSchool.Models
+namespace GalileuszSchool.Models.ModelsForAdminArea
 {
 
     public enum Days

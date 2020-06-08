@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
+using GalileuszSchool.Models.ModelsForAdminArea;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,11 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     [Area("Admin")]
     public class StudentCourseConnectionController : Controller
     {
-        private readonly GalileuszSchoolContext context;
+        private readonly GalileuszSchoolContext _context;
 
         public StudentCourseConnectionController(GalileuszSchoolContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public async Task<IActionResult> AddIds(StudentCourseConnection studentCourseConnection,
@@ -26,11 +27,13 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         {
             studentCourseConnection.CourseId = courseId;
             studentCourseConnection.StudentId= studentId;
+            Student student = await _context.Students.FirstOrDefaultAsync(x => x.Id == studentId);
 
             try
             {
-                context.Add(studentCourseConnection);
-                await context.SaveChangesAsync();
+                student.EnrollmentDate = DateTime.Now;
+                _context.Add(studentCourseConnection);
+                await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
@@ -47,7 +50,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         public async Task<IActionResult> ShowAllStudents()
         {
 
-            var students = await context.Students.OrderByDescending(x => x.Id).ToListAsync();
+            var students = await _context.Students.OrderByDescending(x => x.Id).ToListAsync();
            
             return View(students);
         }
@@ -55,9 +58,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         // get /admin/StudentCourseConnection/StudentsByCourse/1 (course id) 
         public async Task<IActionResult> StudentsByCourse(int id)
         {
-            Course course = await context.Courses.Where(x => x.Id == id).FirstOrDefaultAsync();
+            Course course = await _context.Courses.Where(x => x.Id == id).FirstOrDefaultAsync();
 
-            var studentsByCourse = await context.StudenCourseConnections
+            var studentsByCourse = await _context.StudenCourseConnections
                                                 .OrderByDescending(x => x.CourseId)
                                                 .Where(x =>x.CourseId == id)
                                                 .Include("Student").ToListAsync();

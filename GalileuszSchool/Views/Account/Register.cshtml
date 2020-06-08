@@ -12,11 +12,6 @@
             <div class="col-md-4">
                 <form asp-action="Register">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    @*<div class="form-group">
-                        <label asp-for="UserName" class="control-label"></label>
-                        <input asp-for="UserName" class="form-control" />
-                        <span asp-validation-for="UserName" class="text-danger"></span>
-                    </div>*@
                     
                     <div class="form-group">
                         <label asp-for="FirstName" class="control-label"></label>
@@ -50,6 +45,15 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="form-group">
+                        <div class="pretty p-default p-round p-thick">
+                            <input asp-for="IsTeacher" type="checkbox" value="true"/>
+                            <div class="state p-primary-o">
+                                <label asp-for="IsTeacher">I am a teacher</label>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <input type="submit" value="Register" class="btn btn-primary" />
                     </div>
@@ -57,8 +61,13 @@
             </div>
         </div>
 
+        
+
     </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        console.log("lool");
+    </script>
 }

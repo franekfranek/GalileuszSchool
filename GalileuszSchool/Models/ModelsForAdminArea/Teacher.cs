@@ -1,4 +1,6 @@
-﻿using GalileuszSchool.Repository;
+﻿using GalileuszSchool.Models.ModelsForAdminArea;
+using GalileuszSchool.Models.ModelsForNormalUsers;
+using GalileuszSchool.Repository;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GalileuszSchool.Models
+namespace GalileuszSchool.Models.ModelsForAdminArea
 {
     public class Teacher : IListItem, IEntity
     {
@@ -25,7 +27,10 @@ namespace GalileuszSchool.Models
         public string PhoneNumber { get; set; }
 
         [EmailAddress]
+        [FileExtensions]
         public string Email { get; set; }
+
+        public virtual ICollection<Homework> Homeworks { get; set; }
 
 
     }
