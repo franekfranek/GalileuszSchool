@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Homework>
+
+@{
+    ViewData["Title"] = "XXXX";
+}
+
+<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal:showDialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Create new homework</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    @*<div class="form-group">
+                        <label>Title</label>
+                        <input type="text" class="form-control" name="title" id="homeworkTitle" />
+                    </div>*@
+                </form>
+                <!--<form method="post" name="create-new-homework" id="create-home-form">
+
+
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" class="form-control" name="title" id="homeworkTitle" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea class="form-control" name="content" id="homeworkContent" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teacher</label>
+                        <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId">
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Image</label>
+                        <input type="file" onchange="previewFile(this)"
+                               class="form-control" name="image" id="homeworkCreateImg" /><br>-->
+                        @*<div id="imagePreview" class="img-thumbnail">*@
+                        <!--<img src="" height="200" id="targetImg" alt="" />
+                    </div>
+
+                </form>-->
+            </div>
+
+            @*<div class="modal-footer">
+                <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
+                <input form="create-home-form" type="submit" value="Add" class="btn btn-success"
+                       id="createNewStudent" data-bind="click : submit">
+            </div>*@
+           
+        </div>
+    </div>
+</div>
+
+<button class="btn btn-warning" 
+        data-bind="click: function(){showDialog(true)}">New Homework</button>
+
+
+
+
+
+@section Scripts{
+    <script src="~/js/homeworkIndex.js"></script>
+
+}

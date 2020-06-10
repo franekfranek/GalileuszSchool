@@ -27,7 +27,7 @@ namespace GalileuszSchool.Models.ModelsForNormalUsers
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Submission Date")]
-        public DateTime SubmissionDate { get; set; }
+        public DateTime SubmissionDate { get; set; } = DateTime.Now;
 
         public bool IsDone { get; set; } = false;
     }

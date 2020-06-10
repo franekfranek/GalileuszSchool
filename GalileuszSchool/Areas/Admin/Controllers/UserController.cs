@@ -16,19 +16,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private IPasswordHasher<AppUser> _passwordHasher;
         private readonly GalileuszSchoolContext _context;
         
         public UserController(UserManager<AppUser> userManager,
-                                SignInManager<AppUser> signInManager,
-                                IPasswordHasher<AppUser> passwordHasher,
-                                GalileuszSchoolContext context
-                                )
+                                GalileuszSchoolContext context)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
-            _passwordHasher = passwordHasher;
             _context = context;
         }
 

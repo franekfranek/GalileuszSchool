@@ -22,24 +22,24 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     [Area("Admin")]
     public class CoursesController : Controller
     {
-        private readonly GalileuszSchoolContext context;
+        private readonly GalileuszSchoolContext _context;
         private readonly IRepository<Course> _repository;
 
         public CoursesController(GalileuszSchoolContext context, IRepository<Course> repository)
         {
-            this.context = context;
-            this._repository = repository;
+            _context = context;
+            _repository = repository;
         }
 
         //get Admin/Courses
         public async Task<IActionResult> Index()
         {
             //TODO refactoring needed: how to move db queries to GetSelectListItem or/and use _repository
-            var teacherInfo =  context.Teachers.OrderBy(x => x.Id);
+            var teacherInfo =  _context.Teachers.OrderBy(x => x.Id);
             var selectListTeachers = await GetSelectListItem(teacherInfo);
             ViewBag.TeacherId = new SelectList(selectListTeachers, "Value", "Text");
 
-            var studentInfo = context.Students.OrderBy(x => x.Id);
+            var studentInfo = _context.Students.OrderBy(x => x.Id);
             var selectListStudents = await GetSelectListItem(studentInfo);
             ViewBag.StudentId = new SelectList(selectListStudents, "Value", "Text");
 

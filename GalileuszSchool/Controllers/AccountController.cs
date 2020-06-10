@@ -27,7 +27,8 @@ namespace GalileuszSchool.Controllers
         private readonly GalileuszSchoolContext context;
         private readonly ILogger<AccountController> logger;
         private readonly IEmailSender emailSender;
-        private readonly StudentsController studentsController;
+        private readonly StudentsController _studentsController;
+        private readonly TeachersController _teachersController;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
@@ -35,7 +36,8 @@ namespace GalileuszSchool.Controllers
                                 GalileuszSchoolContext context,
                                 ILogger<AccountController> logger,
                                 IEmailSender emailSender,
-                                StudentsController studentsController)
+                                StudentsController studentsController,
+                                TeachersController teachersController)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -43,7 +45,8 @@ namespace GalileuszSchool.Controllers
             this.context = context;
             this.logger = logger;
             this.emailSender = emailSender;
-            this.studentsController = studentsController;
+            _studentsController = studentsController;
+            _teachersController = teachersController;
         }
 
         // get account/register
@@ -84,7 +87,9 @@ namespace GalileuszSchool.Controllers
                     UserName = user.FirstName.ToLower() + "-" + user.LastName.ToLower(),
                     Email = user.Email,
                     IsStudent = user.IsStudent,
-                    PhoneNumber = user.PhoneNumber
+                    PhoneNumber = user.PhoneNumber,
+                    IsTeacher = user.IsTeacher
+
                 };
                
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
@@ -95,7 +100,20 @@ namespace GalileuszSchool.Controllers
                     {
                         var currentStudent = await userManager.FindByNameAsync(appUser.UserName);
                         await userManager.AddToRoleAsync(currentStudent, "student");
-                        await studentsController.Create(new Student
+                        await _studentsController.Create(new Student
+                        {
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            PhoneNumber = "000-000-000",
+                            Email = user.Email
+                        });
+                    }
+                    
+                    if (appUser.IsTeacher)
+                    {
+                        var currentTeacher = await userManager.FindByNameAsync(appUser.UserName);
+                        await userManager.AddToRoleAsync(currentTeacher, "student");
+                        await _teachersController.Create(new Teacher
                         {
                             FirstName = user.FirstName,
                             LastName = user.LastName,

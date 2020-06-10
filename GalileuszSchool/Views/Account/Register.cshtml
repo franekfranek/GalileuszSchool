@@ -39,7 +39,7 @@
                     
                     <div class="form-group">
                         <div class="pretty p-default p-round p-thick">
-                            <input asp-for="IsStudent" type="checkbox" value="true"/>
+                            <input class="checkBox" id="isStudent" asp-for="IsStudent" type="checkbox" value="true"/>
                             <div class="state p-primary-o">
                                 <label asp-for="IsStudent">I am a student or parent</label>
                             </div>
@@ -48,7 +48,7 @@
                     
                     <div class="form-group">
                         <div class="pretty p-default p-round p-thick">
-                            <input asp-for="IsTeacher" type="checkbox" value="true"/>
+                            <input class="checkBox" id="isTeacher" asp-for="IsTeacher" type="checkbox" value="true"/>
                             <div class="state p-primary-o">
                                 <label asp-for="IsTeacher">I am a teacher</label>
                             </div>
@@ -68,6 +68,26 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        console.log("lool");
+        $('.checkBox').click(function () {
+            updateCheckBox(this);
+        });
+
+        function updateCheckBox(element) {
+            if(!element.checked) {
+                $('.checkBox')
+                    .prop('disabled', false)
+                    .prop('checked', false);
+            }else {
+                if ($('#isStudent').prop('checked') == true) {
+                    $('#isTeacher')
+                        .prop('disabled', true)
+                        .prop("checked", false);
+                } else {
+                    $('#isStudent')
+                        .prop('disabled', true)
+                        .prop("checked", false);
+                }
+            }
+        }
     </script>
 }
