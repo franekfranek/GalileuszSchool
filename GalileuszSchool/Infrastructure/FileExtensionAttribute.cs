@@ -10,6 +10,7 @@ namespace ShopCart.Infrastructure
 {
     public class FileExtensionAttribute : ValidationAttribute
     {
+        public string[] Extensions { get; set; }
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var file = value as IFormFile;
@@ -18,7 +19,7 @@ namespace ShopCart.Infrastructure
             {
                 var extension = Path.GetExtension(file.FileName);
 
-                string[] extensions = { "jpg", "png" };
+                string[] extensions = Extensions;
                 bool result = extensions.Any(x => extension.EndsWith(x));
 
                 if (!result)

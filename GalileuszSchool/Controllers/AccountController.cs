@@ -88,7 +88,8 @@ namespace GalileuszSchool.Controllers
                     Email = user.Email,
                     IsStudent = user.IsStudent,
                     PhoneNumber = user.PhoneNumber,
-                    IsTeacher = user.IsTeacher
+                    IsTeacher = user.IsTeacher,
+                    RegistrationDate = DateTime.Now
 
                 };
                

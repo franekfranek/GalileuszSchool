@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<Homework>
 
 @{
-    ViewData["Title"] = "XXXX";
+    ViewData["Title"] = "Homework";
 }
 
-<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal:showDialog">
+<div class="modal fade" tabindex="-1" role="dialog"
+     data-bind="modal:showDialog" id="createHomeworkModal">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -14,54 +15,67 @@
             </div>
 
             <div class="modal-body">
-                <form>
-                    @*<div class="form-group">
-                        <label>Title</label>
-                        <input type="text" class="form-control" name="title" id="homeworkTitle" />
-                    </div>*@
-                </form>
-                <!--<form method="post" name="create-new-homework" id="create-home-form">
+                <form method="post" name="create-new-homework" id="create-home-form">
 
 
                     <div class="form-group">
                         <label>Title</label>
-                        <input type="text" class="form-control" name="title" id="homeworkTitle" />
+                        <input data-bind="value:Title" type="text" class="form-control"
+                               name="title" id="homeworkTitle" />
                     </div>
 
                     <div class="form-group">
                         <label>Content</label>
-                        <textarea class="form-control" name="content" id="homeworkContent" />
-                    </div>
-
-                    <div class="form-group">
-                        <label>Teacher</label>
-                        <select asp-items="@ViewBag.TeacherId" class="form-control" name="teacherId">
-                        </select>
+                        <input type="file"
+                               name="TextContent" id="inputFile" />
+                        <textarea data-bind="textInput: TextContent" style="width: 470px; height: 150px;"
+                                  class="form-control" name="content" id="homeworkContent"></textarea>
                     </div>
 
                     <div class="form-group">
                         <label>Image</label>
                         <input type="file" onchange="previewFile(this)"
-                               class="form-control" name="image" id="homeworkCreateImg" /><br>-->
+                               class="form-control" name="image" id="homeworkCreateImg" /><br>
                         @*<div id="imagePreview" class="img-thumbnail">*@
-                        <!--<img src="" height="200" id="targetImg" alt="" />
+                        <img src="" height="200" id="targetImg" alt="" />
                     </div>
 
-                </form>-->
+                </form>
             </div>
 
-            @*<div class="modal-footer">
+            <div class="modal-footer">
                 <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
                 <input form="create-home-form" type="submit" value="Add" class="btn btn-success"
                        id="createNewStudent" data-bind="click : submit">
-            </div>*@
-           
+            </div>
+
         </div>
     </div>
 </div>
 
-<button class="btn btn-warning" 
-        data-bind="click: function(){showDialog(true)}">New Homework</button>
+<button class="btn btn-warning"
+        data-bind="click: function(){showDialog(true)}">
+    New Homework
+</button>
+
+@*==============TEACHER VIEW-------------->*@
+<ul data-bind="foreach: homeworks, visible: homeworks().length > 0">
+    <li>
+        <input data-bind="value:Title" />
+    </li>
+</ul>
+
+
+
+@*==============STUDENT VIEW-------------->*@
+@*<ul data-bind="foreach: homeworks, visible: homeworks().length > 0">
+    <li>
+        <input type="checkbox" data-bind="checked: isDone" />
+        <input data-bind="value: title, disable: isDone" />
+        <a href="#" data-bind="click: $parent.removeTask">Delete</a>
+    </li>
+</ul>*@
+
 
 
 
@@ -69,5 +83,18 @@
 
 @section Scripts{
     <script src="~/js/homeworkIndex.js"></script>
+    <script>
+        document.getElementById('inputFile')
+            .addEventListener('change', function () {
+
+                var fr = new FileReader();
+                fr.onload = function () {
+                    document.getElementById('homeworkContent')
+                        .innerHTML = fr.result;
+                }
+
+                fr.readAsText(this.files[0]);
+            })
+    </script>
 
 }

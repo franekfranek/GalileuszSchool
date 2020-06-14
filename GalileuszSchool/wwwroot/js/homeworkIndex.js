@@ -16,14 +16,6 @@
             });
         }
 
-        // Update 13/07/2016
-        // based on @Richard's finding,
-        // don't need to destroy modal explicitly in latest bootstrap.
-        // modal('destroy') doesn't exist in latest bootstrap.
-        // ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
-        //    $(element).modal("destroy");
-        // });
-
     },
     update: function (element, valueAccessor) {
         var value = valueAccessor();
@@ -35,14 +27,59 @@
     }
 }
 
+function Homework(data) {
+    debugger;
+    this.Title = ko.observable(data.title);
+    this.IsDone = ko.observable(data.isDone);
+    this.TextContent = ko.observable(data.TextContent);
+}
+
+
+
 function PopupViewModel() {
+
+     // Data
     var self = this;
     this.showDialog = ko.observable(false);
 
+
+    self.Title = ko.observable("");
+    self.TextContent = ko.observable("");
+    self.homeworks = ko.observableArray([]);
+
+    // Operations
     this.submit = function () {
-        alert('submit');
+        var homework = {};
+        homework.Title= self.Title();
+        homework.TextContent = self.TextContent();
+        //var x =  $('#create-home-form').serialize();
+        //console.log(x);
+        debugger;
+        $.ajax({
+            url: "/homework/create",
+            data: ko.toJS(homework),
+            type: "post",
+            success: function (res) {
+                console.log(res);
+                $('#createHomeworkModal').on('hidden.bs.modal', function () {
+                    $(this).find('form').trigger('reset');
+                    $(this).find('textarea').val('');
+
+
+                })
+            }, error: function (res) {
+                console.log(res);
+            }
+        });
         self.showDialog(false);
     }
+
+    // Load initial state from server, convert it to Homework instances, then populate self.homeworks
+    $.getJSON("/homework/gethomeworks", function (allData) {
+        debugger;
+        var mappedHomeworks = $.map(allData, function (item) { return new Homework(item) });
+        self.homeworks(mappedHomeworks);
+    });  
 }
 
 ko.applyBindings(new PopupViewModel());

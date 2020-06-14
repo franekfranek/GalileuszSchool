@@ -40,7 +40,7 @@ namespace GalileuszSchool.Models.ModelsForAdminArea
         public DateTime EnrollmentDate { get; set; }
 
         [NotMapped]
-        [FileExtension]
+        [FileExtension(Extensions = new string[] { "jpg", "png" })]
         public IFormFile ImageUpload { get; set; }
 
         public virtual ICollection<Homework> Homeworks { get; set; }
