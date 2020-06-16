@@ -43,7 +43,7 @@ namespace GalileuszSchool.Models.ModelsForAdminArea
         [FileExtension(Extensions = new string[] { "jpg", "png" })]
         public IFormFile ImageUpload { get; set; }
 
-        public virtual ICollection<Homework> Homeworks { get; set; }
+        public IList<StudentHomework> StudentHomeworks { get; set; }
 
 
     }

@@ -40,6 +40,9 @@ namespace GalileuszSchool.Models.ModelsForNormalUsers
         public DateTime StudentSubmissionDate { get; set; }
 
         public bool IsDone { get; set; } = false;
+        public IList<StudentHomework> StudentHomeworks { get; set; }
+
+        public string Image { get; set; }
 
         [NotMapped]
         public IFormFile PhotoContent { get; set; }

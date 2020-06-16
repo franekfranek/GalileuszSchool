@@ -46,6 +46,9 @@ function PopupViewModel() {
     self.Title = ko.observable("");
     self.TextContent = ko.observable("");
     self.homeworks = ko.observableArray([]);
+    //folders
+    self.folders = ['All', 'Assigned', 'Not Assigned'];
+    self.chosenFolderId = ko.observable();
 
     // Operations
     this.submit = function () {
@@ -80,6 +83,9 @@ function PopupViewModel() {
         var mappedHomeworks = $.map(allData, function (item) { return new Homework(item) });
         self.homeworks(mappedHomeworks);
     });  
+
+    // Behaviours
+    self.goToFolder = function (folder) { self.chosenFolderId(folder); };
 }
 
 ko.applyBindings(new PopupViewModel());

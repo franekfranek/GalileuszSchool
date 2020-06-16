@@ -59,10 +59,16 @@
 </button>
 
 @*==============TEACHER VIEW-------------->*@
-<ul data-bind="foreach: homeworks, visible: homeworks().length > 0">
-    <li>
-        <input data-bind="value:Title" />
+@*<ul class="folders" data-bind="foreach: homeworks, visible: homeworks().length > 0">
+    <li data-bind="text:Title">
+        
     </li>
+</ul>*@
+
+<ul class="folders" data-bind="foreach: folders">
+    <li data-bind="text: $data,
+            css: { selected: $data == $root.chosenFolderId() },
+            click: $root.goToFolder"></li>
 </ul>
 
 

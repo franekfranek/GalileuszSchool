@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
@@ -83,9 +84,26 @@ namespace GalileuszSchool.Controllers
             return Json(new { text = "Server error!" });
         }
 
-        public async Task<JsonResult> GetHomeworks()
+        public async Task<JsonResult> GetHomeworks(string option)
         {
-            List<Homework> homeworks = await _repository.GetAll().OrderByDescending(x => x.CreationDate)
+            var condition = string.Empty;
+            Expression<Func<Homework, bool>> whereExpression = null;
+
+            switch (option)
+            {
+                case "All":
+                    whereExpression = x => x.Slug != null;
+                    break;
+                case "Assigned":
+                    break;
+                case "Not Assigned":
+                    break;
+
+            }
+            //List<Homework> homeworks = await _repository.GetAll().OrderByDescending(x => x.CreationDate)
+            //                                                .Include(x => x.Teacher).ToListAsync();
+
+            List<Homework> homeworks = await _repository.GetAll().Where(whereExpression)
                                                             .Include(x => x.Teacher).ToListAsync();
             return Json(homeworks);
         }

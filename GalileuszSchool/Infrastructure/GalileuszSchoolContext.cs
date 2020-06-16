@@ -26,10 +26,13 @@ namespace GalileuszSchool.Infrastructure
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<StudentCourseConnection>()
                 .HasKey(o => new { o.StudentId, o.CourseId });
+            modelBuilder.Entity<StudentHomework>()
+                .HasKey(sh => new { sh.StudentId, sh.HomeworkId });
+            
         }
 
         public DbSet<ClassRoom> ClassRoom { get; set; }
         public DbSet<Homework> Homework { get; set; }
-
+        public DbSet<StudentHomework> studentHomework { get; set; }
     }
 }
