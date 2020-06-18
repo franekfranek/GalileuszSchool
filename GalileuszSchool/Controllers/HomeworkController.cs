@@ -95,8 +95,10 @@ namespace GalileuszSchool.Controllers
                     whereExpression = x => x.Slug != null;
                     break;
                 case "Assigned":
+                    whereExpression = x => x.IsDone == true;
                     break;
                 case "Not Assigned":
+                    whereExpression = x => x.IsDone == false;
                     break;
 
             }

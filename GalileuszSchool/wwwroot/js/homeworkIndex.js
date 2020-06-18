@@ -28,15 +28,19 @@
 }
 
 function Homework(data) {
-    debugger;
     this.Title = ko.observable(data.title);
+    this.Slug = ko.observable(data.slug);
     this.IsDone = ko.observable(data.isDone);
-    this.TextContent = ko.observable(data.TextContent);
+    this.CreationDate = ko.observable(data.creationDate.substring(0, 10));
+    this.solutionTextContent = ko.observable(data.solutionTextContent);
+    this.TextContent = ko.observable(data.textContent);
+    this.TeacherName = ko.observable(data.teacher.firstName + " " + data.teacher.lastName);
+    this.studentSubmissionDate = ko.observable(data.studentSubmissionDate);
 }
 
 
 
-function PopupViewModel() {
+function ViewModel() {
 
      // Data
     var self = this;
@@ -49,15 +53,15 @@ function PopupViewModel() {
     //folders
     self.folders = ['All', 'Assigned', 'Not Assigned'];
     self.chosenFolderId = ko.observable();
+    self.chosenFolderData = ko.observable();
 
     // Operations
+    //========SAVE NEW HOMEWORK======
     this.submit = function () {
         var homework = {};
         homework.Title= self.Title();
         homework.TextContent = self.TextContent();
-        //var x =  $('#create-home-form').serialize();
-        //console.log(x);
-        debugger;
+        
         $.ajax({
             url: "/homework/create",
             data: ko.toJS(homework),
@@ -78,14 +82,29 @@ function PopupViewModel() {
     }
 
     // Load initial state from server, convert it to Homework instances, then populate self.homeworks
-    $.getJSON("/homework/gethomeworks", function (allData) {
-        debugger;
-        var mappedHomeworks = $.map(allData, function (item) { return new Homework(item) });
-        self.homeworks(mappedHomeworks);
-    });  
+    //$.getJSON("/homework/gethomeworks", function (allData) {
+    //    debugger;
+    //    var mappedHomeworks = $.map(allData, function (item) { return new Homework(item) });
+    //    self.homeworks(mappedHomeworks);
+    //});  
 
     // Behaviours
-    self.goToFolder = function (folder) { self.chosenFolderId(folder); };
+    //LOAD FILTERED HOMEWORKS
+    self.goToFolder = function (folder) {
+        self.chosenFolderId(folder);
+        $.ajax({
+            type: 'get',
+            url: '/homework/gethomeworks',
+            data: { option: folder },
+            success: function (result) {
+                console.log(result);
+                var mappedHomeworks = $.map(result, function (item) { return new Homework(item) });
+                self.homeworks(mappedHomeworks)
+            }
+        });
+    };
+    // Show all homework by default
+    self.goToFolder('All');
 }
 
-ko.applyBindings(new PopupViewModel());
+ko.applyBindings(new ViewModel());

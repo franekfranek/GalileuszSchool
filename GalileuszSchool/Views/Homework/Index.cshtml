@@ -4,6 +4,7 @@
     ViewData["Title"] = "Homework";
 }
 
+@*==========CREATE HOMEWORK=========*@
 <div class="modal fade" tabindex="-1" role="dialog"
      data-bind="modal:showDialog" id="createHomeworkModal">
     <div class="modal-dialog">
@@ -53,36 +54,51 @@
     </div>
 </div>
 
-<button class="btn btn-warning"
-        data-bind="click: function(){showDialog(true)}">
-    New Homework
-</button>
-
-@*==============TEACHER VIEW-------------->*@
+@*==============TEACHER VIEW============*@
 @*<ul class="folders" data-bind="foreach: homeworks, visible: homeworks().length > 0">
-    <li data-bind="text:Title">
-        
-    </li>
-</ul>*@
+        <li data-bind="text:Title">
 
-<ul class="folders" data-bind="foreach: folders">
+        </li>
+    </ul>*@
+
+<ul class="folders">
+    @*above is not a comment it is legit ko syntax :D*@
+    <!-- ko foreach: folders -->
     <li data-bind="text: $data,
             css: { selected: $data == $root.chosenFolderId() },
-            click: $root.goToFolder"></li>
+            click: $root.goToFolder">
+    </li>
+    <!-- /ko -->
+    <li data-bind="click: function(){showDialog(true)}">
+        <i class="material-icons" data-toggle="tooltip" title="New">&#xE147</i>
+        <span>New</span>
+    </li>
 </ul>
 
 
 
 @*==============STUDENT VIEW-------------->*@
 @*<ul data-bind="foreach: homeworks, visible: homeworks().length > 0">
-    <li>
-        <input type="checkbox" data-bind="checked: isDone" />
-        <input data-bind="value: title, disable: isDone" />
-        <a href="#" data-bind="click: $parent.removeTask">Delete</a>
-    </li>
-</ul>*@
+        <li>
+            <input type="checkbox" data-bind="checked: isDone" />
+            <input data-bind="value: title, disable: isDone" />
+            <a href="#" data-bind="click: $parent.removeTask">Delete</a>
+        </li>
+    </ul>*@
 
-
+<!-- Homework grid -->
+<table class="mails">
+    <thead><tr><th>Title</th><th>Submitted by Student</th>
+        <th>Creation Date</th><th>Teacher</th></tr></thead>
+    <tbody data-bind="foreach: homeworks">
+        <tr>
+            <td data-bind="text: Title"></td>
+            <td data-bind="text: IsDone"></td>
+            <td data-bind="text: CreationDate"></td>
+            <td data-bind="text: TeacherName"></td>
+        </tr>
+    </tbody>
+</table>
 
 
 
