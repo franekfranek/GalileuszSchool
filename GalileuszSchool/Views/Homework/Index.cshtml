@@ -4,7 +4,7 @@
     ViewData["Title"] = "Homework";
 }
 
-@*==========CREATE HOMEWORK=========*@
+@*==========CREATE HOMEWORK MODAL=========*@
 <div class="modal fade" tabindex="-1" role="dialog"
      data-bind="modal:showDialog" id="createHomeworkModal">
     <div class="modal-dialog">
@@ -54,12 +54,7 @@
     </div>
 </div>
 
-@*==============TEACHER VIEW============*@
-@*<ul class="folders" data-bind="foreach: homeworks, visible: homeworks().length > 0">
-        <li data-bind="text:Title">
-
-        </li>
-    </ul>*@
+@*====== STUDENT/TEACHER VIEW ======*@
 
 <ul class="folders">
     @*above is not a comment it is legit ko syntax :D*@
@@ -69,37 +64,46 @@
             click: $root.goToFolder">
     </li>
     <!-- /ko -->
-    <li data-bind="click: function(){showDialog(true)}">
+    <li data-bind="click: function(){showDialog(true)}, ifnot: isStudentStatus">
         <i class="material-icons" data-toggle="tooltip" title="New">&#xE147</i>
         <span>New</span>
     </li>
 </ul>
 
-
-
-@*==============STUDENT VIEW-------------->*@
-@*<ul data-bind="foreach: homeworks, visible: homeworks().length > 0">
-        <li>
-            <input type="checkbox" data-bind="checked: isDone" />
-            <input data-bind="value: title, disable: isDone" />
-            <a href="#" data-bind="click: $parent.removeTask">Delete</a>
-        </li>
-    </ul>*@
-
 <!-- Homework grid -->
 <table class="mails">
-    <thead><tr><th>Title</th><th>Submitted by Student</th>
-        <th>Creation Date</th><th>Teacher</th></tr></thead>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <!-- ko if: isTeacherStatus -->
+            <th>Submitted by Student</th>
+            <th>Creation Date</th>
+            <!-- /ko -->
+            <!-- ko if: isStudentStatus -->
+            <th>Teacher</th>
+            <th>Submited on</th>
+            <!-- /ko -->
+        </tr>
+    </thead>
+
     <tbody data-bind="foreach: homeworks">
         <tr>
             <td data-bind="text: Title"></td>
+            <!-- ko if: $root.isTeacherStatus -->
             <td data-bind="text: IsDone"></td>
             <td data-bind="text: CreationDate"></td>
+            <!-- /ko -->
+            <!-- ko if: $root.isStudentStatus -->
             <td data-bind="text: TeacherName"></td>
+            <td data-bind="text: studentSubmissionDate"></td>
+            <!-- /ko -->
+
         </tr>
     </tbody>
+
 </table>
 
+<div data-bind="if: isStudentStatus"> student </div>
 
 
 

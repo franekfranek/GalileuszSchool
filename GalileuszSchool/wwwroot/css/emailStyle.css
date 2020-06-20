@@ -30,6 +30,10 @@
         border-right: 1px solid #888;
     }
 
+    .folders li:last-child {
+        border-right: none
+    }
+
     .folders li {
         *display: inline !important;
     }
@@ -76,8 +80,9 @@
         padding: 0.4em 0 0.3em 0.7em;
     }
 
-        .mails th:nth-child(1), .mails td:nth-child(1) {
+/*        .mails th:nth-child(1), .mails td:nth-child(1) {
             width: 20%;
+            color:red;
         }
 
         .mails th:nth-child(2), .mails td:nth-child(2) {
@@ -90,7 +95,7 @@
 
         .mails th:nth-child(4), .mails td:nth-child(4) {
             width: 15%;
-        }
+        }*/
 
         .mails th:last-child {
             border-right: none

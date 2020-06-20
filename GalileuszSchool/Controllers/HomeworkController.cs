@@ -86,7 +86,9 @@ namespace GalileuszSchool.Controllers
 
         public async Task<JsonResult> GetHomeworks(string option)
         {
-            var condition = string.Empty;
+            var user = await _userManager.GetUserAsync(User);
+            var teacher = await _context.Teachers.FirstOrDefaultAsync(x=> x.Email == user.Email);
+
             Expression<Func<Homework, bool>> whereExpression = null;
 
             switch (option)
@@ -94,10 +96,10 @@ namespace GalileuszSchool.Controllers
                 case "All":
                     whereExpression = x => x.Slug != null;
                     break;
-                case "Assigned":
+                case "Done":
                     whereExpression = x => x.IsDone == true;
                     break;
-                case "Not Assigned":
+                case "Undone":
                     whereExpression = x => x.IsDone == false;
                     break;
 
@@ -107,6 +109,11 @@ namespace GalileuszSchool.Controllers
 
             List<Homework> homeworks = await _repository.GetAll().Where(whereExpression)
                                                             .Include(x => x.Teacher).ToListAsync();
+            if (user.IsTeacher)
+            {
+                homeworks = homeworks.Where(x => x.TeacherId == teacher.Id).ToList();
+            }
+
             return Json(homeworks);
         }
         public async Task<IActionResult> FindHomework(int id)
@@ -114,5 +121,12 @@ namespace GalileuszSchool.Controllers
             var homework = await _repository.GetById(id);
             return new JsonResult(homework);
         }
+
+        public async Task<IActionResult> IsStudentOrTeacher()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return Json(new { isTeacher = user.IsTeacher, isStudent = user.IsStudent });
+        }
+        
     }
 }

@@ -42,7 +42,7 @@ function Homework(data) {
 
 function ViewModel() {
 
-     // Data
+    // Data
     var self = this;
     this.showDialog = ko.observable(false);
 
@@ -51,9 +51,12 @@ function ViewModel() {
     self.TextContent = ko.observable("");
     self.homeworks = ko.observableArray([]);
     //folders
-    self.folders = ['All', 'Assigned', 'Not Assigned'];
+    self.folders = ko.observable();
     self.chosenFolderId = ko.observable();
-    self.chosenFolderData = ko.observable();
+
+    self.isStudentStatus = ko.observable();
+    self.isTeacherStatus = ko.observable();
+    
 
     // Operations
     //========SAVE NEW HOMEWORK======
@@ -71,8 +74,7 @@ function ViewModel() {
                 $('#createHomeworkModal').on('hidden.bs.modal', function () {
                     $(this).find('form').trigger('reset');
                     $(this).find('textarea').val('');
-
-
+                    self.goToFolder('All');
                 })
             }, error: function (res) {
                 console.log(res);
@@ -81,14 +83,14 @@ function ViewModel() {
         self.showDialog(false);
     }
 
-    // Load initial state from server, convert it to Homework instances, then populate self.homeworks
-    //$.getJSON("/homework/gethomeworks", function (allData) {
-    //    debugger;
-    //    var mappedHomeworks = $.map(allData, function (item) { return new Homework(item) });
-    //    self.homeworks(mappedHomeworks);
-    //});  
-
     // Behaviours
+    //DETERMINE WHICH FOLDERS TO LOAD
+    self.whichFolders = function (who) {
+        console.log(who.isTeacher);
+        if (who.isTeacher) self.folders(['All', 'Assigned', 'Not Assigned']);
+        else self.folders(['All', 'Done', 'Undone'])
+    }
+
     //LOAD FILTERED HOMEWORKS
     self.goToFolder = function (folder) {
         self.chosenFolderId(folder);
@@ -97,12 +99,31 @@ function ViewModel() {
             url: '/homework/gethomeworks',
             data: { option: folder },
             success: function (result) {
-                console.log(result);
-                var mappedHomeworks = $.map(result, function (item) { return new Homework(item) });
-                self.homeworks(mappedHomeworks)
+                //convert it to Homework instances, then populate self.homeworks
+                var mappedHomeworks = $.map(result, function (item) {
+                    if(item.studentSubmissionDate.substring(0, 1) === '0'){
+                        item.studentSubmissionDate = 'Not yet'
+                    }
+                    else {
+                        item.studentSubmissionDate = item.studentSubmissionDate.substring(0, 10);
+                    }
+                    return new Homework(item)
+                });
+                self.homeworks(mappedHomeworks);
             }
         });
     };
+
+    //determine who is logged in
+    self.isStudentOrTeacher = function () {
+        $.get('/homework/isstudentorteacher').done(function (res) {
+            self.isStudentStatus(res.isStudent);
+            self.isTeacherStatus(res.isTeacher);
+            self.whichFolders(res);
+        });  
+    }
+    
+    self.isStudentOrTeacher();
     // Show all homework by default
     self.goToFolder('All');
 }
