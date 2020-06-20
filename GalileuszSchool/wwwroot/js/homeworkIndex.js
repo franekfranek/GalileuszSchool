@@ -28,6 +28,7 @@
 }
 
 function Homework(data) {
+    this.Id = ko.observable(data.id);
     this.Title = ko.observable(data.title);
     this.Slug = ko.observable(data.slug);
     this.IsDone = ko.observable(data.isDone);
@@ -42,24 +43,33 @@ function Homework(data) {
 
 function ViewModel() {
 
-    // Data
-    var self = this;
+    // DATA
+    var self = this;//this has to be here so this contextes dont mix
+    
+    //modal
     this.showDialog = ko.observable(false);
-
-
     self.Title = ko.observable("");
     self.TextContent = ko.observable("");
+
+    //list of homeworks
     self.homeworks = ko.observableArray([]);
     //folders
     self.folders = ko.observable();
     self.chosenFolderId = ko.observable();
 
+    //who is logged
     self.isStudentStatus = ko.observable();
     self.isTeacherStatus = ko.observable();
-    
 
-    // Operations
-    //========SAVE NEW HOMEWORK======
+    //detailed homeworks
+    self.chosenHomeworkData = ko.observable();
+
+    //toggle view
+    self.toggleDetailedView = ko.observable(true);
+
+    // OPERATIONS
+
+    //save homework
     this.submit = function () {
         var homework = {};
         homework.Title= self.Title();
@@ -82,16 +92,22 @@ function ViewModel() {
         });
         self.showDialog(false);
     }
+    self.goToHomework = function (homework) {
+        self.chosenFolderId('All');
+        //console.log(homework.Id);
+        self.toggleDetailedView(true);
+        $.get("/homework/findhomework", { id: homework.Id }, self.chosenHomeworkData).done(function (res) { console.log(res);});
+    };
 
-    // Behaviours
-    //DETERMINE WHICH FOLDERS TO LOAD
+    // BEHAVIOURS
+    //determine which folders to load
     self.whichFolders = function (who) {
         console.log(who.isTeacher);
         if (who.isTeacher) self.folders(['All', 'Assigned', 'Not Assigned']);
         else self.folders(['All', 'Done', 'Undone'])
     }
 
-    //LOAD FILTERED HOMEWORKS
+    //load filteres homeworks
     self.goToFolder = function (folder) {
         self.chosenFolderId(folder);
         $.ajax({
@@ -110,6 +126,8 @@ function ViewModel() {
                     return new Homework(item)
                 });
                 self.homeworks(mappedHomeworks);
+                console.log(mappedHomeworks);
+                self.toggleDetailedView(false);
             }
         });
     };
@@ -125,7 +143,7 @@ function ViewModel() {
     
     self.isStudentOrTeacher();
     // Show all homework by default
-    self.goToFolder('All');
+    //self.goToFolder('All');
 }
 
 ko.applyBindings(new ViewModel());

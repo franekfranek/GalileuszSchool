@@ -71,9 +71,9 @@
 </ul>
 
 <!-- Homework grid -->
-<table class="mails">
+<table data-bind="ifnot: toggleDetailedView" class="mails">
     <thead>
-        <tr>
+        <tr data-bind="click: $root.goToHomework">
             <th>Title</th>
             <!-- ko if: isTeacherStatus -->
             <th>Submitted by Student</th>
@@ -87,7 +87,7 @@
     </thead>
 
     <tbody data-bind="foreach: homeworks">
-        <tr>
+        <tr data-bind="click: $root.goToHomework">
             <td data-bind="text: Title"></td>
             <!-- ko if: $root.isTeacherStatus -->
             <td data-bind="text: IsDone"></td>
@@ -104,6 +104,19 @@
 </table>
 
 <div data-bind="if: isStudentStatus"> student </div>
+
+<!-- Chosen mail -->
+<div data-bind="if: toggleDetailedView">
+    <div class="viewMail" data-bind="with: chosenHomeworkData">
+        <div class="mailInfo">
+            <h1 data-bind="text: title"></h1>
+            @*<p><label>From</label>: <span data-bind="text: from"></span></p>
+                <p><label>To</label>: <span data-bind="text: to"></span></p>
+                <p><label>Date</label>: <span data-bind="text: date"></span></p>*@
+        </div>
+        @*<p class="message" data-bind="html: messageContent" />*@
+    </div>
+</div>
 
 
 
