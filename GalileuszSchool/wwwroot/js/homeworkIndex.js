@@ -27,6 +27,7 @@
     }
 }
 
+//class models
 function Homework(data) {
     this.Id = ko.observable(data.id);
     this.Title = ko.observable(data.title);
@@ -36,7 +37,12 @@ function Homework(data) {
     this.solutionTextContent = ko.observable(data.solutionTextContent);
     this.TextContent = ko.observable(data.textContent);
     this.TeacherName = ko.observable(data.teacher.firstName + " " + data.teacher.lastName);
-    this.studentSubmissionDate = ko.observable(data.studentSubmissionDate);
+    //this.studentSubmissionDate = ko.observable(data.studentSubmissionDate);
+}
+
+function Student(data) {
+    this.Id = ko.observable(data.id);
+    this.FullName = ko.observable(data.firstName + ' ' + data.lastName);
 }
 
 
@@ -63,10 +69,19 @@ function ViewModel() {
 
     //detailed homeworks
     self.chosenHomeworkData = ko.observable();
+    self.currentHomeworkId = ko.observable();
+    self.currentHomeworkObject = ko.observable();
+    self.currentHomeworkObject = ko.observable();
 
     //toggle view
     self.toggleDetailedView = ko.observable(true);
 
+    //list of students 
+    self.studentsPerHomework = ko.observableArray([]);
+    self.studentNotAssignedYet = ko.observableArray([]);
+
+
+    self.selectedStudents = ko.observableArray([]);
     // OPERATIONS
 
     //save homework
@@ -92,12 +107,93 @@ function ViewModel() {
         });
         self.showDialog(false);
     }
+
+
+
+    //find specific homework
     self.goToHomework = function (homework) {
         self.chosenFolderId('All');
-        //console.log(homework.Id);
         self.toggleDetailedView(true);
-        $.get("/homework/findhomework", { id: homework.Id }, self.chosenHomeworkData).done(function (res) { console.log(res);});
+        $.get("/homework/findhomework",
+            { id: homework.Id },
+            self.chosenHomeworkData).done(function (res) {
+                self.loadStudentsPerHomework(res);
+                self.currentHomeworkId(res.id);
+                self.currentHomeworkObject(homework);
+            });
     };
+
+    self.loadStudentsPerHomework = function (homework) {
+        $.ajax({
+            url: '/studentHomework/studentsByHomework',
+            data: { id: homework.id },
+            type: 'get',
+            success: function (res) {
+                var mappedStudents = $.map(res, function (item) {
+                    return new Student(item);
+                });
+                self.studentsPerHomework(mappedStudents);
+                self.loadStudentsWithoutHomework(self.studentsPerHomework());
+            }
+        })
+    }
+
+    self.loadStudentsWithoutHomework = function (students) {
+        var ids = [];
+        for (var i = 0; i < students.length; i++) {
+            ids[i] = students[i].Id;
+        }
+        
+        $.ajax({
+            type: 'get',
+            url: '/studentHomework/getRestOfStudent',
+            dataType: 'json',
+            traditional: true,
+            data: { alreadyAssignedStudents: ids },
+            success: function (res) {
+                var mappedStudents = $.map(res, function (item) {
+                    return new Student(item);
+                });
+                self.studentNotAssignedYet(mappedStudents);
+            }
+        }); 
+    }
+
+
+    // check all the checkboxes
+    //https://knockoutjs.com/documentation/computed-writable.html newer
+    self.SelectAll = ko.dependentObservable({
+        read: function () {
+            return self.selectedStudents().length === self.studentNotAssignedYet().length;
+        },
+        write: function (newValue) {
+            self.selectedStudents(self.selectedStudents().length === self.studentNotAssignedYet().length ? [] : self.studentNotAssignedYet().slice(0));
+        }
+    });
+
+    //save students assigned to homework to db
+    self.saveStudents = function () {
+        var ids = [];
+        for (var i = 0; i < self.selectedStudents().length; i++) {
+            ids.push(self.selectedStudents()[i].Id);
+        }
+
+        $.ajax({
+            type: 'post',
+            url: '/studentHomework/AddStudentHomeworks',
+            dataType: 'json',
+            traditional: true,
+            data: {
+                homeworkId: self.currentHomeworkId(),
+                studentsIds: ids
+            },
+            success: function (res) {
+                self.selectedStudents([]);
+                self.goToHomework(self.currentHomeworkObject());
+               
+            }
+        }); 
+    }
 
     // BEHAVIOURS
     //determine which folders to load
@@ -107,7 +203,7 @@ function ViewModel() {
         else self.folders(['All', 'Done', 'Undone'])
     }
 
-    //load filteres homeworks
+    //load filtered homeworks
     self.goToFolder = function (folder) {
         self.chosenFolderId(folder);
         $.ajax({
@@ -117,16 +213,15 @@ function ViewModel() {
             success: function (result) {
                 //convert it to Homework instances, then populate self.homeworks
                 var mappedHomeworks = $.map(result, function (item) {
-                    if(item.studentSubmissionDate.substring(0, 1) === '0'){
-                        item.studentSubmissionDate = 'Not yet'
-                    }
-                    else {
-                        item.studentSubmissionDate = item.studentSubmissionDate.substring(0, 10);
-                    }
+                    //if(item.studentSubmissionDate.substring(0, 1) === '0'){
+                    //    item.studentSubmissionDate = 'Not yet'
+                    //}
+                    //else {
+                    //    item.studentSubmissionDate = item.studentSubmissionDate.substring(0, 10);
+                    //}
                     return new Homework(item)
                 });
                 self.homeworks(mappedHomeworks);
-                console.log(mappedHomeworks);
                 self.toggleDetailedView(false);
             }
         });
@@ -140,10 +235,10 @@ function ViewModel() {
             self.whichFolders(res);
         });  
     }
-    
+
     self.isStudentOrTeacher();
     // Show all homework by default
-    //self.goToFolder('All');
+    self.goToFolder('All');
 }
 
 ko.applyBindings(new ViewModel());

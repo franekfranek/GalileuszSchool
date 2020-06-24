@@ -34,15 +34,10 @@ namespace GalileuszSchool.Models.ModelsForNormalUsers
         [Display(Name = "Submission Date")]
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Submission Date")]
-        public DateTime StudentSubmissionDate { get; set; }
-
-        public bool IsDone { get; set; } = false;
         public IList<StudentHomework> StudentHomeworks { get; set; }
 
-        public string Image { get; set; }
+        public string ImageContent { get; set; }
+        public string ImageSolution { get; set; }
 
         [NotMapped]
         public IFormFile PhotoContent { get; set; }

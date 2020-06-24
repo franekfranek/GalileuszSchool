@@ -1,10 +1,14 @@
 ﻿using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models.ModelsForAdminArea;
+using GalileuszSchool.Models.ModelsForNormalUsers;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace GalileuszSchool.Controllers
@@ -18,50 +22,58 @@ namespace GalileuszSchool.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> AddStudentHomework(StudentHomework studentHomework,
-                                                    int homeworkId, int studentId)
+        public async Task<IActionResult> AddStudentHomeworks(int homeworkId, List<int> studentsIds)
         {
-            studentHomework.HomeworkId = homeworkId;
-            studentHomework.StudentId = studentId;
+            var studentHomeworks = new List<StudentHomework>();
+
+            foreach (int studentId in studentsIds)
+            {
+                studentHomeworks.Add(new StudentHomework()
+                { HomeworkId = homeworkId, StudentId = studentId });
+            }
 
             try
             {
-                _context.Add(studentHomework);
+                foreach (var item in studentHomeworks)
+                {
+                    _context.Add(item);
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
-                TempData["Error"] = "Server error ocurred!";
-                return RedirectToAction("Index", "Homework");
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { text = "Server error!" });
             }
 
-            TempData["Success"] = "The homework has been added";
-            return RedirectToAction("Index", "Homework");
-
+            return Json(new { text = "Homework assigned!" });
         }
 
-        // get /admin/StudentCourseConnection/ShowStudentForCourse
-        //public async Task<IActionResult> ShowAllStudents()
-        //{
+        // get /admin/StudentHomework/StudentsByhomework/1 (homework id) 
+        public async Task<IActionResult> StudentsByHomework(int id)
+        {
+            var studentsByHomework = await _context.studentHomework
+                                                .OrderByDescending(x => x.HomeworkId)
+                                                .Where(x => x.HomeworkId == id)
+                                                .Include("Student").Select(x => x.Student).ToListAsync();
 
-        //    var students = await _context.Students.OrderByDescending(x => x.Id).ToListAsync();
+            //var q = from s in _context.Students
+            //               join sh in _context.studentHomework
+            //               on s.Id equals sh.StudentId
+            //               where sh.HomeworkId == id
+            //               select s;
+            //var students = await q.ToListAsync();
 
-        //    return View(students);
-        //}
+            return Json(studentsByHomework);
+        }
 
-        // get /admin/StudentCourseConnection/StudentsByCourse/1 (course id) 
-        //public async Task<IActionResult> StudentsByCourse(int id)
-        //{
-        //    Course course = await _context.Courses.Where(x => x.Id == id).FirstOrDefaultAsync();
+        public async Task<IActionResult> GetRestOfStudent(List<int> alreadyAssignedStudents)
+        {
 
-        //    var studentsByCourse = await _context.StudenCourseConnections
-        //                                        .OrderByDescending(x => x.CourseId)
-        //                                        .Where(x => x.CourseId == id)
-        //                                        .Include("Student").ToListAsync();
-
-        //    ViewBag.CourseName = course.Name;
-
-        //    return View(studentsByCourse);
-        //}
+            var students = await _context.Students.Where(x => !alreadyAssignedStudents.Contains(x.Id)).ToListAsync();
+            
+            return Json(students);
+        }
     }
 }

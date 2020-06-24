@@ -97,10 +97,10 @@ namespace GalileuszSchool.Controllers
                     whereExpression = x => x.Slug != null;
                     break;
                 case "Done":
-                    whereExpression = x => x.IsDone == true;
+                    //whereExpression = x => x.;
                     break;
                 case "Undone":
-                    whereExpression = x => x.IsDone == false;
+                    //whereExpression = x => x.IsDone == false;
                     break;
 
             }
@@ -127,6 +127,8 @@ namespace GalileuszSchool.Controllers
             var user = await _userManager.GetUserAsync(User);
             return Json(new { isTeacher = user.IsTeacher, isStudent = user.IsStudent });
         }
+
+
         
     }
 }
