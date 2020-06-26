@@ -2,12 +2,14 @@
 using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers;
 using GalileuszSchool.Repository;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -22,14 +24,17 @@ namespace GalileuszSchool.Controllers
         private readonly GalileuszSchoolContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly IRepository<Homework> _repository;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
         public HomeworkController(GalileuszSchoolContext context,
                                   UserManager<AppUser> userManager,
-                                  IRepository<Homework> repository)
+                                  IRepository<Homework> repository,
+                                  IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
             _repository = repository;
+            this.webHostEnvironment = env;
         }
 
         public async Task<IActionResult> Index()
@@ -69,13 +74,24 @@ namespace GalileuszSchool.Controllers
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new { text = "Homework with this title already exists already exists!" });
                 }
+                string imageName = null;
+                if (homework.PhotoContent != null)
+                {
+                    string uploadsDir = Path.Combine(webHostEnvironment.WebRootPath, "media/homeworks");
+                    imageName = Guid.NewGuid().ToString() + "_" + homework.PhotoContent.FileName; // this gives unique id so no same image twice uploaded 
+                    string filePath = Path.Combine(uploadsDir, imageName);
+                    FileStream fileStream = new FileStream(filePath, FileMode.Create);
+                    await homework.PhotoContent.CopyToAsync(fileStream);
+                    fileStream.Close();
+                }
 
                 var homeworkModel = new Homework()
                 {
                     Title = homework.Title,
                     TextContent = homework.TextContent,
                     TeacherId = teacher.Id,
-                    Slug = homework.Title.ToLower()
+                    Slug = homework.Title.ToLower(),
+                    ImageContent = imageName
                 };
                 await _repository.Create(homeworkModel);
                 return Json(new { text = "Homework added!" });

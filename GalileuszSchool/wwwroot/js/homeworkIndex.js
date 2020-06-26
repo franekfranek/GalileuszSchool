@@ -27,6 +27,8 @@
     }
 }
 
+
+
 //class models
 function Homework(data) {
     this.Id = ko.observable(data.id);
@@ -43,10 +45,9 @@ function Homework(data) {
 function Student(data) {
     this.Id = ko.observable(data.id);
     this.FullName = ko.observable(data.firstName + ' ' + data.lastName);
+    this.Email = ko.observable(data.email);
 }
-
-
-
+ko
 function ViewModel() {
 
     // DATA
@@ -56,6 +57,7 @@ function ViewModel() {
     this.showDialog = ko.observable(false);
     self.Title = ko.observable("");
     self.TextContent = ko.observable("");
+    self.HomeworkPicture = ko.observable("");
 
     //list of homeworks
     self.homeworks = ko.observableArray([]);
@@ -86,19 +88,34 @@ function ViewModel() {
 
     //save homework
     this.submit = function () {
-        var homework = {};
-        homework.Title= self.Title();
-        homework.TextContent = self.TextContent();
+        var data = new FormData();
+
+        data.append('Title', self.Title());
+        data.append('TextContent', self.TextContent());
+        data.append('PhotoContent', self.HomeworkPicture());
+        
+
+        for (var key of data.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
         
         $.ajax({
             url: "/homework/create",
-            data: ko.toJS(homework),
+            data: data,
             type: "post",
+            cache: false,
+            contentType: false,
+            processData: false,
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
             success: function (res) {
                 console.log(res);
                 $('#createHomeworkModal').on('hidden.bs.modal', function () {
                     $(this).find('form').trigger('reset');
                     $(this).find('textarea').val('');
+                    self.HomeworkPicture("");
                     self.goToFolder('All');
                 })
             }, error: function (res) {
@@ -108,7 +125,22 @@ function ViewModel() {
         self.showDialog(false);
     }
 
+    self.fileSelect = function (elemet, event) {
+        var file = event.target.files[0];// FileList object which is part of event properties for current element!
+        // render image file as thumbnail.
+        var reader = new FileReader();
 
+        // Closure to capture the file information.
+        reader.onload = (function (theFile) {
+            return function (e) {
+                console.log(theFile);
+                self.HomeworkPicture(theFile);
+            };
+        })(file);
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(file);
+    }
+   
 
     //find specific homework
     self.goToHomework = function (homework) {
@@ -129,6 +161,7 @@ function ViewModel() {
             data: { id: homework.id },
             type: 'get',
             success: function (res) {
+                console.log(res);
                 var mappedStudents = $.map(res, function (item) {
                     return new Student(item);
                 });

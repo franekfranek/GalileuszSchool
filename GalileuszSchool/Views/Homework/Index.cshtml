@@ -35,10 +35,12 @@
 
                     <div class="form-group">
                         <label>Image</label>
-                        <input type="file" onchange="previewFile(this)"
-                               class="form-control" name="image" id="homeworkCreateImg" /><br>
+                        <input style="border:none" type="file" data-bind="event:{ change: $root.fileSelect }"
+                               class="form-control" id="homeworkCreateImg" /><br>
+                        <output id="list"></output>
+
                         @*<div id="imagePreview" class="img-thumbnail">*@
-                        <img src="" height="200" id="targetImg" alt="" />
+                        <img data-bind = "attr: {src: $root.HomeworkPicture().src}" height="200" id="targetImg"/>
                     </div>
 
                 </form>
