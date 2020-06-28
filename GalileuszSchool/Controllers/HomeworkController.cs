@@ -104,6 +104,7 @@ namespace GalileuszSchool.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             var teacher = await _context.Teachers.FirstOrDefaultAsync(x=> x.Email == user.Email);
+            var student = await _context.Students.FirstOrDefaultAsync(x=> x.Email == user.Email);
 
             Expression<Func<Homework, bool>> whereExpression = null;
 
@@ -128,6 +129,14 @@ namespace GalileuszSchool.Controllers
             if (user.IsTeacher)
             {
                 homeworks = homeworks.Where(x => x.TeacherId == teacher.Id).ToList();
+            }
+            else
+            {
+                homeworks = await _context.studentHomework
+                                                .Where(x => x.StudentId == student.Id)
+                                                .Include(x => x.Homework).ThenInclude(x => x.Teacher)
+                                                .Select(x => x.Homework)
+                                                .ToListAsync();
             }
 
             return Json(homeworks);

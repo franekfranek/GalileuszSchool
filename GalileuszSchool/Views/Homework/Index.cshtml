@@ -75,15 +75,13 @@
 <!-- Homework grid -->
 <table data-bind="ifnot: toggleDetailedView" class="mails">
     <thead>
-        <tr data-bind="click: $root.goToHomework">
+        <tr>
             <th>Title</th>
             <!-- ko if: isTeacherStatus -->
-            <th>Submitted by Student</th>
             <th>Creation Date</th>
             <!-- /ko -->
             <!-- ko if: isStudentStatus -->
             <th>Teacher</th>
-            <th>Submited on</th>
             <!-- /ko -->
         </tr>
     </thead>
@@ -92,12 +90,10 @@
         <tr data-bind="click: $root.goToHomework">
             <td data-bind="text: Title"></td>
             <!-- ko if: $root.isTeacherStatus -->
-            <td data-bind="text: IsDone"></td>
             <td data-bind="text: CreationDate"></td>
             <!-- /ko -->
             <!-- ko if: $root.isStudentStatus -->
             <td data-bind="text: TeacherName"></td>
-            <td data-bind="text: studentSubmissionDate"></td>
             <!-- /ko -->
 
         </tr>

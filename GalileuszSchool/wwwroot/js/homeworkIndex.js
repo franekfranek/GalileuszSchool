@@ -30,7 +30,21 @@
 
 
 //class models
+//teacher's homework model
 function Homework(data) {
+    this.Id = ko.observable(data.id);
+    this.Title = ko.observable(data.title);
+    this.Slug = ko.observable(data.slug);
+    this.IsDone = ko.observable(data.isDone);
+    this.CreationDate = ko.observable(data.creationDate.substring(0, 10));
+    this.solutionTextContent = ko.observable(data.solutionTextContent);
+    this.TextContent = ko.observable(data.textContent);
+    this.TeacherName = ko.observable(data.teacher.firstName + " " + data.teacher.lastName);
+    //this.studentSubmissionDate = ko.observable(data.studentSubmissionDate);
+}
+
+//student's homework model
+function StudentHomework(data) {
     this.Id = ko.observable(data.id);
     this.Title = ko.observable(data.title);
     this.Slug = ko.observable(data.slug);
@@ -72,7 +86,6 @@ function ViewModel() {
     //detailed homeworks
     self.chosenHomeworkData = ko.observable();
     self.currentHomeworkId = ko.observable();
-    self.currentHomeworkObject = ko.observable();
     self.currentHomeworkObject = ko.observable();
 
     //toggle view
@@ -246,6 +259,7 @@ function ViewModel() {
             success: function (result) {
                 //convert it to Homework instances, then populate self.homeworks
                 var mappedHomeworks = $.map(result, function (item) {
+                    console.log(item);
                     //if(item.studentSubmissionDate.substring(0, 1) === '0'){
                     //    item.studentSubmissionDate = 'Not yet'
                     //}
