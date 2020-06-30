@@ -64,23 +64,33 @@ button.accept-policy {
 
 /* Sticky footer styles
 -------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
+html, body {
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
-body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
-    position: relative;
-}
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+    text-align: center;
+    position: fixed;
+    padding: 5px;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
 }
+
+/*.container {
+    position: relative;
+    width: 85%;
+    min-height: 100%;
+    float: left;
+    background-color: silver;
+    margin-bottom: 60px;
+}*/
 
 li.nav-item.logout{
     position: absolute;

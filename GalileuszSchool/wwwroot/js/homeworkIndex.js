@@ -84,9 +84,12 @@ function ViewModel() {
     self.isTeacherStatus = ko.observable();
 
     //detailed homeworks
-    self.chosenHomeworkData = ko.observable();
+    self.chosenHomeworkData = ko.observable("");
     self.currentHomeworkId = ko.observable();
     self.currentHomeworkObject = ko.observable();
+    self.chosenHomeworkImageSrc = ko.computed(function () {
+        return '/media/homeworks/' + self.chosenHomeworkData().imageContent;
+    });
 
     //toggle view
     self.toggleDetailedView = ko.observable(true);
@@ -165,6 +168,7 @@ function ViewModel() {
                 self.loadStudentsPerHomework(res);
                 self.currentHomeworkId(res.id);
                 self.currentHomeworkObject(homework);
+                console.log(self.chosenHomeworkImageSrc());
             });
     };
 
@@ -174,7 +178,6 @@ function ViewModel() {
             data: { id: homework.id },
             type: 'get',
             success: function (res) {
-                console.log(res);
                 var mappedStudents = $.map(res, function (item) {
                     return new Student(item);
                 });
@@ -259,7 +262,6 @@ function ViewModel() {
             success: function (result) {
                 //convert it to Homework instances, then populate self.homeworks
                 var mappedHomeworks = $.map(result, function (item) {
-                    console.log(item);
                     //if(item.studentSubmissionDate.substring(0, 1) === '0'){
                     //    item.studentSubmissionDate = 'Not yet'
                     //}

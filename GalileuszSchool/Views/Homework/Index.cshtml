@@ -40,7 +40,7 @@
                         <output id="list"></output>
 
                         @*<div id="imagePreview" class="img-thumbnail">*@
-                        <img data-bind = "attr: {src: $root.HomeworkPicture().src}" height="200" id="targetImg"/>
+                        <img data-bind="attr: {src: $root.HomeworkPicture().src}" height="200" id="targetImg" />
                     </div>
 
                 </form>
@@ -107,72 +107,77 @@
         <div class="mailInfo">
             <h1 data-bind="text: title"></h1>
             <p><label>Content</label>: <span data-bind="text: textContent"></span></p>
+            <p>
+                <label class="mr-5">Attached file:</label>
+                <img  data-bind="attr: {src: $root.chosenHomeworkImageSrc()}" class="img-fluid" height="500" width="500" />
+            </p>
+
         </div>
+    </div>
+    
+
+</div>
+
+@*=======TEACHER VIEW=======*@
+<div data-bind="if: isTeacherStatus">
+    <div data-bind="if: toggleDetailedView">
+        <h3>Select students:</h3>
+        <div data-bind="if: studentNotAssignedYet().length > 0" class="heading">
+            <input type="checkbox" data-bind="checked: SelectAll" title="Select all/none" /> Select all
+        </div>
+
+        <div data-bind="if: studentNotAssignedYet().length <= 0" class="heading">
+            <p>This homework is assigned to all available students </p>
+        </div>
+
+        <div data-bind="foreach: studentNotAssignedYet">
+            <div>
+                <input type="checkbox" data-bind="checked: $parent.selectedStudents, checkedValue: $data" /><span data-bind="text: FullName"></span>
+            </div>
+        </div>
+
+        <h3 data-bind="if: studentNotAssignedYet().length > 0">You selected:</h3>
+        <div data-bind="foreach: selectedStudents">
+            <div data-bind="text: FullName"></div>
+        </div>
+
+        <h2>Students who got this assigment: </h2>
+        <div data-bind="foreach: studentsPerHomework">
+            <p data-bind="text: FullName"></p>
+
+        </div>
+        <button data-bind="click : saveStudents">Confirm</button>
+    </div>
+</div>
+
+@*=======STUDENT VIEW=======*@
+<div data-bind="if: isStudentStatus">
+    <div data-bind="if: toggleDetailedView">
+        <textarea placeholder="Write your homework here." cols="30" rows="5"></textarea>
     </div>
 </div>
 
 
-<div data-bind="visible: toggleDetailedView">
-    <h3>Select students:</h3>
-    <div data-bind="if: studentNotAssignedYet().length > 0" class="heading">
-        <input type="checkbox" data-bind="checked: SelectAll" title="Select all/none" /> Select all
-    </div>
-
-    <div data-bind="if: studentNotAssignedYet().length <= 0" class="heading">
-        <p>This homework is assigned to all available students </p>
-    </div>
-
-    <div data-bind="foreach: studentNotAssignedYet">
-        <div>
-            <input type="checkbox" data-bind="checked: $parent.selectedStudents, checkedValue: $data" /><span data-bind="text: FullName"></span>
-        </div>
-    </div>
-
-    <h3 data-bind="if: studentNotAssignedYet().length > 0">You selected:</h3>
-    <div data-bind="foreach: selectedStudents">
-        <div data-bind="text: FullName"></div>
-    </div>
-
-    <h2>Students who got this assigment: </h2>
-    <div data-bind="foreach: studentsPerHomework">
-        <p data-bind="text: FullName"></p>
-
-    </div>
-    <button data-bind="click : saveStudents">Confirm</button>
-</div>
-
-
-
-@*<table>
-        <thead><tr><th>Option</th><th>Importance</th></tr></thead>
-        <tbody data-bind="foreach: answers">
-            <tr>
-                <td data-bind="text: answerText"></td>
-                <td><select data-bind="options: [1,2,3,4,5], value: points"></select></td>
-            </tr>
-        </tbody>
-    </table>*@
 
 
 
 
 
 
+    @section Scripts{
+        <script src="~/js/homeworkIndex.js"></script>
+        <script>
+            document.getElementById('inputFile')
+                .addEventListener('change', function () {
 
-@section Scripts{
-    <script src="~/js/homeworkIndex.js"></script>
-    <script>
-        document.getElementById('inputFile')
-            .addEventListener('change', function () {
+                    var fr = new FileReader();
+                    fr.onload = function () {
+                        document.getElementById('homeworkContent')
+                            .innerHTML = fr.result;
+                    }
 
-                var fr = new FileReader();
-                fr.onload = function () {
-                    document.getElementById('homeworkContent')
-                        .innerHTML = fr.result;
-                }
+                    fr.readAsText(this.files[0]);
+                })
+        </script>
 
-                fr.readAsText(this.files[0]);
-            })
-    </script>
-
-}
+    }
