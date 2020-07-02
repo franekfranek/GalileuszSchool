@@ -2,11 +2,14 @@
 using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -16,10 +19,16 @@ namespace GalileuszSchool.Controllers
     public class StudentHomeworkController : Controller
     {
         private readonly GalileuszSchoolContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public StudentHomeworkController(GalileuszSchoolContext context)
+        public StudentHomeworkController(GalileuszSchoolContext context,
+                                         UserManager<AppUser> userManager,
+                                         IWebHostEnvironment env)
         {
             _context = context;
+            _userManager = userManager;
+            _webHostEnvironment = env;
         }
 
         public async Task<IActionResult> AddStudentHomeworks(int homeworkId, List<int> studentsIds)
@@ -74,6 +83,43 @@ namespace GalileuszSchool.Controllers
             var students = await _context.Students.Where(x => !alreadyAssignedStudents.Contains(x.Id)).ToListAsync();
             
             return Json(students);
+        }
+
+        public async Task<IActionResult> AddStudentSolution(StudentHomework studentHomework)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var student = await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
+
+
+                var homeworkByStudent = await _context.studentHomework
+                    .FirstOrDefaultAsync(x => x.StudentId == student.Id && x.HomeworkId == studentHomework.HomeworkId);
+
+                homeworkByStudent.IsDone = true;
+                homeworkByStudent.StudentSubmissionDate = DateTime.Now;
+                homeworkByStudent.SolutionTextContent = studentHomework.SolutionTextContent;
+                string imageName = null;
+
+                if (studentHomework.PhotoSolution != null)
+                {
+                    string uploadsDir = Path.Combine(_webHostEnvironment.WebRootPath, "media/studentHomeworkSolutions");
+                    imageName = Guid.NewGuid().ToString() + "_" + studentHomework.PhotoSolution.FileName; // this gives unique id so no same image twice uploaded 
+                    string filePath = Path.Combine(uploadsDir, imageName);
+                    FileStream fileStream = new FileStream(filePath, FileMode.Create);
+                    await studentHomework.PhotoSolution.CopyToAsync(fileStream);
+                    fileStream.Close();
+                }
+                homeworkByStudent.ImageSolution = imageName;
+                homeworkByStudent.PhotoSolution = studentHomework.PhotoSolution;
+
+                _context.studentHomework.Update(homeworkByStudent);
+                await _context.SaveChangesAsync();
+
+                return Json(new { text = "You submitted your assignment!" });
+            }
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
         }
     }
 }

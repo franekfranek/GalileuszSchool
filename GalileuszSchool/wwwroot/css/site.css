@@ -5,11 +5,6 @@ for details on configuring this project to bundle and minify static web assets. 
     font-family: 'Jura', sans-serif;
 }
 
-.footerX {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 10px
-}
-
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -198,9 +193,9 @@ div.fa-linkedin-in:hover {
     display: none;
 }
 
-.modal-content {
+/*.modal-content {
     border: blue 6px solid;
-}
+}*/
 
 /*picture in modal*/
 /*.thumb {

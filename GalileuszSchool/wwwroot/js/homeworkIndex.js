@@ -1,4 +1,5 @@
-﻿ko.bindingHandlers.modal = {
+﻿//modal binding
+ko.bindingHandlers.modal = {
     init: function (element, valueAccessor) {
         $(element).modal({
             show: false
@@ -43,18 +44,6 @@ function Homework(data) {
     //this.studentSubmissionDate = ko.observable(data.studentSubmissionDate);
 }
 
-//student's homework model
-function StudentHomework(data) {
-    this.Id = ko.observable(data.id);
-    this.Title = ko.observable(data.title);
-    this.Slug = ko.observable(data.slug);
-    this.IsDone = ko.observable(data.isDone);
-    this.CreationDate = ko.observable(data.creationDate.substring(0, 10));
-    this.solutionTextContent = ko.observable(data.solutionTextContent);
-    this.TextContent = ko.observable(data.textContent);
-    this.TeacherName = ko.observable(data.teacher.firstName + " " + data.teacher.lastName);
-    //this.studentSubmissionDate = ko.observable(data.studentSubmissionDate);
-}
 
 function Student(data) {
     this.Id = ko.observable(data.id);
@@ -66,12 +55,13 @@ function ViewModel() {
 
     // DATA
     var self = this;//this has to be here so this contextes dont mix
-    
     //modal
-    this.showDialog = ko.observable(false);
+    self.showDialog = ko.observable(false);
     self.Title = ko.observable("");
     self.TextContent = ko.observable("");
     self.HomeworkPicture = ko.observable("");
+
+    self.currentFileSrc = ko.observable("");
 
     //list of homeworks
     self.homeworks = ko.observableArray([]);
@@ -97,9 +87,12 @@ function ViewModel() {
     //list of students 
     self.studentsPerHomework = ko.observableArray([]);
     self.studentNotAssignedYet = ko.observableArray([]);
-
-
     self.selectedStudents = ko.observableArray([]);
+
+    //student solution submmision
+    self.studentSolutionText = ko.observable("");
+    self.studentSolutionPicture = ko.observable("");
+  
     // OPERATIONS
 
     //save homework
@@ -109,11 +102,6 @@ function ViewModel() {
         data.append('Title', self.Title());
         data.append('TextContent', self.TextContent());
         data.append('PhotoContent', self.HomeworkPicture());
-        
-
-        for (var key of data.entries()) {
-            console.log(key[0] + ', ' + key[1]);
-        }
         
         $.ajax({
             url: "/homework/create",
@@ -132,6 +120,7 @@ function ViewModel() {
                     $(this).find('form').trigger('reset');
                     $(this).find('textarea').val('');
                     self.HomeworkPicture("");
+                    self.currentFileSrc("");
                     self.goToFolder('All');
                 })
             }, error: function (res) {
@@ -149,8 +138,12 @@ function ViewModel() {
         // Closure to capture the file information.
         reader.onload = (function (theFile) {
             return function (e) {
-                console.log(theFile);
-                self.HomeworkPicture(theFile);
+                self.currentFileSrc(e.target.result);
+                if (self.showDialog() === false) {
+                    self.studentSolutionPicture(theFile);
+                } else {
+                    self.HomeworkPicture(theFile);
+                }
             };
         })(file);
         // Read in the image file as a data URL.
@@ -168,7 +161,6 @@ function ViewModel() {
                 self.loadStudentsPerHomework(res);
                 self.currentHomeworkId(res.id);
                 self.currentHomeworkObject(homework);
-                console.log(self.chosenHomeworkImageSrc());
             });
     };
 
@@ -242,6 +234,39 @@ function ViewModel() {
                
             }
         }); 
+    }
+
+    self.savaStudentSolution = function () {
+        var data = new FormData();
+
+        console.log(self.currentHomeworkObject());
+        data.append('HomeworkId', self.currentHomeworkObject().Id());
+        data.append('SolutionTextContent', self.studentSolutionText());
+        data.append('PhotoSolution', self.studentSolutionPicture());
+
+
+        for (var key of data.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
+
+        $.ajax({
+            url: "/studenthomework/AddStudentSolution",
+            data: data,
+            type: "post",
+            cache: false,
+            contentType: false,
+            processData: false,
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (res) {
+                console.log(res);
+                
+            }, error: function (res) {
+                console.log(res);
+            }
+        });
     }
 
     // BEHAVIOURS

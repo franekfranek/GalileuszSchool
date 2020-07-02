@@ -22,8 +22,6 @@ namespace GalileuszSchool.Models.ModelsForNormalUsers
         [FileExtension(Extensions = new string[] { "txt" })]
         public string TextContent { get; set; }
         
-        [FileExtension(Extensions = new string[] { "txt" })]
-        public string SolutionTextContent { get; set; }
         public int TeacherId { get; set; }
 
         [ForeignKey("TeacherId")]
@@ -37,13 +35,11 @@ namespace GalileuszSchool.Models.ModelsForNormalUsers
         public IList<StudentHomework> StudentHomeworks { get; set; }
 
         public string ImageContent { get; set; }
-        public string ImageSolution { get; set; }
-
+      
         [NotMapped]
         public IFormFile PhotoContent { get; set; }
 
-        [NotMapped]
-        public IFormFile PhotoSolution { get; set; }
+       
 
     }
 }

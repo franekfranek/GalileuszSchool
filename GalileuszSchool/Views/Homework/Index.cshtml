@@ -29,7 +29,7 @@
                         <label>Content</label>
                         <input type="file"
                                name="TextContent" id="inputFile" />
-                        <textarea data-bind="textInput: TextContent" style="width: 470px; height: 150px;"
+                        <textarea data-bind="textInput: studentSolutionText" style="width: 470px; height: 150px;"
                                   class="form-control" name="content" id="homeworkContent"></textarea>
                     </div>
 
@@ -39,8 +39,8 @@
                                class="form-control" id="homeworkCreateImg" /><br>
                         <output id="list"></output>
 
-                        @*<div id="imagePreview" class="img-thumbnail">*@
-                        <img data-bind="attr: {src: $root.HomeworkPicture().src}" height="200" id="targetImg" />
+                        
+                        <img data-bind="attr: {src: $root.currentFileSrc()}" height="200" id="targetImg" />
                     </div>
 
                 </form>
@@ -66,10 +66,12 @@
             click: $root.goToFolder">
     </li>
     <!-- /ko -->
-    <li data-bind="click: function(){showDialog(true)}, ifnot: isStudentStatus">
-        <i class="material-icons" data-toggle="tooltip" title="New">&#xE147</i>
-        <span>New</span>
-    </li>
+    <b data-bind="ifnot: isStudentStatus">
+        <li data-bind="click: function(){showDialog(true)}">
+            <i  class="material-icons" data-toggle="tooltip" title="New">&#xE147</i>
+            <span>New</span>
+        </li>
+     </b>
 </ul>
 
 <!-- Homework grid -->
@@ -102,19 +104,23 @@
 </table>
 
 <!-- Chosen mail -->
-<div data-bind="if: toggleDetailedView">
+<div data-bind="if: toggleDetailedView" >
+    <h2>Assignment: </h2>
     <div class="viewMail" data-bind="with: chosenHomeworkData">
         <div class="mailInfo">
             <h1 data-bind="text: title"></h1>
-            <p><label>Content</label>: <span data-bind="text: textContent"></span></p>
-            <p>
-                <label class="mr-5">Attached file:</label>
-                <img  data-bind="attr: {src: $root.chosenHomeworkImageSrc()}" class="img-fluid" height="500" width="500" />
-            </p>
+            <div class="row">
+                <p class="col-6">
+                    <label>Content: </label> <br /><span data-bind="text: textContent"></span></p>
+                <p class="col-6">
+                    <label class="mr-5">Attached file:</label>
+                    <img data-bind="attr: {src: $root.chosenHomeworkImageSrc()}" class="img-fluid" height="500" width="500" />
+                </p>
+            </div>
 
         </div>
     </div>
-    
+
 
 </div>
 
@@ -153,25 +159,51 @@
 @*=======STUDENT VIEW=======*@
 <div data-bind="if: isStudentStatus">
     <div data-bind="if: toggleDetailedView">
-        <textarea placeholder="Write your homework here." cols="30" rows="5"></textarea>
+        <h2>Your solution</h2>
+
+        <form class="solutionX" id="homework-solution">
+            
+            <div class="form-group">
+                <textarea data-bind="textInput: studentSolutionText" style="width: 100%; height: 100%"
+                          class="form-control" name="content" id="homeworkContent"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Image</label>
+                <input style="border:none" type="file" data-bind="event:{ change: $root.fileSelect }"
+                       class="form-control" id="homeworkCreateImg" /><br>
+                <output id="list"></output>
+
+                <img data-bind="attr: {src: $root.currentFileSrc()}" id="targetImg" style="max-width:100%" />
+            </div>
+        </form>
+        
+        <div class="button_cont" align="center"><input form="homework-solution" type="submit" value="Submit now" class="example_b" 
+         id="submitSolution" data-bind="click : savaStudentSolution"></div>
     </div>
+    
 </div>
 
 
-    @section Scripts{
-        <script src="~/js/homeworkIndex.js"></script>
-        <script>
-            document.getElementById('inputFile')
-                .addEventListener('change', function () {
 
-                    var fr = new FileReader();
-                    fr.onload = function () {
-                        document.getElementById('homeworkContent')
-                            .innerHTML = fr.result;
-                    }
 
-                    fr.readAsText(this.files[0]);
-                })
-        </script>
+@section Scripts{
 
-    }
+    <script src="~/js/homeworkIndex.js"></script>
+    <script>
+        document.getElementById('inputFile')
+            .addEventListener('change', function () {
+
+                var fr = new FileReader();
+                fr.onload = function () {
+                    document.getElementById('homeworkContent')
+                        .innerHTML = fr.result;
+                }
+
+                fr.readAsText(this.files[0]);
+            })
+    </script>
+
+
+
+}

@@ -24,7 +24,7 @@ namespace GalileuszSchool.Controllers
         private readonly GalileuszSchoolContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly IRepository<Homework> _repository;
-        private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public HomeworkController(GalileuszSchoolContext context,
                                   UserManager<AppUser> userManager,
@@ -34,7 +34,7 @@ namespace GalileuszSchool.Controllers
             _context = context;
             _userManager = userManager;
             _repository = repository;
-            this.webHostEnvironment = env;
+            _webHostEnvironment = env;
         }
 
         public async Task<IActionResult> Index()
@@ -77,7 +77,7 @@ namespace GalileuszSchool.Controllers
                 string imageName = null;
                 if (homework.PhotoContent != null)
                 {
-                    string uploadsDir = Path.Combine(webHostEnvironment.WebRootPath, "media/homeworks");
+                    string uploadsDir = Path.Combine(_webHostEnvironment.WebRootPath, "media/homeworks");
                     imageName = Guid.NewGuid().ToString() + "_" + homework.PhotoContent.FileName; // this gives unique id so no same image twice uploaded 
                     string filePath = Path.Combine(uploadsDir, imageName);
                     FileStream fileStream = new FileStream(filePath, FileMode.Create);
@@ -153,7 +153,5 @@ namespace GalileuszSchool.Controllers
             return Json(new { isTeacher = user.IsTeacher, isStudent = user.IsStudent });
         }
 
-
-        
     }
 }

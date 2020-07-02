@@ -184,6 +184,9 @@
     <link href="~/css/simple-sidebar.css" rel="stylesheet">
     <link href="~/css/emailStyle.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
+    <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
 
 
 </head>
@@ -306,16 +309,18 @@
         <!-- /#page-content-wrapper -->
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="~/js/knockout-3.5.1.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
         $("#menu-toggle").click(function (e) {
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
         });
     </script>
+
+    
     @RenderSection("Scripts", required: false)
 </body>
 
