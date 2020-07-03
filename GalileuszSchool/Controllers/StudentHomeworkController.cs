@@ -77,6 +77,18 @@ namespace GalileuszSchool.Controllers
             return Json(studentsByHomework);
         }
 
+        // get /admin/StudentHomework/GetCurrentStudentHomework/1 (homework id) 
+        public async Task<IActionResult> GetCurrentStudentHomework(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var student = await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
+
+            var homework  = await _context.studentHomework
+                    .FirstOrDefaultAsync(x => x.StudentId == student.Id && x.HomeworkId == id);
+
+            return Json(homework);
+        }
+
         public async Task<IActionResult> GetRestOfStudent(List<int> alreadyAssignedStudents)
         {
 

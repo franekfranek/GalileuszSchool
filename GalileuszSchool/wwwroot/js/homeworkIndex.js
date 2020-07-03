@@ -36,21 +36,31 @@ function Homework(data) {
     this.Id = ko.observable(data.id);
     this.Title = ko.observable(data.title);
     this.Slug = ko.observable(data.slug);
-    this.IsDone = ko.observable(data.isDone);
     this.CreationDate = ko.observable(data.creationDate.substring(0, 10));
-    this.solutionTextContent = ko.observable(data.solutionTextContent);
     this.TextContent = ko.observable(data.textContent);
     this.TeacherName = ko.observable(data.teacher.firstName + " " + data.teacher.lastName);
-    //this.studentSubmissionDate = ko.observable(data.studentSubmissionDate);
+    this.ImageContent = ko.observable(data.imageContent);
+    
 }
 
+//student's homework model
+function StudentHomework(data) {
+    this.HomeworkId = ko.observable(data.homeworkId);
+    this.StudentId = ko.observable(data.studentId );
+    this.IsDone = ko.observable(data.isDone);
+    this.SolutionTextContent = ko.observable(data.solutionTextContent);
+    this.StudentSubmissionDate = ko.observable(data.studentSubmissionDate);
+    this.ImageSolution = ko.observable(data.imageSolution);
+}
 
+//student model
 function Student(data) {
     this.Id = ko.observable(data.id);
     this.FullName = ko.observable(data.firstName + ' ' + data.lastName);
     this.Email = ko.observable(data.email);
 }
-ko
+
+
 function ViewModel() {
 
     // DATA
@@ -75,12 +85,11 @@ function ViewModel() {
 
     //detailed homeworks
     self.chosenHomeworkData = ko.observable("");
-    self.currentHomeworkId = ko.observable();
-    self.currentHomeworkObject = ko.observable();
-    self.chosenHomeworkImageSrc = ko.computed(function () {
-        return '/media/homeworks/' + self.chosenHomeworkData().imageContent;
-    });
-
+    self.chosenHomeworkImageSrc = ko.observable("");
+    self.isFileAttached = ko.observable("");
+    self.chosenStudentHomework = ko.observable("");
+    self.isCurrenHomeworkDone = ko.observable(false);
+      
     //toggle view
     self.toggleDetailedView = ko.observable(true);
 
@@ -153,16 +162,40 @@ function ViewModel() {
 
     //find specific homework
     self.goToHomework = function (homework) {
-        self.chosenFolderId('All');
         self.toggleDetailedView(true);
-        $.get("/homework/findhomework",
-            { id: homework.Id },
-            self.chosenHomeworkData).done(function (res) {
-                self.loadStudentsPerHomework(res);
-                self.currentHomeworkId(res.id);
-                self.currentHomeworkObject(homework);
-            });
+        self.chosenHomeworkData(homework);
+        console.log(self.chosenHomeworkData().ImageContent());
+        if (self.chosenHomeworkData().ImageContent() !== null) {
+            self.isFileAttached(true);
+            self.chosenHomeworkImageSrc('/media/homeworks/' + self.chosenHomeworkData().ImageContent());
+        }else{
+            self.isFileAttached(false);
+        }
+
+        self.getStudentHomeworkDetails(homework.Id);
+        //$.get("/homework/findhomework",
+        //    { id: homework.Id },
+        //    self.chosenHomeworkData).done(function (res) {
+        //        self.loadStudentsPerHomework(res);
+        //        self.currentHomeworkId(res.id);
+        //        console.log(self.chosenHomeworkData());
+        //    });
     };
+
+    //get clicked homework details 
+    self.getStudentHomeworkDetails = function (homeworkId) {
+        $.ajax({
+            url: '/studentHomework/GetCurrentStudentHomework',
+            data: { id: homeworkId },
+            type: 'get',
+            success: function (res) {
+                console.log(res);
+                self.chosenStudentHomework(new StudentHomework(res));
+                self.isCurrenHomeworkDone(self.chosenStudentHomework().IsDone());
+                console.log(self.isCurrenHomeworkDone());
+            }
+        });
+    }
 
     self.loadStudentsPerHomework = function (homework) {
         $.ajax({
@@ -176,7 +209,7 @@ function ViewModel() {
                 self.studentsPerHomework(mappedStudents);
                 self.loadStudentsWithoutHomework(self.studentsPerHomework());
             }
-        })
+        });
     }
 
     self.loadStudentsWithoutHomework = function (students) {
@@ -230,7 +263,7 @@ function ViewModel() {
             },
             success: function (res) {
                 self.selectedStudents([]);
-                self.goToHomework(self.currentHomeworkObject());
+                self.goToHomework(self.chosenHomeworkData());
                
             }
         }); 
@@ -239,8 +272,7 @@ function ViewModel() {
     self.savaStudentSolution = function () {
         var data = new FormData();
 
-        console.log(self.currentHomeworkObject());
-        data.append('HomeworkId', self.currentHomeworkObject().Id());
+        data.append('HomeworkId', self.chosenHomeworkData().Id());
         data.append('SolutionTextContent', self.studentSolutionText());
         data.append('PhotoSolution', self.studentSolutionPicture());
 
@@ -273,8 +305,8 @@ function ViewModel() {
     //determine which folders to load
     self.whichFolders = function (who) {
         console.log(who.isTeacher);
-        if (who.isTeacher) self.folders(['All', 'Assigned', 'Not Assigned']);
-        else self.folders(['All', 'Done', 'Undone'])
+        if (who.isTeacher) self.folders(['All', 'Submitted', 'Unsubmitted']);
+        else self.folders(['All', 'Submitted', 'Unsubmitted']);
     }
 
     //load filtered homeworks

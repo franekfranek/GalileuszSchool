@@ -30,11 +30,64 @@ a {
   border-color: #1861ac;
 }
 
-/* Sticky footer styles
+/* footer styles
 -------------------------------------------------- */
-html {
-  font-size: 14px;
+html, body {
+    height: 100%;
 }
+
+.page-wrap {
+    height: 1000px; /* Force height on body */
+    position: relative;
+    
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    background-color: #d2d6db;
+    text-align: center;
+    right: 0;
+    left: 0;
+    background-repeat: no-repeat;
+    height: auto;
+}
+
+    .footer .links ul {
+        list-style-type: none;
+    }
+
+    .footer .links li a {
+        color:black;
+        transition: color 0.2s;
+    }
+
+        .footer .links li a:hover {
+            text-decoration: none;
+            color: #4180cb;
+        }
+
+    .footer .about-company i {
+        font-size: 25px;
+    }
+
+    .footer .about-company a {
+        color: white;
+        transition: color 0.2s;
+    }
+
+        .footer .about-company a:hover {
+            color: #4180cb;
+        }
+
+    .footer .location i {
+        font-size: 18px;
+    }
+
+    .footer .copyright p {
+        border-top: 1px solid rgba(255, 255, 255, .1);
+    }
+
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -56,36 +109,6 @@ button.accept-policy {
   font-size: 1rem;
   line-height: inherit;
 }
-
-/* Sticky footer styles
--------------------------------------------------- */
-html, body {
-    height: 100%;
-    min-height: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
-.footer {
-    text-align: center;
-    position: fixed;
-    padding: 5px;
-    left: 0px;
-    bottom: 0px;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px; /* Vertically center the text there */
-}
-
-/*.container {
-    position: relative;
-    width: 85%;
-    min-height: 100%;
-    float: left;
-    background-color: silver;
-    margin-bottom: 60px;
-}*/
 
 li.nav-item.logout{
     position: absolute;
@@ -110,7 +133,7 @@ thead {
 
 #menu-toggle {
     font-size: 36px;
-    color: blue;
+    color: steelblue;
     cursor: pointer;
 }
 
@@ -197,10 +220,3 @@ div.fa-linkedin-in:hover {
     border: blue 6px solid;
 }*/
 
-/*picture in modal*/
-/*.thumb {
-    height: 75px;
-    border: 1px solid #000;
-    margin: 10px 5px 0 0;
-}*/
-    

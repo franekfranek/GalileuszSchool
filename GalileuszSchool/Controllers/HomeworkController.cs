@@ -106,34 +106,39 @@ namespace GalileuszSchool.Controllers
             var teacher = await _context.Teachers.FirstOrDefaultAsync(x=> x.Email == user.Email);
             var student = await _context.Students.FirstOrDefaultAsync(x=> x.Email == user.Email);
 
-            Expression<Func<Homework, bool>> whereExpression = null;
+            Expression<Func<StudentHomework, bool>> whereExpressionForStudent = null;
+            Expression<Func<StudentHomework, bool>> whereExpressionForTeacher = null;
 
             switch (option)
             {
                 case "All":
-                    whereExpression = x => x.Slug != null;
+                    whereExpressionForStudent = x => x.StudentId == student.Id;
+                    whereExpressionForTeacher = x => x.HomeworkId != 0;
                     break;
-                case "Done":
-                    //whereExpression = x => x.;
+                case "Submitted":
+                    whereExpressionForStudent = x => x.StudentId == student.Id && x.IsDone == true;
+                    whereExpressionForTeacher = x => x.IsDone == true;
                     break;
-                case "Undone":
-                    //whereExpression = x => x.IsDone == false;
+                case "Unsubmitted":
+                    whereExpressionForStudent = x => x.StudentId == student.Id && x.IsDone == false;
+                    whereExpressionForTeacher = x => x.IsDone == false;
                     break;
 
             }
-            //List<Homework> homeworks = await _repository.GetAll().OrderByDescending(x => x.CreationDate)
-            //                                                .Include(x => x.Teacher).ToListAsync();
-
-            List<Homework> homeworks = await _repository.GetAll().Where(whereExpression)
-                                                            .Include(x => x.Teacher).ToListAsync();
+            
+            List<Homework> homeworks = null;
             if (user.IsTeacher)
             {
-                homeworks = homeworks.Where(x => x.TeacherId == teacher.Id).ToList();
+                homeworks = await _context.studentHomework
+                                                .Where(whereExpressionForTeacher)
+                                                .Include(x => x.Homework).ThenInclude(x => x.Teacher)
+                                                .Select(x => x.Homework).Where(x => x.TeacherId == teacher.Id)
+                                                .ToListAsync();
             }
             else
             {
                 homeworks = await _context.studentHomework
-                                                .Where(x => x.StudentId == student.Id)
+                                                .Where(whereExpressionForStudent)
                                                 .Include(x => x.Homework).ThenInclude(x => x.Teacher)
                                                 .Select(x => x.Homework)
                                                 .ToListAsync();
