@@ -62,10 +62,33 @@ namespace GalileuszSchool.Controllers
         // get /admin/StudentHomework/StudentsByhomework/1 (homework id) 
         public async Task<IActionResult> StudentsByHomework(int id)
         {
-            var studentsByHomework = await _context.studentHomework
-                                                .OrderByDescending(x => x.HomeworkId)
-                                                .Where(x => x.HomeworkId == id)
-                                                .Include("Student").Select(x => x.Student).ToListAsync();
+            var studentsByHomework = await _context.Students.Include(x => x.StudentHomeworks).ToListAsync();
+
+            var s = new List<Student>();
+
+            foreach (var student in studentsByHomework)
+            {
+                foreach (var item in student.StudentHomeworks)
+                {
+                    if(item.HomeworkId == id)
+                    {
+                        s.Add(student);
+                    }
+                }
+            } 
+
+            //Where(x => x.StudentHomeworks.Where(y => y.HomeworkId == id)
+            //    .Select(x => new {
+            //        x,
+            //        x.Student,
+            //        x.Homework
+            //    }).AsEnumerable()
+
+            //studentHomework
+            //                                .OrderByDescending(x => x.HomeworkId)
+            //                                .Where(x => x.HomeworkId == id)
+            //                                .Include("Student")
+            //                                .Select(x => x.Student).ToListAsync();
 
             //var q = from s in _context.Students
             //               join sh in _context.studentHomework
@@ -74,14 +97,21 @@ namespace GalileuszSchool.Controllers
             //               select s;
             //var students = await q.ToListAsync();
 
-            return Json(studentsByHomework);
+            return Json(s);
+        }
+
+        public async Task<IActionResult> GetRestOfStudent(List<int> alreadyAssignedStudents)
+        {
+
+            var students = await _context.Students.Where(x => !alreadyAssignedStudents.Contains(x.Id)).ToListAsync();
+
+            return Json(students);
         }
 
         // get /admin/StudentHomework/GetCurrentStudentHomework/1 (homework id) 
         public async Task<IActionResult> GetCurrentStudentHomework(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var student = await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
+            var student = GetLoggedStudent().Result;
 
             var homework  = await _context.studentHomework
                     .FirstOrDefaultAsync(x => x.StudentId == student.Id && x.HomeworkId == id);
@@ -89,21 +119,23 @@ namespace GalileuszSchool.Controllers
             return Json(homework);
         }
 
-        public async Task<IActionResult> GetRestOfStudent(List<int> alreadyAssignedStudents)
+        public async Task<IActionResult> GetAllStudentHomeworkWithFlag(bool isDone)
         {
+            var student = GetLoggedStudent().Result;
 
-            var students = await _context.Students.Where(x => !alreadyAssignedStudents.Contains(x.Id)).ToListAsync();
+            var allSubmittedHomeworks = await _context.studentHomework
+                .Where(x => x.StudentId == student.Id && x.IsDone == isDone)
+                .ToListAsync();
+
+            return Json(allSubmittedHomeworks);
             
-            return Json(students);
         }
 
         public async Task<IActionResult> AddStudentSolution(StudentHomework studentHomework)
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.GetUserAsync(User);
-                var student = await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
-
+                var student = GetLoggedStudent().Result;
 
                 var homeworkByStudent = await _context.studentHomework
                     .FirstOrDefaultAsync(x => x.StudentId == student.Id && x.HomeworkId == studentHomework.HomeworkId);
@@ -132,6 +164,12 @@ namespace GalileuszSchool.Controllers
             }
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return Json(new { text = "Server error!" });
+        }
+
+        public async Task<Student> GetLoggedStudent()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
         }
     }
 }

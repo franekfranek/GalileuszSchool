@@ -15,7 +15,7 @@ a.navbar-brand {
 a {
   /*color: #0366d6;*/
    text-decoration: none;
-   color:white;
+   color:steelblue;
 }
 
 .btn-primary {
@@ -37,34 +37,18 @@ html, body {
 }
 
 .page-wrap {
-    height: 1000px; /* Force height on body */
+/*    height: 1000px; */
+    /* Force height on body */
     position: relative;
     
 }
 .footer {
-    position: absolute;
+    position: relative;
     bottom: 0;
-    background-color: #d2d6db;
-    text-align: center;
-    right: 0;
-    left: 0;
-    background-repeat: no-repeat;
+    background-color: steelblue;
+    color:white;
     height: auto;
 }
-
-    .footer .links ul {
-        list-style-type: none;
-    }
-
-    .footer .links li a {
-        color:black;
-        transition: color 0.2s;
-    }
-
-        .footer .links li a:hover {
-            text-decoration: none;
-            color: #4180cb;
-        }
 
     .footer .about-company i {
         font-size: 25px;
@@ -72,7 +56,6 @@ html, body {
 
     .footer .about-company a {
         color: white;
-        transition: color 0.2s;
     }
 
         .footer .about-company a:hover {
@@ -85,15 +68,20 @@ html, body {
 
     .footer .copyright p {
         border-top: 1px solid rgba(255, 255, 255, .1);
+        text-align: center;
     }
 
+.small-logo {
+    display: inline-block;
+    vertical-align: middle;
+}
 
-@media (min-width: 768px) {
+/*@media (min-width: 768px) {
   html {
     font-size: 16px;
   }
 }
-
+*/
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
@@ -130,6 +118,30 @@ thead {
 }
 
 /*icons*/
+
+/*homework notification*/
+.book-homework {
+    font-size: 20px;
+    color: steelblue;
+    cursor: pointer;
+    padding-right:8px;
+    padding-top:8px;
+    position:relative;
+    display: none;
+}
+#txt {
+    background-color: red;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: right;
+    color: white;
+    border-radius: 25px;
+    position: absolute;
+    padding: 2px;
+    top: 0px;
+    right: 0px;
+}
+/*end of homework notf*/
 
 #menu-toggle {
     font-size: 36px;

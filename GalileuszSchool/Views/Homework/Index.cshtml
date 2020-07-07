@@ -83,6 +83,7 @@
             <th>Creation Date</th>
             <!-- /ko -->
             <!-- ko if: isStudentStatus -->
+            <th>Course</th>
             <th>Teacher</th>
             <!-- /ko -->
         </tr>
@@ -127,32 +128,38 @@
 @*=======TEACHER VIEW=======*@
 <div data-bind="if: isTeacherStatus">
     <div data-bind="if: toggleDetailedView">
-        <h3>Select students:</h3>
-        <div data-bind="if: studentNotAssignedYet().length > 0" class="heading">
-            <input type="checkbox" data-bind="checked: SelectAll" title="Select all/none" /> Select all
-        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <h3>Select students:</h3>
+                <div data-bind="if: studentNotAssignedYet().length > 0" class="heading">
+                    <input type="checkbox" data-bind="checked: SelectAll" title="Select all/none" /> Select all
+                </div>
 
-        <div data-bind="if: studentNotAssignedYet().length <= 0" class="heading">
-            <p>This homework is assigned to all available students </p>
-        </div>
+                <div data-bind="if: studentNotAssignedYet().length <= 0" class="heading">
+                    <p>This homework is assigned to all available students </p>
+                </div>
 
-        <div data-bind="foreach: studentNotAssignedYet">
-            <div>
-                <input type="checkbox" data-bind="checked: $parent.selectedStudents, checkedValue: $data" /><span data-bind="text: FullName"></span>
+                <div data-bind="foreach: studentNotAssignedYet">
+                    <div>
+                        <input type="checkbox" data-bind="checked: $parent.selectedStudents, checkedValue: $data" /><span data-bind="text: FullName"></span>
+                    </div>
+                </div>
+            </div>
+            <div data-bind="if: studentNotAssignedYet().length > 0" class="col-6">
+                <h3 >You selected:</h3>
+                <div data-bind="foreach: selectedStudents">
+                    <div data-bind="text: FullName"></div>
+                </div>
+                <button data-bind="click : saveStudents">Confirm</button>
             </div>
         </div>
-
-        <h3 data-bind="if: studentNotAssignedYet().length > 0">You selected:</h3>
-        <div data-bind="foreach: selectedStudents">
-            <div data-bind="text: FullName"></div>
-        </div>
-
-        <h2>Students who got this assigment: </h2>
+        <h2>Students who already got this assigment: </h2>
         <div data-bind="foreach: studentsPerHomework">
             <p data-bind="text: FullName"></p>
 
         </div>
-        <button data-bind="click : saveStudents">Confirm</button>
+
     </div>
 </div>
 

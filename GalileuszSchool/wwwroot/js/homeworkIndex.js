@@ -104,6 +104,8 @@ function ViewModel() {
   
     // OPERATIONS
 
+
+    //ONLY TEACHER METHODS
     //save homework
     this.submit = function () {
         var data = new FormData();
@@ -138,75 +140,18 @@ function ViewModel() {
         });
         self.showDialog(false);
     }
-
-    self.fileSelect = function (elemet, event) {
-        var file = event.target.files[0];// FileList object which is part of event properties for current element!
-        // render image file as thumbnail.
-        var reader = new FileReader();
-
-        // Closure to capture the file information.
-        reader.onload = (function (theFile) {
-            return function (e) {
-                self.currentFileSrc(e.target.result);
-                if (self.showDialog() === false) {
-                    self.studentSolutionPicture(theFile);
-                } else {
-                    self.HomeworkPicture(theFile);
-                }
-            };
-        })(file);
-        // Read in the image file as a data URL.
-        reader.readAsDataURL(file);
-    }
-   
-
-    //find specific homework
-    self.goToHomework = function (homework) {
-        self.toggleDetailedView(true);
-        self.chosenHomeworkData(homework);
-        console.log(self.chosenHomeworkData().ImageContent());
-        if (self.chosenHomeworkData().ImageContent() !== null) {
-            self.isFileAttached(true);
-            self.chosenHomeworkImageSrc('/media/homeworks/' + self.chosenHomeworkData().ImageContent());
-        }else{
-            self.isFileAttached(false);
-        }
-
-        self.getStudentHomeworkDetails(homework.Id);
-        //$.get("/homework/findhomework",
-        //    { id: homework.Id },
-        //    self.chosenHomeworkData).done(function (res) {
-        //        self.loadStudentsPerHomework(res);
-        //        self.currentHomeworkId(res.id);
-        //        console.log(self.chosenHomeworkData());
-        //    });
-    };
-
-    //get clicked homework details 
-    self.getStudentHomeworkDetails = function (homeworkId) {
-        $.ajax({
-            url: '/studentHomework/GetCurrentStudentHomework',
-            data: { id: homeworkId },
-            type: 'get',
-            success: function (res) {
-                console.log(res);
-                self.chosenStudentHomework(new StudentHomework(res));
-                self.isCurrenHomeworkDone(self.chosenStudentHomework().IsDone());
-                console.log(self.isCurrenHomeworkDone());
-            }
-        });
-    }
-
     self.loadStudentsPerHomework = function (homework) {
         $.ajax({
             url: '/studentHomework/studentsByHomework',
-            data: { id: homework.id },
+            data: { id: homework.Id },
             type: 'get',
             success: function (res) {
+                console.log(res);
                 var mappedStudents = $.map(res, function (item) {
                     return new Student(item);
                 });
                 self.studentsPerHomework(mappedStudents);
+                console.log(mappedStudents);
                 self.loadStudentsWithoutHomework(self.studentsPerHomework());
             }
         });
@@ -217,7 +162,7 @@ function ViewModel() {
         for (var i = 0; i < students.length; i++) {
             ids[i] = students[i].Id;
         }
-        
+
         $.ajax({
             type: 'get',
             url: '/studentHomework/getRestOfStudent',
@@ -230,11 +175,32 @@ function ViewModel() {
                 });
                 self.studentNotAssignedYet(mappedStudents);
             }
-        }); 
+        });
+    }
+    //save students assigned to homework to db
+    self.saveStudents = function () {
+        var ids = [];
+        for (var i = 0; i < self.selectedStudents().length; i++) {
+            ids.push(self.selectedStudents()[i].Id);
+        }
+        $.ajax({
+            type: 'post',
+            url: '/studentHomework/AddStudentHomeworks',
+            dataType: 'json',
+            traditional: true,
+            data: {
+                homeworkId: self.chosenHomeworkData().Id,
+                studentsIds: ids
+            },
+            success: function (res) {
+                self.selectedStudents([]);
+                self.goToHomework(self.chosenHomeworkData());
+
+            }
+        });
     }
 
-
-    // check all the checkboxes
+    // check all the checkboxes for student to homework assigments
     //https://knockoutjs.com/documentation/computed-writable.html newer
     self.SelectAll = ko.dependentObservable({
         read: function () {
@@ -244,31 +210,8 @@ function ViewModel() {
             self.selectedStudents(self.selectedStudents().length === self.studentNotAssignedYet().length ? [] : self.studentNotAssignedYet().slice(0));
         }
     });
-
-    //save students assigned to homework to db
-    self.saveStudents = function () {
-        var ids = [];
-        for (var i = 0; i < self.selectedStudents().length; i++) {
-            ids.push(self.selectedStudents()[i].Id);
-        }
-
-        $.ajax({
-            type: 'post',
-            url: '/studentHomework/AddStudentHomeworks',
-            dataType: 'json',
-            traditional: true,
-            data: {
-                homeworkId: self.currentHomeworkId(),
-                studentsIds: ids
-            },
-            success: function (res) {
-                self.selectedStudents([]);
-                self.goToHomework(self.chosenHomeworkData());
-               
-            }
-        }); 
-    }
-
+    
+    //ONLY STUDENT METHODS
     self.savaStudentSolution = function () {
         var data = new FormData();
 
@@ -293,10 +236,72 @@ function ViewModel() {
                     $('input:hidden[name="__RequestVerificationToken"]').val()
             },
             success: function (res) {
+                self.goToFolder('All');
+                self.studentSolutionText = ko.observable("");
+                self.studentSolutionPicture = ko.observable("");
                 console.log(res);
-                
+
             }, error: function (res) {
                 console.log(res);
+            }
+        });
+    }
+
+    self.getStudentHomeworkWithFlag = function (isDone) {
+        console.log('hej');
+        $.ajax({
+            url: '/studentHomework/GetAllStudentHomeworkWithFlag',
+            data: { isDone: isDone },
+            type: 'get',
+            success: function (res) {
+                if (res.length > 0) {
+                    $(".book-homework").attr("title", "You have " + res.length + " homework(s) unsubmited.");
+                    $(".book-homework").css("display", "block");
+                    $("#txt").text(res.length);
+                } else {
+                    $("#txt").remove();
+                }
+                
+            }
+        });
+    }
+
+    //USED BY BOTH T AND S
+    //display specific homework's details
+    self.goToHomework = function (homework) {
+        self.toggleDetailedView(true);
+        self.chosenHomeworkData(homework);
+        if (self.chosenHomeworkData().ImageContent() !== null) {
+            self.isFileAttached(true);
+            self.chosenHomeworkImageSrc('/media/homeworks/' + self.chosenHomeworkData().ImageContent());
+        }else{
+            self.isFileAttached(false);
+        };
+
+        if (self.isStudentStatus() === true) {
+            self.getStudentHomeworkDetails(homework.Id);
+        }
+        else {
+            self.loadStudentsPerHomework(homework);
+        }
+        //$.get("/homework/findhomework",
+        //    { id: homework.Id },
+        //    self.chosenHomeworkData).done(function (res) {
+        //        self.loadStudentsPerHomework(res);
+        //        self.currentHomeworkId(res.id);
+        //        console.log(self.chosenHomeworkData());
+        //    });
+    };
+
+    //get clicked homework details 
+    self.getStudentHomeworkDetails = function (homeworkId) {
+        $.ajax({
+            url: '/studentHomework/GetCurrentStudentHomework',
+            data: { id: homeworkId },
+            type: 'get',
+            success: function (res) {
+                self.chosenStudentHomework(new StudentHomework(res));
+                self.isCurrenHomeworkDone(self.chosenStudentHomework().IsDone());
             }
         });
     }
@@ -319,19 +324,37 @@ function ViewModel() {
             success: function (result) {
                 //convert it to Homework instances, then populate self.homeworks
                 var mappedHomeworks = $.map(result, function (item) {
-                    //if(item.studentSubmissionDate.substring(0, 1) === '0'){
-                    //    item.studentSubmissionDate = 'Not yet'
-                    //}
-                    //else {
-                    //    item.studentSubmissionDate = item.studentSubmissionDate.substring(0, 10);
-                    //}
                     return new Homework(item)
                 });
-                self.homeworks(mappedHomeworks);
+                self.homeworks(mappedHomeworks); 
                 self.toggleDetailedView(false);
+
+                if (self.isStudentStatus() === true) {
+                    self.getStudentHomeworkWithFlag(false);
+                }
             }
         });
     };
+
+    self.fileSelect = function (elemet, event) {
+        var file = event.target.files[0];// FileList object which is part of event properties for current element!
+        // render image file as thumbnail.
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = (function (theFile) {
+            return function (e) {
+                self.currentFileSrc(e.target.result);
+                if (self.showDialog() === false) {
+                    self.studentSolutionPicture(theFile);
+                } else {
+                    self.HomeworkPicture(theFile);
+                }
+            };
+        })(file);
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(file);
+    }
 
     //determine who is logged in
     self.isStudentOrTeacher = function () {
@@ -341,6 +364,8 @@ function ViewModel() {
             self.whichFolders(res);
         });  
     }
+
+
 
     self.isStudentOrTeacher();
     // Show all homework by default

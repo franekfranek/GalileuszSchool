@@ -38,24 +38,9 @@ namespace GalileuszSchool.Controllers
         }
 
         public async Task<IActionResult> Index()
-        {
-            
-            //var teacherInfo = _context.Teachers.OrderBy(x => x.Id);
-            //var selectListTeachers = await GetSelectListItem(teacherInfo);
-            //ViewBag.TeacherId = new SelectList(selectListTeachers, "Value", "Text");
-
+        {   
             return View();
         }
-
-        //private async Task<IEnumerable<SelectListItem>> GetSelectListItem(IOrderedQueryable<IListItem> dbData)
-        //{
-        //    IEnumerable<SelectListItem> selectList = await dbData.Select(s => new SelectListItem
-        //    {
-        //        Value = s.Id.ToString(),
-        //        Text = s.FirstName + " " + s.LastName.ToString()
-        //    }).ToListAsync();
-        //    return selectList;
-        //}
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -133,6 +118,7 @@ namespace GalileuszSchool.Controllers
                                                 .Where(whereExpressionForTeacher)
                                                 .Include(x => x.Homework).ThenInclude(x => x.Teacher)
                                                 .Select(x => x.Homework).Where(x => x.TeacherId == teacher.Id)
+                                                .Distinct()
                                                 .ToListAsync();
             }
             else
