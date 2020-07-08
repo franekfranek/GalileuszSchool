@@ -54,10 +54,21 @@ function StudentHomework(data) {
 }
 
 //student model
-function Student(data) {
+function Student(data, id) {
     this.Id = ko.observable(data.id);
     this.FullName = ko.observable(data.firstName + ' ' + data.lastName);
     this.Email = ko.observable(data.email);
+    this.CurrentHomeworkIsDone = ko.observable("");
+
+    for (var i = 0; i < data.studentHomeworks?.length; i++) {
+        if (data.studentHomeworks[i].homeworkId === id) {
+            if (data.studentHomeworks[i].isDone === true) {
+                this.CurrentHomeworkIsDone("Submitted");
+            } else this.CurrentHomeworkIsDone("Not submitted");
+
+            
+        }
+    }
 }
 
 
@@ -148,7 +159,7 @@ function ViewModel() {
             success: function (res) {
                 console.log(res);
                 var mappedStudents = $.map(res, function (item) {
-                    return new Student(item);
+                    return new Student(item, self.chosenHomeworkData().Id());
                 });
                 self.studentsPerHomework(mappedStudents);
                 console.log(mappedStudents);

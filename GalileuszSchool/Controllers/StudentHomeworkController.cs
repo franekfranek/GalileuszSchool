@@ -70,12 +70,12 @@ namespace GalileuszSchool.Controllers
             {
                 foreach (var item in student.StudentHomeworks)
                 {
-                    if(item.HomeworkId == id)
+                    if (item.HomeworkId == id)
                     {
                         s.Add(student);
                     }
                 }
-            } 
+            }
 
             //Where(x => x.StudentHomeworks.Where(y => y.HomeworkId == id)
             //    .Select(x => new {

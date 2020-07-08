@@ -131,34 +131,71 @@
         
         <div class="row">
             <div class="col-6">
-                <h3>Select students:</h3>
-                <div data-bind="if: studentNotAssignedYet().length > 0" class="heading">
-                    <input type="checkbox" data-bind="checked: SelectAll" title="Select all/none" /> Select all
-                </div>
+                <div class="card mt-3 mr-3">
+                    <div class="card-header">
+                        <h4>Select students:</h4>
+                    </div>
+                    
+                    <div data-bind="if: studentNotAssignedYet().length > 0" class="heading ml-2 mb-2 mt-1 pretty p-default p-fill">
+                        <input type="checkbox" data-bind="checked: SelectAll" title="Select all/none" />
+                        <div class="state p-info">
+                            <label>Select all</label>
+                        </div>
 
-                <div data-bind="if: studentNotAssignedYet().length <= 0" class="heading">
-                    <p>This homework is assigned to all available students </p>
-                </div>
+                    </div>
 
-                <div data-bind="foreach: studentNotAssignedYet">
-                    <div>
-                        <input type="checkbox" data-bind="checked: $parent.selectedStudents, checkedValue: $data" /><span data-bind="text: FullName"></span>
+
+
+                    <div data-bind="if: studentNotAssignedYet().length <= 0" class="heading">
+                        <p>This homework is assigned to all available students </p>
+                    </div>
+
+                    <div data-bind="foreach: studentNotAssignedYet">
+                        <div class="pretty p-icon p-jelly p-round p-bigger ml-2 mb-2 card" style="display:block;">
+                            <input type="checkbox" data-bind="checked: $parent.selectedStudents, checkedValue: $data" />
+                            <div class="state p-info">
+                                <i class="icon material-icons">done</i>
+                                <label data-bind="text: FullName"></label>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
-            <div data-bind="if: studentNotAssignedYet().length > 0" class="col-6">
-                <h3 >You selected:</h3>
-                <div data-bind="foreach: selectedStudents">
-                    <div data-bind="text: FullName"></div>
+            <div data-bind="if: studentNotAssignedYet().length > 0" class="col-6 mt-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>You selected:</h4>
+                    </div>
+                    
+                    <div data-bind="foreach: selectedStudents" class="mt-1">
+                        <div class="card mb-1 ml-1 mr-1">
+                            <div class="card-body">
+                                <p class="card-text" data-bind="text: FullName"></p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" data-bind="click : saveStudents">Confirm</button>
                 </div>
-                <button data-bind="click : saveStudents">Confirm</button>
             </div>
         </div>
         <h2>Students who already got this assigment: </h2>
-        <div data-bind="foreach: studentsPerHomework">
-            <p data-bind="text: FullName"></p>
 
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Full name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: studentsPerHomework">
+                <tr>
+                    <td data-bind="text: FullName"></td>
+                    <td data-bind="text: CurrentHomeworkIsDone"></td>
+                </tr>
+            </tbody>       
+        </table>
 
     </div>
 </div>
@@ -195,11 +232,7 @@
         <p style="text-align:center">You have already submitted this assigment.</p>
         <!-- /ko -->
     </div>
-    
-
 </div>
-
-
 
 
 @section Scripts{
