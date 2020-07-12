@@ -28,6 +28,20 @@ ko.bindingHandlers.modal = {
     }
 }
 
+//good example of binding in submitted/unsubmitted badge in teacher section
+//for further usege XD https://stackoverflow.com/questions/33442589/how-to-convert-the-boolean-value-to-yes-or-no-in-knockout
+//    < span data - bind="boolean: myBooleanVar" ></span > < !--(Defaults to "Yes" or "No")-->
+//        <span data-bind="boolean: myBooleanVar, trueText: 'Absolutely', falseText: 'Negative'"></span>
+
+
+//ko.bindingHandlers.boolean = {
+//    update: function (element, valueAccessor, allBindings) {
+//        var bool = ko.utils.unwrapObservable(valueAccessor()),
+//            trueText = allBindings.get('trueText') || 'Yes',
+//            falseText = allBindings.get('falseText') || 'No';
+//        $(element).text(bool ? trueText : falseText);
+//    },
+//};
 
 
 //class models
@@ -40,35 +54,50 @@ function Homework(data) {
     this.TextContent = ko.observable(data.textContent);
     this.TeacherName = ko.observable(data.teacher.firstName + " " + data.teacher.lastName);
     this.ImageContent = ko.observable(data.imageContent);
+    this.Course = ko.observable(data.course);
     
 }
 
 //student's homework model
 function StudentHomework(data) {
-    this.HomeworkId = ko.observable(data.homeworkId);
-    this.StudentId = ko.observable(data.studentId );
-    this.IsDone = ko.observable(data.isDone);
-    this.SolutionTextContent = ko.observable(data.solutionTextContent);
-    this.StudentSubmissionDate = ko.observable(data.studentSubmissionDate);
-    this.ImageSolution = ko.observable(data.imageSolution);
+    var self = this;
+    self.HomeworkId = ko.observable(data.homeworkId);
+    self.StudentId = ko.observable(data.studentId );
+    self.IsDone = ko.observable(data.isDone);
+    self.SolutionTextContent = ko.observable(data.solutionTextContent);
+    self.StudentSubmissionDate = ko.observable(data.studentSubmissionDate);
+    self.ImageSolution = ko.observable(data.imageSolution);
+    self.ImageSrc = ko.computed(function () {
+        return self.ImageSolution() ? '/media/studentHomeworkSolutions/' + self.ImageSolution() : false;
+    })
 }
 
 //student model
 function Student(data, id) {
-    this.Id = ko.observable(data.id);
-    this.FullName = ko.observable(data.firstName + ' ' + data.lastName);
-    this.Email = ko.observable(data.email);
-    this.CurrentHomeworkIsDone = ko.observable("");
+    var that = this;
+    that.Id = ko.observable(data.id);
+    that.FullName = ko.observable(data.firstName + ' ' + data.lastName);
+    that.Email = ko.observable(data.email);
+    that.CurrentHomeworkIsDone = ko.observable("");
 
     for (var i = 0; i < data.studentHomeworks?.length; i++) {
         if (data.studentHomeworks[i].homeworkId === id) {
             if (data.studentHomeworks[i].isDone === true) {
-                this.CurrentHomeworkIsDone("Submitted");
-            } else this.CurrentHomeworkIsDone("Not submitted");
-
-            
+                that.CurrentHomeworkIsDone(true);
+            } else that.CurrentHomeworkIsDone(false);
         }
     }
+    that.Status = ko.computed(function () {
+        return that.CurrentHomeworkIsDone() ? 'Submitted' : 'Not Submitted';
+    });
+}
+
+function Course(data) {
+    var self = this;
+    self.Id = ko.observable(data.id);
+    self.Name = ko.observable(data.name);
+    self.Level = ko.observable(data.level);
+    self.Description = ko.observable(data.description);
 }
 
 
@@ -103,6 +132,8 @@ function ViewModel() {
       
     //toggle view
     self.toggleDetailedView = ko.observable(true);
+    //togle student homework solution in teacher's section 
+    self.toggleStudentHomework = ko.observable(false);
 
     //list of students 
     self.studentsPerHomework = ko.observableArray([]);
@@ -112,7 +143,25 @@ function ViewModel() {
     //student solution submmision
     self.studentSolutionText = ko.observable("");
     self.studentSolutionPicture = ko.observable("");
-  
+
+    //student homework for teacher view
+    self.studentSolutiuonToShow = ko.observable("");
+    self.currentStudentName = ko.observable("");
+    self.currentStudentMessage = ko.pureComputed({
+        read: function () {
+            return self.currentStudentName() + "'s solution: ";
+        },
+        write: function (value) {
+            console.log(value);
+            return value;
+        },
+        owner: self
+    })
+
+    //courses
+    self.coursesAvailable = ko.observableArray([]);
+    self.selectedCourse = ko.observable("");
+
     // OPERATIONS
 
 
@@ -124,6 +173,7 @@ function ViewModel() {
         data.append('Title', self.Title());
         data.append('TextContent', self.TextContent());
         data.append('PhotoContent', self.HomeworkPicture());
+        data.append('Course', self.selectedCourse().Name());
         
         $.ajax({
             url: "/homework/create",
@@ -157,13 +207,33 @@ function ViewModel() {
             data: { id: homework.Id },
             type: 'get',
             success: function (res) {
-                console.log(res);
                 var mappedStudents = $.map(res, function (item) {
                     return new Student(item, self.chosenHomeworkData().Id());
                 });
                 self.studentsPerHomework(mappedStudents);
-                console.log(mappedStudents);
                 self.loadStudentsWithoutHomework(self.studentsPerHomework());
+            }
+        });
+    }
+
+    //show student's solutions text and picture 
+    self.showStudentHomework = function (student) {
+        self.toggleStudentHomework(true);
+        self.currentStudentName(student.FullName());
+        self.studentSolutiuonToShow("");
+        $.ajax({
+            type: 'get',
+            url: '/studentHomework/getSolution',
+            dataType: 'json',
+            traditional: true,
+            data: {
+                studentId: student.Id(),
+                homeworkId: self.chosenHomeworkData().Id()
+            },
+            success: function (res) {
+                var solutiuon = new StudentHomework(res);
+                
+                self.studentSolutiuonToShow(solutiuon);
             }
         });
     }
@@ -259,7 +329,6 @@ function ViewModel() {
     }
 
     self.getStudentHomeworkWithFlag = function (isDone) {
-        console.log('hej');
         $.ajax({
             url: '/studentHomework/GetAllStudentHomeworkWithFlag',
             data: { isDone: isDone },
@@ -282,6 +351,7 @@ function ViewModel() {
     self.goToHomework = function (homework) {
         self.toggleDetailedView(true);
         self.chosenHomeworkData(homework);
+        console.log(self.chosenHomeworkData());
         if (self.chosenHomeworkData().ImageContent() !== null) {
             self.isFileAttached(true);
             self.chosenHomeworkImageSrc('/media/homeworks/' + self.chosenHomeworkData().ImageContent());
@@ -295,13 +365,7 @@ function ViewModel() {
         else {
             self.loadStudentsPerHomework(homework);
         }
-        //$.get("/homework/findhomework",
-        //    { id: homework.Id },
-        //    self.chosenHomeworkData).done(function (res) {
-        //        self.loadStudentsPerHomework(res);
-        //        self.currentHomeworkId(res.id);
-        //        console.log(self.chosenHomeworkData());
-        //    });
+        
     };
 
     //get clicked homework details 
@@ -327,12 +391,14 @@ function ViewModel() {
 
     //load filtered homeworks
     self.goToFolder = function (folder) {
+        self.currentStudentMessage("");
         self.chosenFolderId(folder);
         $.ajax({
             type: 'get',
             url: '/homework/gethomeworks',
             data: { option: folder },
             success: function (result) {
+                console.log(result);
                 //convert it to Homework instances, then populate self.homeworks
                 var mappedHomeworks = $.map(result, function (item) {
                     return new Homework(item)
@@ -367,6 +433,19 @@ function ViewModel() {
         reader.readAsDataURL(file);
     }
 
+    self.getCourses = function () {
+        $.ajax({
+            url: '/Homework/GetCoursesOfTeacher',
+            type: 'get',
+            success: function (res) {
+                var mappedCourses = $.map(res, function (item) {
+                    return new Course(item);
+                });
+                self.coursesAvailable(mappedCourses);
+            }
+        });
+    }
+
     //determine who is logged in
     self.isStudentOrTeacher = function () {
         $.get('/homework/isstudentorteacher').done(function (res) {
@@ -376,11 +455,15 @@ function ViewModel() {
         });  
     }
 
-
-
+    //establish what user is logged in
     self.isStudentOrTeacher();
-    // Show all homework by default
+    // show all homework by default
     self.goToFolder('All');
+
+    //load courses teacher's courses
+    if (self.isTeacherStatus === true) {
+        self.getCourses();
+    }
 }
 
 ko.applyBindings(new ViewModel());

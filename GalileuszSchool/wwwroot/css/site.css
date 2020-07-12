@@ -112,10 +112,10 @@ li.nav-item.logout{
     padding: 1px 20px 1px 20px;*/
 }
 
-thead {
+/*thead {
     background-color: #006DCC;
     color: white;
-}
+}*/
 
 /*icons*/
 
@@ -232,3 +232,7 @@ div.fa-linkedin-in:hover {
     border: blue 6px solid;
 }*/
 
+/*icon eye*/
+.see-homework{
+    cursor: pointer;
+}

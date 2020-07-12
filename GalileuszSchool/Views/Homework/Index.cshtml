@@ -34,12 +34,29 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Course</label>
+                        <select class="form-control" data-bind="options: coursesAvailable,
+                               optionsText: function(item) {
+                                   return item.Name() + ' (level: ' + item.Level() + ')'
+                               },
+                               value: selectedCourse,
+                               optionsCaption: 'Choose...'">
+                        </select>
+
+                        <div data-bind="visible: selectedCourse">
+                            <!-- Appears when you select something -->
+                            You have chosen a course on level
+                            <span data-bind="text: selectedCourse() ? selectedCourse().Level() : 'unknown'"></span>.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label>Image</label>
                         <input style="border:none" type="file" data-bind="event:{ change: $root.fileSelect }"
                                class="form-control" id="homeworkCreateImg" /><br>
                         <output id="list"></output>
 
-                        
+
                         <img data-bind="attr: {src: $root.currentFileSrc()}" height="200" id="targetImg" />
                     </div>
 
@@ -66,12 +83,12 @@
             click: $root.goToFolder">
     </li>
     <!-- /ko -->
-    <b data-bind="ifnot: isStudentStatus">
-        <li data-bind="click: function(){showDialog(true)}">
+    
+        <li data-bind="click: function(){showDialog(true)}, ifnot: isStudentStatus ">
             <i  class="material-icons" data-toggle="tooltip" title="New">&#xE147</i>
             <span>New</span>
         </li>
-     </b>
+
 </ul>
 
 <!-- Homework grid -->
@@ -79,11 +96,11 @@
     <thead>
         <tr>
             <th>Title</th>
+            <th>Course</th>
             <!-- ko if: isTeacherStatus -->
             <th>Creation Date</th>
             <!-- /ko -->
             <!-- ko if: isStudentStatus -->
-            <th>Course</th>
             <th>Teacher</th>
             <!-- /ko -->
         </tr>
@@ -92,6 +109,7 @@
     <tbody data-bind="foreach: homeworks">
         <tr data-bind="click: $root.goToHomework">
             <td data-bind="text: Title"></td>
+            <td data-bind="text: Course"></td>
             <!-- ko if: $root.isTeacherStatus -->
             <td data-bind="text: CreationDate"></td>
             <!-- /ko -->
@@ -112,10 +130,12 @@
             <h1 data-bind="text: Title()"></h1>
             <div class="row">
                 <p class="col-6">
-                    <label>Content: </label> <br /><span data-bind="text: TextContent()"></span></p>
+                    <label class="mr-1">Course:</label> <span data-bind="text: Course()"></span><br />
+                    <label>Content: </label> <br /><span data-bind="text: TextContent()"></span>
+                </p>
                 <p class="col-6" data-bind="if: $root.isFileAttached" >
                     <label class="mr-5">Attached file:</label>
-                    <img data-bind="attr: {src: $root.chosenHomeworkImageSrc()}" class="img-fluid" height="500" width="500" />
+                    <img data-bind="attr: {src: $root.chosenHomeworkImageSrc()}" class="img-fluid" height="450" width="450" />
                 </p>
             </div>
 
@@ -128,14 +148,14 @@
 @*=======TEACHER VIEW=======*@
 <div data-bind="if: isTeacherStatus">
     <div data-bind="if: toggleDetailedView">
-        
+
         <div class="row">
             <div class="col-6">
                 <div class="card mt-3 mr-3">
                     <div class="card-header">
-                        <h4>Select students:</h4>
+                        <h4>Select students for this assignment:</h4>
                     </div>
-                    
+
                     <div data-bind="if: studentNotAssignedYet().length > 0" class="heading ml-2 mb-2 mt-1 pretty p-default p-fill">
                         <input type="checkbox" data-bind="checked: SelectAll" title="Select all/none" />
                         <div class="state p-info">
@@ -151,7 +171,7 @@
                     </div>
 
                     <div data-bind="foreach: studentNotAssignedYet">
-                        <div class="pretty p-icon p-jelly p-round p-bigger ml-2 mb-2 card" style="display:block;">
+                        <div class="pretty p-icon p-jelly p-round p-bigger ml-2 mb-2" style="display:block;">
                             <input type="checkbox" data-bind="checked: $parent.selectedStudents, checkedValue: $data" />
                             <div class="state p-info">
                                 <i class="icon material-icons">done</i>
@@ -167,35 +187,68 @@
                     <div class="card-header">
                         <h4>You selected:</h4>
                     </div>
-                    
+
                     <div data-bind="foreach: selectedStudents" class="mt-1">
                         <div class="card mb-1 ml-1 mr-1">
                             <div class="card-body">
                                 <p class="card-text" data-bind="text: FullName"></p>
                             </div>
-                            
+
                         </div>
                     </div>
                     <button class="btn btn-secondary" data-bind="click : saveStudents">Confirm</button>
                 </div>
             </div>
         </div>
-        <h2>Students who already got this assigment: </h2>
+        <h2 class="mt-3">Students who already got this assigment: </h2>
+    <div class="row">
+        <div class="col-6">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                        <th></th>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Full name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody data-bind="foreach: studentsPerHomework">
-                <tr>
-                    <td data-bind="text: FullName"></td>
-                    <td data-bind="text: CurrentHomeworkIsDone"></td>
-                </tr>
-            </tbody>       
-        </table>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: studentsPerHomework">
+
+                    <tr scope="row">
+                        <td data-bind="text: FullName"></td>
+                        <td > <h5><span data-bind="text: Status, css:{
+                                        'badge' : true,
+                                        'badge-success' : CurrentHomeworkIsDone(),
+                                        'badge-danger' : !CurrentHomeworkIsDone()
+                                        
+                                        }">
+                              </span></h5></td>
+                        <td class="see-homework" data-bind="if: CurrentHomeworkIsDone, click: $root.showStudentHomework">
+                        <span class="material-icons" style="color: steelblue;">visibility</span></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        <div data-bind="if: $root.toggleStudentHomework" class="col-6">
+            <div class="viewMail" data-bind="foreach: $root.studentSolutiuonToShow">
+                <h2 id="studentSolution" data-bind="text: $root.currentStudentMessage()"> </h2>
+                <div class="mailInfo" data-bind="text: SolutionTextContent"></div>
+                <div class="mt-3" data-bind="if: ImageSrc()">
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Attached pictures:</h2>
+                        </div>
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <img data-bind="attr: {src: ImageSrc()}" class="img-fluid justify-content-center" height="300" width="300" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
     </div>
 </div>

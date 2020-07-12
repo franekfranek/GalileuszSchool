@@ -171,5 +171,13 @@ namespace GalileuszSchool.Controllers
             var user = await _userManager.GetUserAsync(User);
             return await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
         }
+
+        public async Task<IActionResult> GetSolution(int studentId, int homeworkId)
+        {
+            var studentSolution = await _context.studentHomework
+                .FirstOrDefaultAsync(x => x.HomeworkId == homeworkId && x.StudentId == studentId);
+
+            return Json(studentSolution);
+        }
     }
 }

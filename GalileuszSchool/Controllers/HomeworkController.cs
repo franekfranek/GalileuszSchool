@@ -76,7 +76,8 @@ namespace GalileuszSchool.Controllers
                     TextContent = homework.TextContent,
                     TeacherId = teacher.Id,
                     Slug = homework.Title.ToLower(),
-                    ImageContent = imageName
+                    ImageContent = imageName,
+                    Course = homework.Course
                 };
                 await _repository.Create(homeworkModel);
                 return Json(new { text = "Homework added!" });
@@ -144,5 +145,20 @@ namespace GalileuszSchool.Controllers
             return Json(new { isTeacher = user.IsTeacher, isStudent = user.IsStudent });
         }
 
+        public async Task<IActionResult> GetCoursesOfTeacher()
+        {
+            var teacher = GetLoggedTeacher().Result;
+
+            var courses = await _context.Courses.Where(x => x.TeacherId == teacher.Id).ToListAsync();
+
+            return Json(courses);
+        }
+
+        //need to make it non-generic 
+        public async Task<Teacher> GetLoggedTeacher()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
+        }
     }
 }

@@ -34,6 +34,8 @@ namespace GalileuszSchool.Models.ModelsForNormalUsers
 
         public IList<StudentHomework> StudentHomeworks { get; set; }
 
+        public string Course { get; set; } = null;
+
         public string ImageContent { get; set; }
       
         [NotMapped]
