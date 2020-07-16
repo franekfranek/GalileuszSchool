@@ -115,7 +115,7 @@ namespace GalileuszSchool.Controllers
             List<Homework> homeworks = null;
             if (user.IsTeacher)
             {
-                homeworks = await _context.studentHomework
+                homeworks = await _context.StudentHomework
                                                 .Where(whereExpressionForTeacher)
                                                 .Include(x => x.Homework).ThenInclude(x => x.Teacher)
                                                 .Select(x => x.Homework).Where(x => x.TeacherId == teacher.Id)
@@ -124,7 +124,7 @@ namespace GalileuszSchool.Controllers
             }
             else
             {
-                homeworks = await _context.studentHomework
+                homeworks = await _context.StudentHomework
                                                 .Where(whereExpressionForStudent)
                                                 .Include(x => x.Homework).ThenInclude(x => x.Teacher)
                                                 .Select(x => x.Homework)

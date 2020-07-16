@@ -113,7 +113,7 @@ namespace GalileuszSchool.Controllers
                     if (appUser.IsTeacher)
                     {
                         var currentTeacher = await userManager.FindByNameAsync(appUser.UserName);
-                        await userManager.AddToRoleAsync(currentTeacher, "student");
+                        await userManager.AddToRoleAsync(currentTeacher, "teacher");
                         await _teachersController.Create(new Teacher
                         {
                             FirstName = user.FirstName,

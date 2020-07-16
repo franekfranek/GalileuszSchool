@@ -113,7 +113,7 @@ namespace GalileuszSchool.Controllers
         {
             var student = GetLoggedStudent().Result;
 
-            var homework  = await _context.studentHomework
+            var homework  = await _context.StudentHomework
                     .FirstOrDefaultAsync(x => x.StudentId == student.Id && x.HomeworkId == id);
 
             return Json(homework);
@@ -123,7 +123,7 @@ namespace GalileuszSchool.Controllers
         {
             var student = GetLoggedStudent().Result;
 
-            var allSubmittedHomeworks = await _context.studentHomework
+            var allSubmittedHomeworks = await _context.StudentHomework
                 .Where(x => x.StudentId == student.Id && x.IsDone == isDone)
                 .ToListAsync();
 
@@ -137,7 +137,7 @@ namespace GalileuszSchool.Controllers
             {
                 var student = GetLoggedStudent().Result;
 
-                var homeworkByStudent = await _context.studentHomework
+                var homeworkByStudent = await _context.StudentHomework
                     .FirstOrDefaultAsync(x => x.StudentId == student.Id && x.HomeworkId == studentHomework.HomeworkId);
 
                 homeworkByStudent.IsDone = true;
@@ -157,7 +157,7 @@ namespace GalileuszSchool.Controllers
                 homeworkByStudent.ImageSolution = imageName;
                 homeworkByStudent.PhotoSolution = studentHomework.PhotoSolution;
 
-                _context.studentHomework.Update(homeworkByStudent);
+                _context.StudentHomework.Update(homeworkByStudent);
                 await _context.SaveChangesAsync();
 
                 return Json(new { text = "You submitted your assignment!" });
@@ -174,7 +174,7 @@ namespace GalileuszSchool.Controllers
 
         public async Task<IActionResult> GetSolution(int studentId, int homeworkId)
         {
-            var studentSolution = await _context.studentHomework
+            var studentSolution = await _context.StudentHomework
                 .FirstOrDefaultAsync(x => x.HomeworkId == homeworkId && x.StudentId == studentId);
 
             return Json(studentSolution);

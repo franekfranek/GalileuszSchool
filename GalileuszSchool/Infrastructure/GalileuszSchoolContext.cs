@@ -33,6 +33,6 @@ namespace GalileuszSchool.Infrastructure
 
         public DbSet<ClassRoom> ClassRoom { get; set; }
         public DbSet<Homework> Homework { get; set; }
-        public DbSet<StudentHomework> studentHomework { get; set; }
+        public DbSet<StudentHomework> StudentHomework { get; set; }
     }
 }

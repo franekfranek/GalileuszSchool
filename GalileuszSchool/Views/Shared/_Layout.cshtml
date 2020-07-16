@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet" />
     @*<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" rel="stylesheet" >*@
-<script src="https://use.fontawesome.com/6f3079242d.js"></script>
+    <script src="https://use.fontawesome.com/6f3079242d.js"></script>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/fontawesome-free-5.13.0-web/css/all.css" rel="stylesheet">
     <link href="~/css/simple-sidebar.css" rel="stylesheet">
@@ -25,6 +25,9 @@
     <link href="~/css/student-submission-table.css" rel="stylesheet" />
     <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjGvDz9871qFSq6_PzKmfmw7fX6DbMILI&callback=initMap">
+    </script>
 
 
 
@@ -154,38 +157,34 @@
                 <footer class="footer">
                     <div class="" style="position: relative;">
                         <div class="row">
-                            <div class="col-1"> </div>
-                            <div class="col-7 about-company mt-3 pl-4">
+
+                            <div class="col-5 about-company mt-3 pl-4">
                                 <img class="mr-2 small-logo" src="~/media/logo-small.png" alt="" height="35" width="35" />
                                 <h2 class="mt-2 small-logo">Galileusz School</h2>
 
                                 <h4>Newsletter</h4>
                                 <p>A rover wearing a fuzzy suit doesn’t alarm the real penguins</p>
-                                <p>
-                                    <div class="row ml-0">
-                                        <div class="col-xs-6">
-                                            <input type="text" class="form-control " placeholder="Your email address">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-info mt-1" type="button">Subscribe</button>
-                                            </span>
-                                        </div>
-                                        
-                                    </div><!-- /input-group -->
-                                </p>
+                                
+                                    <div class="col-xs-3 input-group">
+                                        <input type="text" class="form-control" size="20" placeholder="You Email">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-outline-light" type="button">Subscribe</button>
+                                        </span>
+                                    </div>
+                                
 
                             </div>
-                            @*<div class="col-lg-3 col-xs-12 links">
-                                <h4 class="mt-lg-0 mt-sm-3">Links</h4>
-                                <ul class="m-0 p-0">
-                                    <li>- <a href="#"Lorem ipsum</a></li>
-                                </ul>
-                            </div>*@
-                            <div class="col-4 location">
+
+                            <div class="col-4 mt-4" id="map" >
+
+                            </div>
+
+                            <div class="col-3 location " style="text-align: center; padding-left:0px;">
                                 <h4 class="mt-4">Contact Us</h4>
                                 <p class="mb-2"><span class="material-icons mr-1" style="vertical-align: middle">location_on</span>777 Aleje Jerozolimskie Warsaw</p>
                                 <p class="mb-1"><i class="fa fa-phone mr-1"></i>+48 22 75-43-00</p>
                                 <p><span class="material-icons mr-1" style="vertical-align: middle">mail</span>info@galileusz.com</p>
-                               
+
                             </div>
                         </div>
                         <div class="row mt-5">
@@ -212,6 +211,21 @@
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
         });
+
+        var map;
+        function initMap() {
+            var coordinates = { lat: 52.199636, lng: 20.933612 }
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: coordinates,
+                zoom: 15
+            });
+
+            var marker = new google.maps.Marker({
+                position: coordinates,
+                map: map,
+                title: "Galileusz School"
+            });
+        }
     </script>
 
     
