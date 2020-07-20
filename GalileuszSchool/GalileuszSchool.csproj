@@ -8,6 +8,9 @@
   <ItemGroup>
     <PackageReference Include="jQuery.Validation" Version="1.19.1" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Core" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
@@ -26,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Services\Google\" />
     <Folder Include="wwwroot\css\DataTables\" />
     <Folder Include="wwwroot\js\DataTables\" />
     <Folder Include="wwwroot\media\homeworks\" />

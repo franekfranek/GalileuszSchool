@@ -25,9 +25,9 @@
     <link href="~/css/student-submission-table.css" rel="stylesheet" />
     <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjGvDz9871qFSq6_PzKmfmw7fX6DbMILI&callback=initMap">
-    </script>
+    @*<script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap">
+    </script>*@
 
 
 
@@ -212,7 +212,7 @@
             $("#wrapper").toggleClass("toggled");
         });
 
-        var map;
+        @*var map;
         function initMap() {
             var coordinates = { lat: 52.199636, lng: 20.933612 }
             map = new google.maps.Map(document.getElementById("map"), {
@@ -225,7 +225,7 @@
                 map: map,
                 title: "Galileusz School"
             });
-        }
+        }*@
     </script>
 
     

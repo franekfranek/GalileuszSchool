@@ -12,13 +12,13 @@
             <div class="col-md-4">
                 <form asp-action="Register">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    
+
                     <div class="form-group">
                         <label asp-for="FirstName" class="control-label"></label>
                         <input asp-for="FirstName" class="form-control" />
                         <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
-                    
+
                     <div class="form-group">
                         <label asp-for="LastName" class="control-label"></label>
                         <input asp-for="LastName" class="form-control" />
@@ -36,19 +36,19 @@
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
-                    
+
                     <div class="form-group">
                         <div class="pretty p-default p-round p-thick">
-                            <input class="checkBox" id="isStudent" asp-for="IsStudent" type="checkbox" value="true"/>
+                            <input class="checkBox" id="isStudent" asp-for="IsStudent" type="checkbox" value="true" />
                             <div class="state p-primary-o">
                                 <label asp-for="IsStudent">I am a student or parent</label>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <div class="pretty p-default p-round p-thick">
-                            <input class="checkBox" id="isTeacher" asp-for="IsTeacher" type="checkbox" value="true"/>
+                            <input class="checkBox" id="isTeacher" asp-for="IsTeacher" type="checkbox" value="true" />
                             <div class="state p-primary-o">
                                 <label asp-for="IsTeacher">I am a teacher</label>
                             </div>
@@ -58,6 +58,7 @@
                         <input type="submit" value="Register" class="btn btn-primary" />
                     </div>
                 </form>
+                
             </div>
         </div>
 
@@ -89,5 +90,6 @@
                 }
             }
         }
+
     </script>
 }

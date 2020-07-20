@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using GalileuszSchool.Areas.Admin.Controllers;
 using GalileuszSchool.Infrastructure;
@@ -8,11 +9,13 @@ using GalileuszSchool.Models;
 using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers;
 using GalileuszSchool.Services;
+using GalileuszSchool.Services.Facebook;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using WebPWrecover.Services;
 
 namespace GalileuszSchool.Controllers
@@ -21,14 +24,15 @@ namespace GalileuszSchool.Controllers
     public class AccountController : Controller
     {
 
-        private readonly UserManager<AppUser> userManager;
-        private readonly SignInManager<AppUser> signInManager;
-        private IPasswordHasher<AppUser> passwordHasher;
-        private readonly GalileuszSchoolContext context;
-        private readonly ILogger<AccountController> logger;
-        private readonly IEmailSender emailSender;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private IPasswordHasher<AppUser> _passwordHasher;
+        private readonly GalileuszSchoolContext _context;
+        private readonly ILogger<AccountController> _logger;
+        private readonly IEmailSender _emailSender;
         private readonly StudentsController _studentsController;
         private readonly TeachersController _teachersController;
+        private readonly IFacebookAuthService _facebookAuthService;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
@@ -37,16 +41,18 @@ namespace GalileuszSchool.Controllers
                                 ILogger<AccountController> logger,
                                 IEmailSender emailSender,
                                 StudentsController studentsController,
-                                TeachersController teachersController)
+                                TeachersController teachersController,
+                                IFacebookAuthService facebookAuthService)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.passwordHasher = passwordHasher;
-            this.context = context;
-            this.logger = logger;
-            this.emailSender = emailSender;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _passwordHasher = passwordHasher;
+            _context = context;
+            _logger = logger;
+            _emailSender = emailSender;
             _studentsController = studentsController;
             _teachersController = teachersController;
+            _facebookAuthService = facebookAuthService;
         }
 
         // get account/register
@@ -64,7 +70,7 @@ namespace GalileuszSchool.Controllers
         {
             if (ModelState.IsValid)
             {
-                var isEmailAlreadyExists = context.Users.Any(x => x.Email == user.Email);
+                var isEmailAlreadyExists = _context.Users.Any(x => x.Email == user.Email);
 
                 if (isEmailAlreadyExists)
                 {
@@ -74,7 +80,7 @@ namespace GalileuszSchool.Controllers
 
                 var userName = user.FirstName.ToLower() + "-" + user.LastName.ToLower();
 
-                var isUserExists = context.Users.Any(x => x.UserName == userName);
+                var isUserExists = _context.Users.Any(x => x.UserName == userName);
 
                 if (isUserExists)
                 {
@@ -93,14 +99,14 @@ namespace GalileuszSchool.Controllers
 
                 };
                
-                IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
+                IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
 
                 if (result.Succeeded)
                 {
                     if (appUser.IsStudent)
                     {
-                        var currentStudent = await userManager.FindByNameAsync(appUser.UserName);
-                        await userManager.AddToRoleAsync(currentStudent, "student");
+                        var currentStudent = await _userManager.FindByNameAsync(appUser.UserName);
+                        await _userManager.AddToRoleAsync(currentStudent, "student");
                         await _studentsController.Create(new Student
                         {
                             FirstName = user.FirstName,
@@ -112,8 +118,8 @@ namespace GalileuszSchool.Controllers
                     
                     if (appUser.IsTeacher)
                     {
-                        var currentTeacher = await userManager.FindByNameAsync(appUser.UserName);
-                        await userManager.AddToRoleAsync(currentTeacher, "teacher");
+                        var currentTeacher = await _userManager.FindByNameAsync(appUser.UserName);
+                        await _userManager.AddToRoleAsync(currentTeacher, "teacher");
                         await _teachersController.Create(new Teacher
                         {
                             FirstName = user.FirstName,
@@ -122,15 +128,15 @@ namespace GalileuszSchool.Controllers
                             Email = user.Email
                         });
                     }
-                    var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
                     var confirmationLink = Url.Action("ConfirmEmail", "Account",
                                             new { userId = appUser.Id, token = token }, Request.Scheme);
 
-                    logger.Log(LogLevel.Warning, confirmationLink);
+                    _logger.Log(LogLevel.Warning, confirmationLink);
 
 
-                    await emailSender.SendEmailAsync(appUser.Email, "Email Confirmation",
+                    await _emailSender.SendEmailAsync(appUser.Email, "Email Confirmation",
                         "Your confirmation link: "+ confirmationLink);
 
                     TempData["Success"] = "You succesufully registered your account! We sent you email confirmation";
@@ -150,11 +156,12 @@ namespace GalileuszSchool.Controllers
 
         // /get/account/login
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
+        public async Task<IActionResult> Login(string returnUrl)
         {
             Login login = new Login
             {
-                ReturnUrl = returnUrl
+                ReturnUrl = returnUrl,
+                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
             };
             return View(login);
         }
@@ -167,12 +174,12 @@ namespace GalileuszSchool.Controllers
         {
             if (ModelState.IsValid)
             {
-                AppUser appUser = await userManager.FindByEmailAsync(login.Email);
+                AppUser appUser = await _userManager.FindByEmailAsync(login.Email);
                 //if (appUser != null && appUser.EmailConfirmed)
                 
                 if (appUser != null)
                 {
-                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync
+                    Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync
                         (appUser, login.Password, false, false);
 
                     if (result.Succeeded)
@@ -191,14 +198,14 @@ namespace GalileuszSchool.Controllers
         // /get/account/logout
         public async Task<IActionResult> Logout()
         {
-            await signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return Redirect("/account/login");
         }
 
         // /get/account/edit
         public async Task<IActionResult> Edit()
         {
-            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+            AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
             UserEdit user = new UserEdit(appUser);
 
             return View(user);
@@ -211,7 +218,7 @@ namespace GalileuszSchool.Controllers
         public async Task<IActionResult> Edit(UserEdit userEdit)
         {
 
-            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+            AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
             var oldEmail = appUser.Email;
             var oldName = appUser.UserName;
             var fullNameFromModel = userEdit.FirstName.ToLower() + "-" + userEdit.LastName.ToLower();
@@ -219,7 +226,7 @@ namespace GalileuszSchool.Controllers
             if (ModelState.IsValid)
             {
                 //email edit
-                var isEmailAlreadyExists = context.Users.Any(x => x.Email == userEdit.Email);
+                var isEmailAlreadyExists = _context.Users.Any(x => x.Email == userEdit.Email);
                 if (oldEmail != userEdit.Email)
                 {
                     if (isEmailAlreadyExists)
@@ -232,7 +239,7 @@ namespace GalileuszSchool.Controllers
                 else { appUser.Email = oldEmail; }
 
                 //name edit
-                var isNameAlreadyExists = context.Users.Any(x => x.UserName == fullNameFromModel);
+                var isNameAlreadyExists = _context.Users.Any(x => x.UserName == fullNameFromModel);
                 if(oldName != fullNameFromModel)
                 {
                     if (isNameAlreadyExists)
@@ -254,7 +261,7 @@ namespace GalileuszSchool.Controllers
                 //password edit
                 if (userEdit.Password != null)
                 {
-                    appUser.PasswordHash = passwordHasher.HashPassword(appUser, userEdit.Password);
+                    appUser.PasswordHash = _passwordHasher.HashPassword(appUser, userEdit.Password);
                 }
 
 
@@ -264,19 +271,19 @@ namespace GalileuszSchool.Controllers
                     appUser.EmailConfirmed = false;
                 }
 
-                IdentityResult result = await userManager.UpdateAsync(appUser);
+                IdentityResult result = await _userManager.UpdateAsync(appUser);
                 if (result.Succeeded)
                 {
                     if (oldEmail != appUser.Email) {
 
-                        var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
                         var confirmationLink = Url.Action("ConfirmEmail", "Account",
                                                 new { userId = appUser.Id, token = token }, Request.Scheme);
 
-                        logger.Log(LogLevel.Warning, confirmationLink);
+                        _logger.Log(LogLevel.Warning, confirmationLink);
 
-                        await emailSender.SendEmailAsync(appUser.Email, "Email Confirmation",
+                        await _emailSender.SendEmailAsync(appUser.Email, "Email Confirmation",
                        "Your confirmation link: " + confirmationLink);
 
                         TempData["Success"] = "We send you an Email with reset password link.";
@@ -296,7 +303,7 @@ namespace GalileuszSchool.Controllers
 
         public async Task<IActionResult> Delete()
         {
-            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+            AppUser appUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (appUser == null)
             {
@@ -306,7 +313,7 @@ namespace GalileuszSchool.Controllers
             }
             else
             {
-                IdentityResult result = await userManager.DeleteAsync(appUser);
+                IdentityResult result = await _userManager.DeleteAsync(appUser);
 
                 if (result.Succeeded)
                 {
@@ -334,7 +341,7 @@ namespace GalileuszSchool.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
             {
@@ -342,7 +349,7 @@ namespace GalileuszSchool.Controllers
                 return NotFound();
             }
 
-            var result = await userManager.ConfirmEmailAsync(user, token);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
 
             if (result.Succeeded)
             {
@@ -369,17 +376,17 @@ namespace GalileuszSchool.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await userManager.FindByEmailAsync(forgotPassword.Email);
-                if (user != null && await userManager.IsEmailConfirmedAsync(user))
+                var user = await _userManager.FindByEmailAsync(forgotPassword.Email);
+                if (user != null && await _userManager.IsEmailConfirmedAsync(user))
                 {
-                    var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                     var passwordResetLink = Url.Action("ResetPassword", "Account",
                          new { email = forgotPassword.Email, token = token }, Request.Scheme);
 
-                    logger.Log(LogLevel.Warning, passwordResetLink);
+                    _logger.Log(LogLevel.Warning, passwordResetLink);
 
-                    await emailSender.SendEmailAsync(forgotPassword.Email, "Reset Password",
+                    await _emailSender.SendEmailAsync(forgotPassword.Email, "Reset Password",
                        "Your reset link: " + passwordResetLink);
 
                     TempData["Success"] = "We send you an Email with reset password link. Redirecting...";
@@ -410,11 +417,11 @@ namespace GalileuszSchool.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await userManager.FindByEmailAsync(resetPassword.Email);
+                var user = await _userManager.FindByEmailAsync(resetPassword.Email);
 
                 if (user != null)
                 {
-                    var result = await userManager.ResetPasswordAsync(user, resetPassword.Token, resetPassword.Password);
+                    var result = await _userManager.ResetPasswordAsync(user, resetPassword.Token, resetPassword.Password);
 
                     if (result.Succeeded)
                     {
@@ -433,6 +440,101 @@ namespace GalileuszSchool.Controllers
 
             }
             return View(resetPassword);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account",
+                                                    new { ReturnUrl = returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+
+            return new ChallengeResult(provider, properties);
+        }
+
+        //[AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        {
+            var redirectUrl = returnUrl ?? Url.Content("~/"); //if url is null we intilize it to the root othetwise it is returnUrl
+
+            Login login = new Login
+            {
+                ReturnUrl = returnUrl,
+                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+            };
+
+            if(remoteError != null)//google/fb error
+            {
+                ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
+
+                return View("Login", login);
+            }
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+
+            if(info == null)//no data from provider
+            {
+                ModelState.AddModelError(string.Empty, $"Error loading external login data.");
+
+                return View("Login", login);
+            }
+
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider,
+                info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (signInResult.Succeeded)
+            {
+                return LocalRedirect(returnUrl);
+            }
+            else
+            {
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);//email from provider
+
+                if (email != null)
+                {
+                    var user = await _userManager.FindByEmailAsync(email);//check if it is already in AspNetUser table
+
+                    if (user == null)
+                    {
+                        user = new AppUser
+                        {
+                            UserName = info.Principal.FindFirstValue(ClaimTypes.Name),
+                            Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        };
+                        await _userManager.CreateAsync(user);
+                    }
+
+                    await _userManager.AddLoginAsync(user, info);//add row to AspNetUserLogins
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    return LocalRedirect(returnUrl);
+                }
+            }
+
+            return View("Login", login);
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult LoginWithFacebookAsync(string accessToken)
+        {
+            //var validatedToken = await _facebookAuthService.ValidateAccessTokenAsync(accessToken);
+
+            //if (!validatedToken.Data.IsValid)
+            //{
+            //    TempData["Error"] = "An error occures. Please try again.";
+            //}
+
+            //var userInfo = await _facebookAuthService.GetUserInfoAsync(accessToken);
+
+            //var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+            //return View();
+
+            return Json(new { Big = "elo" });
         }
     }
 

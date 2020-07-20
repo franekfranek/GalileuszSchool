@@ -17,17 +17,19 @@ using GalileuszSchool.Services;
 using GalileuszSchool.Repository;
 using GalileuszSchool.Areas.Admin.Controllers;
 using GalileuszSchool.Models.ModelsForNormalUsers;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using System.Security.Claims;
+using GalileuszSchool.Services.Facebook;
 
 namespace GalileuszSchool
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -72,6 +74,34 @@ namespace GalileuszSchool
             services.AddTransient<TeachersController>();
             //services.AddScoped<ICoursesRepository, CoursesRepository>();
             //it here in case specific modifications have to be made to any model
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    var googleAuth = Configuration.GetSection("Authentication:Google");
+
+                    options.ClientId = googleAuth["ClientId"];
+                    options.ClientSecret = googleAuth["ClientSecret"];
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                    options.Events = new OAuthEvents()
+                    {
+                        OnTicketReceived = ctx =>
+                        {
+                            var username =
+                                ctx.Principal.FindFirstValue(ClaimTypes
+                                                                 .NameIdentifier);
+                            //TODO: Add user check/creation here 
+
+                            ctx.Response.Redirect("/");
+                            ctx.HandleResponse();
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+            var facebookAuthSettings = new FacebookAuthSettings();
+            Configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
+            services.AddSingleton(facebookAuthSettings);
+            services.AddHttpClient();
+            services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

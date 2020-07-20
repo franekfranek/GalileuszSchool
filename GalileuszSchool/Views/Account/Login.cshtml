@@ -8,7 +8,7 @@
 
 
 <div class="row justify-content-center">
-    <div class="col-md-4">
+    <div class="col-md-5">
         <form asp-action="Login">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -30,15 +30,52 @@
             <div class="form-group">
                 <input type="submit" value="Login" class="btn btn-primary" />
                 <div>
-                    <a  asp-action="ForgotPassword">Forgot Password?</a>
+                    <a asp-action="ForgotPassword">Forgot Password?</a>
                 </div>
             </div>
-           
+
 
         </form>
 
-       
+        @{
+            if (Model.ExternalLogins.Count != 0)
+            {
+                <p style="text-align:center">-OR-</p>
+                <form asp-action="ExternalLogin" method="post" asp-route-returnUrl="@Model.ReturnUrl">
+
+                    <div class="row" style="text-align:center">
+                        @foreach (var provider in Model.ExternalLogins)
+                        {
+                            if (provider.Name == "Google")
+                            {
+                                <button type="submit" class="btn btn-outline-dark mr-5" name="provider" value="@provider.Name"
+                                        role="button" style="text-transform:none" title="Login using your @provider.DisplayName account">
+                                    <img width="25px;" alt="Google sign-in"
+                                         src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+                                    Login with Google
+                                </button>
+                            }
+
+                        }
+                        <div onlogin="checkLoginState();" class="fb-login-button" data-size="large" data-button-type="login_with" data-layout="default"
+                             data-auto-logout-link="false" data-use-continue-as="false" data-width=""></div>
+                    </div>
+
+                </form>
+            }
+        }
+
+
+        @*<div>
+
+            <fb:login-button scope="public_profile,email"
+                             onlogin="checkLoginState();">
+            </fb:login-button>
+        </div>*@
         
+
+
+
 
     </div>
 </div>
@@ -46,4 +83,53 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '482202485962412',
+            cookie: true,
+            xfbml: true,
+            version: 'v7.0'
+        });
+
+        FB.AppEvents.logPageView();
+
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) { return; }
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+
+    function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+            console.log(typeof(response.authResponse.accessToken));
+            statusChangeCallback(response);
+            });
+    }
+
+    function statusChangeCallback(response) {
+        
+        $.ajax({
+            url: '/account/loginWithFacebookAsync',
+            data: "lool" ,
+            type: 'post',
+            cache: false,
+            contentType: false,
+            processData: false,
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (res) {
+                console.log(res);
+            }
+        });
+    }
+</script>
 }
