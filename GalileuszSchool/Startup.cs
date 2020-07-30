@@ -98,10 +98,12 @@ namespace GalileuszSchool
                     };
                 });
             var facebookAuthSettings = new FacebookAuthSettings();
-            Configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
+            Configuration.GetSection("Authentication:FacebookAuthSettings").Bind(facebookAuthSettings);
+            //Configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
             services.AddSingleton(facebookAuthSettings);
             services.AddHttpClient();
             services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
+            services.AddSingleton<IAppSettingsService, AppSettingsService>(e => Configuration.GetSection(nameof(AppSettingsService)).Get<AppSettingsService>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -126,6 +128,8 @@ namespace GalileuszSchool
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            //app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {

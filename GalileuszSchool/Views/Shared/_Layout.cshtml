@@ -1,6 +1,8 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
-
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -26,7 +28,7 @@
     <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @*<script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap">
+            src="https://maps.googleapis.com/maps/api/js?key=@Configuration.GetSection("GoogleMapsApiKey").Value&callback=initMap">
     </script>*@
 
 
@@ -87,18 +89,18 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                        
+
                         @*<li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>*@
-                            <li class="nav-item">
-                                @*@if(User.IsInRole("student")){*@
-                                    <a>
-                                    <i class="fa fa-book book-homework" aria-hidden="true" data-toggle="tooltip" data-placement="left"
-                                       title=""><div id="txt"></div></i>                                    
-                                </a>
-                                @*}*@
-                            </li>
+                                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                            </li>*@
+                        <li class="nav-item">
+                            @*@if(User.IsInRole("student")){*@
+                            <a>
+                                <i class="fa fa-book book-homework" aria-hidden="true" data-toggle="tooltip" data-placement="left"
+                                   title=""><div id="txt"></div></i>
+                            </a>
+                            @*}*@
+                        </li>
 
                         <li class="nav-item dropdown">
 
@@ -107,7 +109,7 @@
 
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <strong>Welcome @User.Identity.Name</strong>
+                                    <strong>Welcome @User.Identity.Name.First().ToString().ToUpper()@User.Identity.Name.Substring(1,User.Identity.Name.IndexOf("-") -1)</strong>
                                 </a>
 
                                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -164,18 +166,18 @@
 
                                 <h4>Newsletter</h4>
                                 <p>A rover wearing a fuzzy suit doesn’t alarm the real penguins</p>
-                                
-                                    <div class="col-xs-3 input-group">
-                                        <input type="text" class="form-control" size="20" placeholder="You Email">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-outline-light" type="button">Subscribe</button>
-                                        </span>
-                                    </div>
-                                
+
+                                <div class="col-xs-3 input-group">
+                                    <input type="text" class="form-control" size="20" placeholder="You Email">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-outline-light" type="button">Subscribe</button>
+                                    </span>
+                                </div>
+
 
                             </div>
 
-                            <div class="col-4 mt-4" id="map" >
+                            <div class="col-4 mt-4" id="map">
 
                             </div>
 
@@ -228,7 +230,7 @@
         }*@
     </script>
 
-    
+
     @RenderSection("Scripts", required: false)
 </body>
 

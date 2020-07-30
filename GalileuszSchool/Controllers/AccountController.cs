@@ -212,7 +212,6 @@ namespace GalileuszSchool.Controllers
         }
 
         // post account/edit
-        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserEdit userEdit)
@@ -519,22 +518,47 @@ namespace GalileuszSchool.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult LoginWithFacebookAsync(string accessToken)
+        public async Task<IActionResult> SignInWithFb(string accessToken)
         {
-            //var validatedToken = await _facebookAuthService.ValidateAccessTokenAsync(accessToken);
+            var validatedToken = await _facebookAuthService.ValidateAccessTokenAsync(accessToken);
 
-            //if (!validatedToken.Data.IsValid)
-            //{
-            //    TempData["Error"] = "An error occures. Please try again.";
-            //}
+            //invalid token
+            if (!validatedToken.Data.IsValid)
+            {
+                TempData["Error"] = "An error occures. Please try again.";
+                return Json(new { Text = "An error occures. Please try again." });
+            }
 
-            //var userInfo = await _facebookAuthService.GetUserInfoAsync(accessToken);
+            var userInfo = await _facebookAuthService.GetUserInfoAsync(accessToken);
+            var user = await _userManager.FindByEmailAsync(userInfo.Email);
 
-            //var user = await _userManager.FindByEmailAsync(userInfo.Email);
+            //user is not db we have to register 
+            if(user == null)
+            {
+                var newUser = new AppUser
+                {
+                    UserName = userInfo.FirstName.ToLower() + "-" + userInfo.LastName.ToLower(),
+                    Email = userInfo.Email,
+                    RegistrationDate = DateTime.Now
+                };
 
-            //return View();
+                var createResult = await _userManager.CreateAsync(newUser);
 
-            return Json(new { Big = "elo" });
+                if (!createResult.Succeeded)
+                {
+                    TempData["Error"] = "Erro: User was't registered. Please try again.";
+                    return Json(new { Text = "Erro: User was't registered. Please try again." });
+                }
+
+
+                await _signInManager.SignInAsync(newUser,false);
+                return Redirect("Edit");
+
+            }
+
+            //user is registered already we just log him in
+            await _signInManager.SignInAsync(user, true);
+            return Redirect("Register");
         }
     }
 
