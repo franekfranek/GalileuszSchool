@@ -1,5 +1,6 @@
 ﻿using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers;
+using GalileuszSchool.Models.ModelsForNormalUsers.Calendar;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -34,5 +35,6 @@ namespace GalileuszSchool.Infrastructure
         public DbSet<ClassRoom> ClassRoom { get; set; }
         public DbSet<Homework> Homework { get; set; }
         public DbSet<StudentHomework> StudentHomework { get; set; }
+        public DbSet<CalendarEvent> CalendarEvents { get; set; }
     }
 }

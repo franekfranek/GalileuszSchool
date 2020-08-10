@@ -155,7 +155,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             List<Student> students = await _repository.GetAll().OrderByDescending(x => x.Id).ToListAsync();
             return Json(students);
         }
-        public async Task<IActionResult> FindStudent(int id)
+        public async Task<JsonResult> FindStudent(int id)
         {
             var student = await _repository.GetById(id);
             return new JsonResult(student);

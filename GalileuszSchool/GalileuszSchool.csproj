@@ -31,7 +31,6 @@
   <ItemGroup>
     <Folder Include="Services\Google\" />
     <Folder Include="wwwroot\css\DataTables\" />
-    <Folder Include="wwwroot\js\DataTables\" />
     <Folder Include="wwwroot\media\homeworks\" />
     <Folder Include="wwwroot\media\studentHomeworkSolutions\" />
   </ItemGroup>
