@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using GalileuszSchool.Infrastructure;
@@ -16,12 +17,14 @@ namespace GalileuszSchool.Controllers
     public class CalendarController : Controller
     {
         private readonly GalileuszSchoolContext _context;
-        private readonly string[] borderColors = new string[] { "red", "green", "yellow", "blue" };
+        private readonly string[] borderColors = new string[] { "#FF756D", "#85DE77", "#CE9DD9", "#88AED0" };
 
         public CalendarController(GalileuszSchoolContext context)
         {
             _context = context;
         }
+
+        //get calendar/index
         public async Task<IActionResult> Index()
         {
             var courses = _context.Courses.OrderBy(x => x.Id);
@@ -35,17 +38,21 @@ namespace GalileuszSchool.Controllers
             return View();
         }
 
+        //get calendar/getevents
         public async Task<JsonResult> GetEvents()
         {
             var events = await _context.CalendarEvents.Where(x => x.Id != 0).ToListAsync();
 
             return Json(events);
         }
+        //post calendar/create
         public async Task<JsonResult> Create(CalendarEvent calendarEvent)
         {
-            GetErrorListFromModelState(ModelState);
             if (ModelState.IsValid)
             {
+                var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id == calendarEvent.CourseId);
+                calendarEvent.Title += " ";
+                calendarEvent.Title += course.Name;
                 calendarEvent.Color = GetRandomColor();
                 
                 try
@@ -64,6 +71,37 @@ namespace GalileuszSchool.Controllers
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return Json(new { text = "Server error!" });
         }
+        //post calendar/edit/event
+        public async Task<JsonResult> Edit(CalendarEvent calendarEvent)
+        {
+            if (ModelState.IsValid)
+            {
+                if (calendarEvent != null)
+                {
+                    _context.CalendarEvents.Update(calendarEvent);
+                    await _context.SaveChangesAsync();
+                    return Json(new { text = "Class edited!" });
+                }
+            }
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
+        }
+        //post calendar/delete/ {id}
+        public async Task<JsonResult> Delete(int id)
+        {
+            if (ModelState.IsValid)
+            { 
+                var classEvent = await _context.CalendarEvents.FirstOrDefaultAsync(x => x.Id == id);
+                if (classEvent != null)
+                {
+                    _context.CalendarEvents.Remove(classEvent);
+                    await _context.SaveChangesAsync();
+                    return Json(new { text = "Class removed!" });
+                }    
+            }
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Server error!" });
+        }
 
         private string GetRandomColor()
         {
@@ -71,15 +109,6 @@ namespace GalileuszSchool.Controllers
             int indexRandom = random.Next(0, borderColors.Length);
             return borderColors[indexRandom];
         }
-        public static List<string> GetErrorListFromModelState
-                                              (ModelStateDictionary modelState)
-        {
-            var query = from state in modelState.Values
-                        from error in state.Errors
-                        select error.ErrorMessage;
-
-            var errorList = query.ToList();
-            return errorList;
-        }
+        
     }
 }
