@@ -21,5 +21,7 @@ namespace GalileuszSchool.Models.ModelsForNormalUsers.Calendar
         public int CourseId { get; set; }
         [ForeignKey("CourseId")]
         public virtual Course Course { get; set; }
+
+        public IList<CalendarEventStudent> CalendarEventStudents { get; set; }
     }
 }

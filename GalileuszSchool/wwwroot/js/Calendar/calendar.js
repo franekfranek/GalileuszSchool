@@ -20,10 +20,13 @@ function generateCalendar() {
 
             
             $('#deleteId').val(info.event.id);
+            $('#attendanceEventId').val(info.event.id);
             $('#eventStartEdit').val(info.event.start.toISOString());
             $('#eventEndEdit').val(info.event.end.toISOString());
-            $('#editEvent').modal('show');
+            getStudentByEvent(info.event.id);
 
+            $('#editEvent').modal('show');
+            
 
             //info.jsEvent.preventDefault();
 
@@ -117,10 +120,6 @@ $('#deleteEvent').on('click', function (e) {
             url: "/calendar/delete",
             data: { id: deleteId },
             type: "post",
-            //headers: {
-            //    RequestVerificationToken:
-            //        $('input:hidden[name="__RequestVerificationToken"]').val()
-            //},
             success: function (res) {
                 console.log(res);
                 $('#editEvent').modal('hide');
@@ -135,6 +134,76 @@ $('#deleteEvent').on('click', function (e) {
     }
  
 });
+
+//SAVE ATTENDANCE
+$('#saveAttendance').on('click', function (e) {
+    e.preventDefault();
+    var data_arr = new Array();
+
+    //instead it's possible to get value from checkboxes even if its not checked
+    var serializedArray = $("#saveAttendanceFormId").serializeArray();
+    console.log(serializedArray);
+
+    if (serializedArray.length <= 2) {
+        alert("Please just check present students otherwise leave it as it is.");
+    } else {
+        for (var i =2; i < serializedArray.length; i++) {
+            var item = {};
+            console.log(serializedArray[2].value);
+
+            item['EventId'] = serializedArray[0].value;
+            item['StudentId'] = serializedArray[i].name.substring(9);
+            item['IsPresent'] = serializedArray[i].value === "on" ? true : false;
+
+            data_arr.push(item);
+        }
+    }
+    saveAttendance(data_arr);
+});
+
+function saveAttendance(dataArr) {
+    $.ajax({
+        url: "/calendar/CheckAttendance",
+        data: { attendanceForms: dataArr },
+        type: "post",
+        success: function (res) {
+            console.log(res);
+            $('#editEvent').modal('hide');
+
+        }, error: function (res) {
+            $('#editEvent').modal('hide');
+            console.log(res);
+        }
+    });
+}
+
+function getStudentByEvent(eventId) {
+
+    $.ajax({
+        url: "/calendar/GetStudentsByEvent",
+        data: { eventId: eventId },
+        type: "get",
+        success: function (res) {
+            console.log(res);
+            $.each(res, function (index, value) {
+                var fullName = value.student.firstName + " " + value.student.lastName;
+
+
+                //bad practice make it better
+                var htmlPart = "<div class=" + "'row form-row'" + "><div class=" + "'col'" + ">" +
+                    "<label class=" + "'form-check-label'" + " for=" +"'"+ fullName + "Id" +"'" + ">" + fullName + "</label></div>" +
+                    "<div class=" + "'col-right'" + ">" +
+                    "<input type=" + "'checkbox'" + " class=" + "'form-check-input'" + " id=" + "'" + fullName + "Id" + "'" + " name=" + "'" + "isPresent" + value.student.id +"'" + 
+                    " data-studentid=" +"'" + value.student.id + "'" + " ></div ></div > ";
+                $('#saveAttendanceFormId').append($(htmlPart));
+            })
+            
+        }, error: function (res) {
+            console.log(res);
+        }
+    });
+}
+
 
 //EVENT MODEL
 function Event(data) {

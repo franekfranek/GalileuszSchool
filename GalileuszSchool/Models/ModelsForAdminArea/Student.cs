@@ -1,4 +1,5 @@
 ﻿using GalileuszSchool.Models.ModelsForNormalUsers;
+using GalileuszSchool.Models.ModelsForNormalUsers.Calendar;
 using GalileuszSchool.Repository;
 using Microsoft.AspNetCore.Http;
 using ShopCart.Infrastructure;
@@ -44,6 +45,7 @@ namespace GalileuszSchool.Models.ModelsForAdminArea
         public IFormFile ImageUpload { get; set; }
 
         public IList<StudentHomework> StudentHomeworks { get; set; }
+        public IList<CalendarEventStudent> CalendarEventStudents { get; set; }
 
 
     }

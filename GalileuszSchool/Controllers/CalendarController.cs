@@ -6,6 +6,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using GalileuszSchool.Infrastructure;
+using GalileuszSchool.Models.DTOs;
+using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers.Calendar;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -50,20 +52,20 @@ namespace GalileuszSchool.Controllers
         {
             if (ModelState.IsValid)
             {
-                var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id == calendarEvent.CourseId);
-                calendarEvent.Title += " ";
-                calendarEvent.Title += course.Name;
-                calendarEvent.Color = GetRandomColor();
-                
-                try
+                if(calendarEvent != null)
                 {
-                    _context.CalendarEvents.Add(calendarEvent);
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception)
-                {
+                    var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id == calendarEvent.CourseId);
+                    calendarEvent.Title += " ";
+                    calendarEvent.Title += course.Name;
+                    calendarEvent.Color = GetRandomColor();
 
-                    throw;
+                    _context.CalendarEvents.Add(calendarEvent);
+                    var save = await _context.SaveChangesAsync();
+
+                    if (course != null && save > 0)
+                    {
+                        await SaveStudentsByEvent(calendarEvent.CourseId, (int)calendarEvent.Id);
+                    }
                 }
 
                 return Json(new { text = "Class added!" });
@@ -71,6 +73,19 @@ namespace GalileuszSchool.Controllers
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return Json(new { text = "Server error!" });
         }
+
+        //it is void but it's async so it returns Task 
+        private async Task SaveStudentsByEvent(int courseId, int eventId)
+        {
+            var studentsByCourse = await _context.StudenCourseConnections.Where(x => x.CourseId == courseId).ToListAsync();
+            foreach (var item in studentsByCourse)
+            {
+                _context.CalendarEventStudents.Add(new CalendarEventStudent { CalendarEventId = eventId, StudentId = item.StudentId });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
         //post calendar/edit/event
         public async Task<JsonResult> Edit(CalendarEvent calendarEvent)
         {
@@ -109,6 +124,34 @@ namespace GalileuszSchool.Controllers
             int indexRandom = random.Next(0, borderColors.Length);
             return borderColors[indexRandom];
         }
-        
+
+        //get /calendar/GetStudentsByEvent/ {id}
+        public async Task<JsonResult> GetStudentsByEvent(int eventId)
+        {
+            var students = await _context.CalendarEventStudents
+                        .OrderBy(x => x.CalendarEventId)
+                        .Where(x => x.CalendarEventId == eventId)
+                        .Include("Student").ToListAsync();
+
+            return Json(students);
+        }
+
+        //post
+        public async Task<JsonResult> CheckAttendance(AttendanceForm[] attendanceForms)
+        {
+            if (ModelState.IsValid)
+            {
+                foreach (AttendanceForm attendance in attendanceForms)
+                {
+                    var studentEvent = await _context.CalendarEventStudents.FirstOrDefaultAsync(x => x.StudentId == attendance.StudentId && x.CalendarEventId == attendance.EventId);
+                    studentEvent.IsPresent = attendance.IsPresent;
+                }
+                await _context.SaveChangesAsync();
+
+                return Json(new { info = "Attendance saved!" });
+            }
+
+            return Json(new { info = "Server error" });
+        }
     }
 }

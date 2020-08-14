@@ -22,6 +22,10 @@ namespace GalileuszSchool.Infrastructure
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentCourseConnection> StudenCourseConnections { get; set; }
         public DbSet<LessonPlan> LessonPlan { get; set; }
+        public DbSet<ClassRoom> ClassRoom { get; set; }
+        public DbSet<Homework> Homework { get; set; }
+        public DbSet<StudentHomework> StudentHomework { get; set; }
+        public DbSet<CalendarEvent> CalendarEvents { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -29,12 +33,20 @@ namespace GalileuszSchool.Infrastructure
                 .HasKey(o => new { o.StudentId, o.CourseId });
             modelBuilder.Entity<StudentHomework>()
                 .HasKey(sh => new { sh.StudentId, sh.HomeworkId });
-            
-        }
+            modelBuilder.Entity<CalendarEventStudent>()
+                .HasKey(es => new { es.CalendarEventId, es.StudentId });
 
-        public DbSet<ClassRoom> ClassRoom { get; set; }
-        public DbSet<Homework> Homework { get; set; }
-        public DbSet<StudentHomework> StudentHomework { get; set; }
-        public DbSet<CalendarEvent> CalendarEvents { get; set; }
+            //calendarEventStudent
+            modelBuilder.Entity<CalendarEventStudent>()
+            .HasOne(es => es.CalendarEvent)
+            .WithMany(e => e.CalendarEventStudents)
+            .HasForeignKey(es => es.CalendarEventId);
+
+            modelBuilder.Entity<CalendarEventStudent>()
+                .HasOne(es => es.Student)
+                .WithMany(s => s.CalendarEventStudents)
+                .HasForeignKey(es=> es.StudentId);
+        }
+        public DbSet<CalendarEventStudent> CalendarEventStudents { get; set; }
     }
 }
