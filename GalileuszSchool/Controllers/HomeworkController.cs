@@ -37,7 +37,7 @@ namespace GalileuszSchool.Controllers
             _webHostEnvironment = env;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {   
             return View();
         }
@@ -154,7 +154,7 @@ namespace GalileuszSchool.Controllers
             return Json(courses);
         }
 
-        //need to make it non-generic 
+        //make it non-generic 
         public async Task<Teacher> GetLoggedTeacher()
         {
             var user = await _userManager.GetUserAsync(User);

@@ -8,7 +8,9 @@ using System.Web.Helpers;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models.DTOs;
 using GalileuszSchool.Models.ModelsForAdminArea;
+using GalileuszSchool.Models.ModelsForNormalUsers;
 using GalileuszSchool.Models.ModelsForNormalUsers.Calendar;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,11 +21,14 @@ namespace GalileuszSchool.Controllers
     public class CalendarController : Controller
     {
         private readonly GalileuszSchoolContext _context;
+        private readonly UserManager<AppUser> _userManager;
         private readonly string[] borderColors = new string[] { "#FF756D", "#85DE77", "#CE9DD9", "#88AED0" };
 
-        public CalendarController(GalileuszSchoolContext context)
+        public CalendarController(GalileuszSchoolContext context,
+                                    UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         //get calendar/index
@@ -44,6 +49,18 @@ namespace GalileuszSchool.Controllers
         public async Task<JsonResult> GetEvents()
         {
             var events = await _context.CalendarEvents.Where(x => x.Id != 0).ToListAsync();
+
+            return Json(events);
+        }
+
+        //get calendar/GetEventsForStudent
+        public async Task<JsonResult> GetEventsForStudents()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var currentStudent = await _context.Students.FirstOrDefaultAsync(x => x.Email == currentUser.Email);
+            var events = await _context.CalendarEventStudents
+                        .Where(x => x.StudentId == currentStudent.Id)
+                        .Include(x=> x.CalendarEvent).Select(x=> x.CalendarEvent).ToListAsync();
 
             return Json(events);
         }
@@ -143,7 +160,9 @@ namespace GalileuszSchool.Controllers
             {
                 foreach (AttendanceForm attendance in attendanceForms)
                 {
-                    var studentEvent = await _context.CalendarEventStudents.FirstOrDefaultAsync(x => x.StudentId == attendance.StudentId && x.CalendarEventId == attendance.EventId);
+                    var studentEvent = await _context.CalendarEventStudents
+                        .FirstOrDefaultAsync(x => x.StudentId == attendance.StudentId && x.CalendarEventId == attendance.EventId);
+
                     studentEvent.IsPresent = attendance.IsPresent;
                 }
                 await _context.SaveChangesAsync();
