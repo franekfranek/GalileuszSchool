@@ -10,6 +10,7 @@ using GalileuszSchool.Models.DTOs;
 using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers;
 using GalileuszSchool.Models.ModelsForNormalUsers.Calendar;
+using GalileuszSchool.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -34,13 +35,19 @@ namespace GalileuszSchool.Controllers
         //get calendar/index
         public async Task<IActionResult> Index()
         {
-            var courses = _context.Courses.OrderBy(x => x.Id);
-            var selectListTeachers = await courses.Select(s => new SelectListItem
+            var user = await _userManager.GetUserAsync(User);
+            var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
+            if(currentTeacher != null)
+            {
+                var courses = _context.Courses.Where(x => x.TeacherId == currentTeacher.Id);
+                var selectListTeachers = await courses.Select(s => new SelectListItem
                 {
                     Value = s.Id.ToString(),
                     Text = s.Name.ToString()
                 }).ToListAsync();
-            ViewBag.Courses = new SelectList(selectListTeachers, "Value", "Text");
+                ViewBag.Courses = new SelectList(selectListTeachers, "Value", "Text");
+            }
+            
 
             return View();
         }
@@ -48,7 +55,10 @@ namespace GalileuszSchool.Controllers
         //get calendar/getevents
         public async Task<JsonResult> GetEvents()
         {
-            var events = await _context.CalendarEvents.Where(x => x.Id != 0).ToListAsync();
+            var user = await _userManager.GetUserAsync(User);
+            var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
+            var courses = await _context.Courses.Where(x => x.TeacherId == currentTeacher.Id).Select(x => x.Id).ToListAsync();
+            var events = await _context.CalendarEvents.Where(x => courses.Contains( x.CourseId )).ToListAsync();
 
             return Json(events);
         }
@@ -56,8 +66,8 @@ namespace GalileuszSchool.Controllers
         //get calendar/GetEventsForStudent
         public async Task<JsonResult> GetEventsForStudents()
         {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var currentStudent = await _context.Students.FirstOrDefaultAsync(x => x.Email == currentUser.Email);
+            var user = await _userManager.GetUserAsync(User);
+            var currentStudent = await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
             var events = await _context.CalendarEventStudents
                         .Where(x => x.StudentId == currentStudent.Id)
                         .Include(x=> x.CalendarEvent).Select(x=> x.CalendarEvent).ToListAsync();

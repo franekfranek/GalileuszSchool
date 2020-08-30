@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using WebPWrecover.Services;
@@ -42,7 +44,8 @@ namespace GalileuszSchool.Controllers
                                 IEmailSender emailSender,
                                 StudentsController studentsController,
                                 TeachersController teachersController,
-                                IFacebookAuthService facebookAuthService)
+                                IFacebookAuthService facebookAuthService
+                                )
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -559,6 +562,17 @@ namespace GalileuszSchool.Controllers
             //user is registered already we just log him in
             await _signInManager.SignInAsync(user, true);
             return Redirect("Register");
+        }
+
+        public async Task<JsonResult> GetClasses()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var currentStudent = await _context.Students.FirstOrDefaultAsync(x => x.Email == currentUser.Email);
+            var classes = await _context.CalendarEventStudents
+                        .Where(x => x.StudentId == currentStudent.Id)
+                        .Include(x => x.CalendarEvent.Course).ToListAsync();
+
+            return Json(classes);
         }
     }
 

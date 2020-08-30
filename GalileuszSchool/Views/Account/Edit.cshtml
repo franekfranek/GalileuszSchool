@@ -53,11 +53,85 @@
                 </div>
             </form>
 
-
-
     </div>
     <div class="col-7">
-        <h3>Your attendance</h3>
+        <div data-bind="if: isStudentStatus">
+            <h3>Attendance and Payment</h3>
+
+            <!-- Classes grid -->
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Class title</th>
+                        <th>Course</th>
+                        <th>Date</th>
+                        <th>Attendance</th>
+                        <th>Paid</th>
+                        <th>Price</th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+
+                <tbody data-bind="foreach: classes">
+                    <tr>
+                        <td data-bind="text: Title"></td>
+                        <td data-bind="text: Course"></td>
+                        <td data-bind="text: Date"></td>
+                        <td>
+                            <h5>
+                                <span data-bind="text: IsPresent, css:{
+                                        'badge' : true,
+                                        'badge-success' : IsPresent() == 'Present',
+                                        'badge-danger' : IsPresent() == 'Absent'
+                                        }">
+                                </span>
+                            </h5>
+                        </td>
+
+
+                        <td>
+                            <!-- ko if: IsPresent2 -->
+                            <h5>
+                                <span data-bind="text: IsPaid, css:{
+                                        'badge' : true,
+                                        'badge-success' : IsPaid() == 'Yes',
+                                        'badge-danger' : IsPaid() == 'No'
+                                        }">
+                                </span>
+                            </h5>
+
+                            <!-- /ko -->
+                        </td>
+
+                        <!-- ko if: IsPresent2 -->
+                        <td data-bind="text: Price">
+                        </td>
+                        <!-- /ko -->
+                        <td data-bind="if: IsPresent2">
+                            <div class="pretty p-icon p-jelly p-round p-bigger">
+                                <input type="checkbox" data-bind="checked: Checked,
+                                       disable:  IsPaid() == 'Yes' " />
+                                <div class="state p-info">
+                                    <i class="icon material-icons">done</i>
+                                    <label></label>
+                                </div>
+                            </div>
+                        </td>
+
+
+
+                    </tr>
+                </tbody>
+
+            </table>
+            <div style="float: right;">
+                <h5 style="display: inline-block;">Subtotal:</h5>
+                <p class="ml-2" data-bind="text: grandTotal" style="display: inline-block;" ></p>
+                @*<button style="display: inline-block;" class="btn btn-dark">PAY BITCH</button>*@
+            </div>
+        </div>
+
     </div>
 
 
@@ -68,4 +142,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src='~/js/StudentPage/studentPage.js'></script>
 }

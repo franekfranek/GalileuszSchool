@@ -79,8 +79,8 @@ namespace GalileuszSchool
                 {
                     var googleAuth = Configuration.GetSection("Authentication:Google");
 
-                    options.ClientId = googleAuth["ClientId"];
-                    options.ClientSecret = googleAuth["ClientSecret"];
+                    options.ClientId = Configuration["GalileuszSchool-Authentication-Google-ClientId"];
+                    options.ClientSecret = Configuration["GalileuszSchool-Authentication-Google-ClientId"];
                     options.SignInScheme = IdentityConstants.ExternalScheme;
                     options.Events = new OAuthEvents()
                     {
@@ -98,7 +98,10 @@ namespace GalileuszSchool
                     };
                 });
             var facebookAuthSettings = new FacebookAuthSettings();
-            Configuration.GetSection("Authentication:FacebookAuthSettings").Bind(facebookAuthSettings);
+            facebookAuthSettings.AppId = Configuration["FacebookAuthSettings-AppId"];
+            facebookAuthSettings.AppSecret = Configuration["FacebookAuthSettings-AppSecret"];
+            
+            //Configuration.GetSection("Authentication:FacebookAuthSettings").Bind(facebookAuthSettings);
             //Configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
             services.AddSingleton(facebookAuthSettings);
             services.AddHttpClient();
@@ -128,8 +131,6 @@ namespace GalileuszSchool
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            //app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {
