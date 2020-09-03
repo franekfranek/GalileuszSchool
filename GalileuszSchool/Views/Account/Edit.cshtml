@@ -7,51 +7,51 @@
 <div class="row">
 
     <div class="col-5">
-        
-            <h3>Edit your profile</h3>
 
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <h3>Edit your profile</h3>
 
-                <div class="form-group">
-                    <label asp-for="FirstName" class="control-label"></label>
-                    <input asp-for="FirstName" class="form-control" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                </div>
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="form-group">
-                    <label asp-for="LastName" class="control-label"></label>
-                    <input asp-for="LastName" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
 
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
 
-                <div class="form-group">
-                    <label asp-for="Password" class="control-label"></label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
 
-                <div class="form-group">
-                    <label asp-for="ConfirmPassword" class="control-label"></label>
-                    <input asp-for="ConfirmPassword" class="form-control" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
 
-                <div class="form-group">
-                    <label asp-for="PhoneNumber" class="control-label"></label>
-                    <input asp-for="PhoneNumber" class="form-control" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-primary" />
-                </div>
-            </form>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="control-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+        </form>
 
     </div>
     <div class="col-7">
@@ -125,12 +125,26 @@
                 </tbody>
 
             </table>
-            <div style="float: right;">
-                <h5 style="display: inline-block;">Subtotal:</h5>
-                <p class="ml-2" data-bind="text: grandTotal" style="display: inline-block;" ></p>
-                @*<button style="display: inline-block;" class="btn btn-dark">PAY BITCH</button>*@
+            <div style="float: right; display: block;">
+                <div>
+                    <h5 style="display: inline-block;">Subtotal:</h5>
+                    <p class="ml-2" data-bind="text: grandTotal" style="display: inline-block;font-weight: bold; font-size:large"></p>
+                    <p class="ml-2" style="display: inline-block; font-size:large">PLN</p>
+                </div>
+                
+            </div>  
+            <div style="clear: both">
+                <div style="float: right;">
+                    <h5 style="display: inline-block;">Pay with:</h5>
+                    <a data-bind="attr: { href: $root.dotPayLink() }" style="display: inline-block;" class="ml-2">
+                        <img style="height:50px; width:100px;" src="~/media/PaymentsPngs/dotpay_b2_160x83_eng.png" alt="" />
+                    </a>
+                    <div style="display: inline-block;" id="container"></div>
+                </div>
             </div>
+
         </div>
+        
 
     </div>
 
@@ -142,5 +156,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
     <script src='~/js/StudentPage/studentPage.js'></script>
+
 }

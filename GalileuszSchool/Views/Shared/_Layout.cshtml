@@ -110,7 +110,7 @@
 
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <strong>Welcome @User.Identity.Name.First().ToString().ToUpper()@User.Identity.Name.Substring(1,User.Identity.Name.IndexOf("-") -1)</strong>
+                                    <strong>Welcome @User.Identity.Name.First().ToString().ToUpper()@User.Identity.Name.Substring(1, User.Identity.Name.IndexOf("-") - 1)</strong>
                                 </a>
 
                                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -204,6 +204,7 @@
         <!-- /#page-content-wrapper -->
     </div>
 
+    <script src="https://pay.google.com/gp/p/js/pay.js"></script>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="~/js/knockout-3.5.1.js"></script>
@@ -231,8 +232,9 @@
         }*@
     </script>
 
+    @RenderSection("Scripts", required: true)
 
-    @RenderSection("Scripts", required: false)
+
 </body>
 
 </html>

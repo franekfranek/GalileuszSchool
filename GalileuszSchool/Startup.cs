@@ -77,10 +77,15 @@ namespace GalileuszSchool
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {
+                   
+
+                    //options.ClientId = Configuration["GalileuszSchool-Authentication-Google-ClientId"];
+                    //options.ClientSecret = Configuration["GalileuszSchool-Authentication-Google-ClientId"];
                     var googleAuth = Configuration.GetSection("Authentication:Google");
 
-                    options.ClientId = Configuration["GalileuszSchool-Authentication-Google-ClientId"];
-                    options.ClientSecret = Configuration["GalileuszSchool-Authentication-Google-ClientId"];
+                    options.ClientId = googleAuth["ClientId"];
+                    options.ClientSecret = googleAuth["ClientSecret"];
+
                     options.SignInScheme = IdentityConstants.ExternalScheme;
                     options.Events = new OAuthEvents()
                     {
@@ -98,10 +103,10 @@ namespace GalileuszSchool
                     };
                 });
             var facebookAuthSettings = new FacebookAuthSettings();
-            facebookAuthSettings.AppId = Configuration["FacebookAuthSettings-AppId"];
-            facebookAuthSettings.AppSecret = Configuration["FacebookAuthSettings-AppSecret"];
-            
-            //Configuration.GetSection("Authentication:FacebookAuthSettings").Bind(facebookAuthSettings);
+            //facebookAuthSettings.AppId = Configuration["FacebookAuthSettings-AppId"];
+            //facebookAuthSettings.AppSecret = Configuration["FacebookAuthSettings-AppSecret"];
+
+            Configuration.GetSection("Authentication:FacebookAuthSettings").Bind(facebookAuthSettings);
             //Configuration.Bind(nameof(FacebookAuthSettings), facebookAuthSettings);
             services.AddSingleton(facebookAuthSettings);
             services.AddHttpClient();
