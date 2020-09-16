@@ -22,12 +22,13 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         public TeachersController(IRepository<Teacher> repository)
         {
-            this._repository = repository;
+            _repository = repository;
         }
         //get Admin/Teachers
         public async Task<IActionResult> Index()
         {
-            return View(await _repository.GetAll().ToListAsync());
+            //var teachers = await _repository.GetAll().ToListAsync();
+            return View();
         }
 
         //POST /admin/teacher/create
@@ -43,7 +44,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 if (slug != null)
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    //Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new { text = "Teacher already exists!" });
                 }
 
@@ -51,8 +52,9 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 return Ok();
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { text = "Server error!" });
+            //TODO: Response is null ???, hence not possible to set the code 
+            //Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Invalid Techer model!" });
         }
 
         //admin/teachers/edit/{id}
@@ -67,19 +69,22 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 teacher.Slug = teacher.FirstName.ToLower().Replace(" ", "-") + teacher.LastName.ToLower().Replace(" ", "-");
 
+                //Explanation: we want to check if there is already teacher we want to edit 
+                // we want to consider all teachers except the one passed and find if any other has slug like it 
+                // in short it checks if edited Teacher DOES not have the same name as somebody in the DB already....
                 var slug = await _repository.GetModelByCondition(x => x.Id != teacher.Id, x => x.Slug == teacher.Slug);
 
                 if (slug != null)
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Json(new { text = "Teacher already exists!" });
+                    //Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { text = "Teacher with that name already exists!" });
                 }
                 await _repository.Update(teacher);
 
                 return Ok();
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { text = "Server error!" });
+            //Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Invalid Techer model!" });
         }
 
         //get/admin/teachers/delete/{id}
@@ -89,7 +94,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             if (teacher == null)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                //Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(new { text = "Teacher does not exists!" });
             }
             else
@@ -102,13 +107,21 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         public async Task<JsonResult> GetTeachers()
         {
-            List<Teacher> teachers = await _repository.GetAll().OrderByDescending(x => x.Id).ToListAsync();
+            List<Teacher> teachers = await _repository.GetAll().ToListAsync();
+            if(teachers == null || teachers.Count == 0)
+            {
+                return Json(new { text = "No teachers found!" });
+            }
             return Json(teachers);
         }
 
-        public async Task<IActionResult> FindTeacher(int id)
+        public async Task<JsonResult> FindTeacher(int id)
         {
             var teacher = await _repository.GetById(id);
+            if (teacher == null)
+            {
+                return Json(new { text = "Server error!" });
+            }
             return new JsonResult(teacher);
         }
     }
