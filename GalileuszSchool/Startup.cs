@@ -112,6 +112,7 @@ namespace GalileuszSchool
             services.AddHttpClient();
             services.AddSingleton<IFacebookAuthService, FacebookAuthService>();
             services.AddSingleton<IAppSettingsService, AppSettingsService>(e => Configuration.GetSection(nameof(AppSettingsService)).Get<AppSettingsService>());
+            services.AddScoped<IGalileuszSchoolDbContext>(provider => provider.GetService<GalileuszSchoolContext>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

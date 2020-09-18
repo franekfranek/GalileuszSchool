@@ -16,7 +16,7 @@ using Xunit;
 
 namespace GalileuszSchool.Tests
 {
-    public class TeachersControllerTests
+    public class TeachersControllerUnitTests
     {
         private readonly TeachersController _controller;
         private readonly Mock<IRepository<Teacher>> _repoMock = new Mock<IRepository<Teacher>>();
@@ -25,7 +25,7 @@ namespace GalileuszSchool.Tests
         // Act
 
         // Assert
-        public TeachersControllerTests()
+        public TeachersControllerUnitTests()
         {
             _controller = new TeachersController(_repoMock.Object);
         }
@@ -56,12 +56,12 @@ namespace GalileuszSchool.Tests
             _controller.ModelState.AddModelError("FirstName", "Required");
 
             // Act
-            var response = _controller.Create(teacher);
-            dynamic responseFromTask = response.Result;
-            var valueFromAnnonymous = responseFromTask.Value.GetType().GetProperty("text").GetValue(responseFromTask.Value, null);
+            dynamic response = await _controller.Create(teacher);
+
+            var valueFromAnnonymous = response.Value.GetType().GetProperty("text").GetValue(response.Value, null);
 
             // Assert
-            Assert.IsType<JsonResult>(response.Result);
+            Assert.IsType<JsonResult>(response);
             //Assert.Equal("{ text = Invalid Techer model! }", s.Value.ToString());
             Assert.NotNull(response);
             Assert.Equal("Invalid Techer model!", valueFromAnnonymous);
@@ -71,30 +71,19 @@ namespace GalileuszSchool.Tests
         public async Task Create_ShouldReturnOk_WhenValidObjectPassed()
         {
             // Arrange
-            var teacher = new Teacher()
-            {
-                FirstName = "Stanislaw",
-                LastName = "Brzeczyszczykiewicz",
-                Email = "elo@gmail.com"
-            };
+            var teacher = GetTeacher();
             // Act
-            var response = _controller.Create(teacher);
+            var response = await _controller.Create(teacher);
 
             // Assert
             Assert.NotNull(response);
-            Assert.IsType<OkResult>(response.Result);
+            Assert.IsType<OkResult>(response);
         }
         [Fact]
         public async Task Create_ShouldReturnAnonymousObject_WhenTeacherAlreadyExists()
         {
             // Arrange
-            var teacher = new Teacher()
-            {
-                Id = 1,
-                FirstName = "Franciszek",
-                LastName = "Zawadzki",
-                Slug = "franciszekzawadzki"
-            };
+            var teacher = GetTeacher();
             _repoMock.Setup(x => x.GetBySlug(teacher.Slug)).ReturnsAsync(teacher);
             //Act          
             dynamic result = await _controller.Create(teacher);
@@ -121,12 +110,12 @@ namespace GalileuszSchool.Tests
             _controller.ModelState.AddModelError("FirstName", "Required");
 
             // Act
-            var response = _controller.Edit(teacher);
-            dynamic responseFromTask = response.Result;
-            var valueFromAnnonymous = responseFromTask.Value.GetType().GetProperty("text").GetValue(responseFromTask.Value, null);
+            dynamic response = await _controller.Edit(teacher);
+
+            var valueFromAnnonymous = response.Value.GetType().GetProperty("text").GetValue(response.Value, null);
 
             // Assert
-            Assert.IsType<JsonResult>(response.Result);
+            Assert.IsType<JsonResult>(response);
             Assert.NotNull(response);
             Assert.Equal("Invalid Techer model!", valueFromAnnonymous);
         }
@@ -134,30 +123,19 @@ namespace GalileuszSchool.Tests
         public async Task Edit_ShouldReturnOk_WhenValidObjectPassed()
         {
             // Arrange
-            var teacher = new Teacher()
-            {
-                FirstName = "Stanislaw",
-                LastName = "Brzeczyszczykiewicz",
-                Email = "elo@gmail.com"
-            };
+            var teacher = GetTeacher();
             // Act
-            var response = _controller.Edit(teacher);
+            var response = await _controller.Edit(teacher);
 
             // Assert
             Assert.NotNull(response);
-            Assert.IsType<OkResult>(response.Result);
+            Assert.IsType<OkResult>(response);
         }
         [Fact]
         public async Task Edit_ShouldReturnAnonymousObject_WhenTeacherAlreadyExists()
         {
             // Arrange
-            var teacher = new Teacher()
-            {
-                Id = 1,
-                FirstName = "Franciszek",
-                LastName = "Zawadzki",
-                Slug = "franciszekzawadzki"
-            };
+            var teacher = GetTeacher();
             _repoMock.Setup(x => x.GetModelByCondition(x => x.Id != teacher.Id, x => x.Slug == teacher.Slug)).ReturnsAsync(teacher);
             //Act          
             dynamic result = await _controller.Edit(teacher);
@@ -190,20 +168,14 @@ namespace GalileuszSchool.Tests
         public async Task Delete_ShouldReturnOk_WhenExistingIdPassed()
         {
             // Arrange
-            var teacher = new Teacher()
-            {
-                Id = 1,
-                FirstName = "Stanislaw",
-                LastName = "Brzeczyszczykiewicz",
-                Email = "elo@gmail.com"
-            };
+            var teacher = GetTeacher();
             // Act
             _repoMock.Setup(x => x.GetById(teacher.Id)).ReturnsAsync(teacher);
-            var response = _controller.Delete(teacher.Id);
+            var response = await _controller.Delete(teacher.Id);
 
             // Assert
             Assert.NotNull(response);
-            Assert.IsType<OkResult>(response.Result);
+            Assert.IsType<OkResult>(response);
         }
         [Fact]
         public async Task Delete_ShouldRemoveOneTeacher_WhenExistingIdPassed()
@@ -253,12 +225,7 @@ namespace GalileuszSchool.Tests
         {
             //Arrange
             int teacherId = 1;
-            var teacherFromDb = new Teacher
-            {
-                Id = 1,
-                FirstName = "Franciszek",
-                LastName = "Zawadzki"
-            };
+            var teacherFromDb = GetTeacher();
             _repoMock.Setup(x => x.GetById(teacherId)).ReturnsAsync(teacherFromDb);
             //Act          
             dynamic result = await _controller.FindTeacher(teacherId);
@@ -330,8 +297,18 @@ namespace GalileuszSchool.Tests
         }
         // GetTeachers END ================================
 
+        private Teacher GetTeacher()
+        {
+            return new Teacher
+            {
+                Id = 1,
+                FirstName = "Franciszek",
+                LastName = "Zawadzki",
+                Slug = "franciszekzawadzki",
+                Email = "czesc@gmail.com"
+            };
+        }
 
-        //get list of teachers
         private List<Teacher> GetTeachersList()
         {
             return new List<Teacher> {

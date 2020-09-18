@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace GalileuszSchool.Infrastructure
 {
-    public class GalileuszSchoolContext : IdentityDbContext<AppUser>
+    public class GalileuszSchoolContext : IdentityDbContext<AppUser>, IGalileuszSchoolDbContext
     {
         public GalileuszSchoolContext(DbContextOptions<GalileuszSchoolContext> options)
             : base(options)
         {
         }
         public DbSet<Page> Pages { get; set; }
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<Teacher> Teachers { get; set; }
-        public DbSet<Student> Students { get; set; }
+        public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<Teacher> Teachers { get; set; }
+        public virtual DbSet<Student> Students { get; set; }
         public DbSet<StudentCourseConnection> StudenCourseConnections { get; set; }
         public DbSet<LessonPlan> LessonPlan { get; set; }
         public DbSet<ClassRoom> ClassRoom { get; set; }

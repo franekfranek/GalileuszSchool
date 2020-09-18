@@ -1,4 +1,7 @@
-﻿using System;
+﻿using GalileuszSchool.Infrastructure;
+using GalileuszSchool.Models.ModelsForAdminArea;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,6 +20,8 @@ namespace GalileuszSchool.Repository
         Task<TModel> GetModelByCondition(Expression<Func<TModel, bool>> expression,
                                                 Expression<Func<TModel, bool>> secondExpression);
         Task<bool> IsInDB(int id);
+        IOrderedQueryable<Teacher> GetAllTeachers();
+        IOrderedQueryable<Student> GetAllStudents();
     }
 
 }

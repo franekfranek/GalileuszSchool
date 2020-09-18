@@ -21,12 +21,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     public class StudentsController : Controller
     {
         private readonly IRepository<Student> _repository;
-        private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public StudentsController(IWebHostEnvironment env,
                                     IRepository<Student> repository)
         {
-            this.webHostEnvironment = env;
+            _webHostEnvironment = env;
             _repository = repository;
         }
 
@@ -60,7 +60,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 string imageName = "noimage.jpg";
                 if (student.ImageUpload != null)
                 {
-                    string uploadsDir = Path.Combine(webHostEnvironment.WebRootPath, "media/students");
+                    string uploadsDir = Path.Combine(_webHostEnvironment.WebRootPath, "media/students");
                     imageName = Guid.NewGuid().ToString() + "_" + student.ImageUpload.FileName; // this gives unique id so no same image twice uploaded 
                     string filePath = Path.Combine(uploadsDir, imageName);
                     FileStream fileStream = new FileStream(filePath, FileMode.Create);
@@ -98,7 +98,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 if (student.ImageUpload != null)
                 {
-                    string uploadsDir = Path.Combine(webHostEnvironment.WebRootPath, "media/students");
+                    string uploadsDir = Path.Combine(_webHostEnvironment.WebRootPath, "media/students");
                     if (!string.Equals(student.Image, "noimage.jpg"))
                     {
                         //string oldImagePath = Path.Combine(uploadsDir, student.Image);
@@ -136,7 +136,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             }
             else
             {
-                string uploadsDir = Path.Combine(webHostEnvironment.WebRootPath, "media/students");
+                string uploadsDir = Path.Combine(_webHostEnvironment.WebRootPath, "media/students");
                 if (!string.Equals(student.Image, "noimage.jpg"))
                 {
                     string oldImagePath = Path.Combine(uploadsDir, student.Image);

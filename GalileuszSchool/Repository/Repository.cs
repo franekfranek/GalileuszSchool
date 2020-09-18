@@ -1,4 +1,5 @@
 ﻿using GalileuszSchool.Infrastructure;
+using GalileuszSchool.Models.ModelsForAdminArea;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace GalileuszSchool.Repository
 
         public Repository(GalileuszSchoolContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         public async Task Create(TModel model)
@@ -43,6 +44,7 @@ namespace GalileuszSchool.Repository
         {
             return _context.Set<TModel>().AsNoTracking();
         }
+        
 
         public async Task<TModel> GetById(int id)
         {
@@ -65,6 +67,17 @@ namespace GalileuszSchool.Repository
         public async Task<bool> IsInDB(int id)
         {
             return await _context.Set<TModel>().AnyAsync(e => e.Id == id);
+        }
+
+        //TODO: generic needed for these, bad practice
+        public IOrderedQueryable<Teacher> GetAllTeachers()
+        {
+            return _context.Teachers.OrderBy(x => x.Id);
+        }
+
+        public IOrderedQueryable<Student> GetAllStudents()
+        {
+            return _context.Students.OrderBy(x => x.Id);
         }
     }
 }

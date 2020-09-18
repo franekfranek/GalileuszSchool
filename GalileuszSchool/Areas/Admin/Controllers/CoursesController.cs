@@ -22,12 +22,10 @@ namespace GalileuszSchool.Areas.Admin.Controllers
     [Area("Admin")]
     public class CoursesController : Controller
     {
-        private readonly GalileuszSchoolContext _context;
         private readonly IRepository<Course> _repository;
 
-        public CoursesController(GalileuszSchoolContext context, IRepository<Course> repository)
+        public CoursesController(IRepository<Course> repository)
         {
-            _context = context;
             _repository = repository;
         }
 
@@ -35,11 +33,12 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             //TODO refactoring needed: how to move db queries to GetSelectListItem or/and use _repository
-            var teacherInfo =  _context.Teachers.OrderBy(x => x.Id);
+            // 
+            var teacherInfo = _repository.GetAllTeachers();
             var selectListTeachers = await GetSelectListItem(teacherInfo);
             ViewBag.TeacherId = new SelectList(selectListTeachers, "Value", "Text");
 
-            var studentInfo = _context.Students.OrderBy(x => x.Id);
+            var studentInfo = _repository.GetAllStudents();
             var selectListStudents = await GetSelectListItem(studentInfo);
             ViewBag.StudentId = new SelectList(selectListStudents, "Value", "Text");
 
@@ -48,12 +47,16 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
         private async Task<IEnumerable<SelectListItem>> GetSelectListItem(IOrderedQueryable<IListItem> dbData)
         {
-            IEnumerable<SelectListItem> selectList = await dbData.Select(s => new SelectListItem
-                                                     {
-                                                        Value = s.Id.ToString(),
-                                                        Text = s.FirstName + " " + s.LastName.ToString()
-                                                     }).ToListAsync();
-            return selectList;
+            if(dbData != null)
+            {
+                return await dbData.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.FirstName + " " + s.LastName.ToString()
+                }).ToListAsync();
+            }
+
+            return new List<SelectListItem>();
         }
 
         //POST /admin/courses/create
@@ -70,16 +73,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 var slug = await _repository.GetBySlug(course.Slug);
                 if (slug != null)
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new { text = "Course already exists!" });
                 }
 
                 await _repository.Create(course);
 
-                return StatusCode(200);
+                //return StatusCode(200);
+                return Ok();
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { text = "Server error!" });
+            return Json(new { text = "Invalid Course model!" });
         }
 
         //POST /admin/courses/edit/{id}
@@ -95,17 +97,15 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 var slug = await _repository.GetModelByCondition(x => x.Id != course.Id, x => x.Slug == course.Slug);
                 if (slug != null)
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Json(new { text = "Course already exists!" });
+                    return Json(new { text = "Course with that name already exists!" });
                 }
 
                 await _repository.Update(course);
 
-                return StatusCode(200);
+                return Ok();
             }
 
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { text = "Server error!" });
+            return Json(new { text = "Invalid Course model!" });
         }
 
         //get /admin/pages/delete/{id}
@@ -115,7 +115,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             if (course == null)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(new { text = "Course does not exists!" });
             }
             else
@@ -130,11 +129,19 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         {
             List<Course> courses = await _repository.GetAll().OrderByDescending(x => x.Sorting)
                                                             .Include(x => x.Teacher).ToListAsync();
+            if(courses == null || courses.Count == 0)
+            {
+                return Json(new { text = "No courses found!" });
+            }
             return Json(courses);
         }
         public async Task<IActionResult> FindCourse(int id)
         {
             var course = await _repository.GetById(id);
+            if (course == null)
+            {
+                return Json(new { text = "Server error!" });
+            }
             return new JsonResult(course);
         }
     }
