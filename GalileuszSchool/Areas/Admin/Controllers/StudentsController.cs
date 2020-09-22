@@ -53,7 +53,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 var slug = await _repository.GetBySlug(student.Slug);
                 if (slug != null)
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new { text = "Student already exists!" });
                 }
 
@@ -73,8 +72,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 return Ok();
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { text = "Server error!" });
+            return Json(new { text = "Invalid Student model!" });
         }
 
         //admin/teachers/edit/{id}
@@ -91,8 +89,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 var slug = await _repository.GetModelByCondition(x => x.Id != student.Id, x => x.Slug == student.Slug);
                 if (slug != null)
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Json(new { text = "Student already exists!" });
+                    return Json(new { text = "Student with that data already exists!" });
                 }
 
 
@@ -120,8 +117,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 return Ok();
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { text = "Server error!" });
+            return Json(new { text = "Invalid Student model!" });
         }
 
         //get/admin/students/delete/{id}
@@ -131,14 +127,13 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             if (student == null)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(new { text = "Student does not exists!" });
             }
             else
             {
-                string uploadsDir = Path.Combine(_webHostEnvironment.WebRootPath, "media/students");
                 if (!string.Equals(student.Image, "noimage.jpg"))
                 {
+                    string uploadsDir = Path.Combine(_webHostEnvironment.WebRootPath, "media/students");
                     string oldImagePath = Path.Combine(uploadsDir, student.Image);
                     if (System.IO.File.Exists(oldImagePath))
                     {
@@ -153,11 +148,19 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         public async Task<JsonResult> GetStudents()
         {
             List<Student> students = await _repository.GetAll().OrderByDescending(x => x.Id).ToListAsync();
+            if (students == null || students.Count == 0)
+            {
+                return Json(new { text = "No students found!" });
+            }
             return Json(students);
         }
         public async Task<JsonResult> FindStudent(int id)
         {
             var student = await _repository.GetById(id);
+            if (student == null)
+            {
+                return Json(new { text = "Server error!" });
+            }
             return new JsonResult(student);
         }
     }

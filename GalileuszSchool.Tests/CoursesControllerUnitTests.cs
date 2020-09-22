@@ -235,10 +235,9 @@ namespace GalileuszSchool.Tests
 
             Assert.NotNull(result);
         }
-        // FindTeacher END =================================
+        // FindCourse END =================================
 
-        // GetTeachers ================================
-        //TODO: how to mock list<Teacher> as null
+        // GetCourses ================================
         [Fact]
         public async Task GetCourses_ShouldReturnAnonymousObject_WhenQueryFromDbIsNullOrListLenIs0()
         {
@@ -290,8 +289,7 @@ namespace GalileuszSchool.Tests
             Assert.Equal(3, teachersJson.Count);
 
         }
-        // GetTeachers END ================================
-
+        // GetCourses END ================================
 
         private Course GetCourse()
         {
