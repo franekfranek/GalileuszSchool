@@ -86,7 +86,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
             {
                 student.Slug = student.FirstName.ToLower().Replace(" ", "-") + student.LastName.ToLower().Replace(" ", "-");
 
-                var slug = await _repository.GetModelByCondition(x => x.Id != student.Id, x => x.Slug == student.Slug);
+                var slug = await _repository.GetModelByWhereAndFirstConditions(x => x.Id != student.Id, x => x.Slug == student.Slug);
                 if (slug != null)
                 {
                     return Json(new { text = "Student with that data already exists!" });

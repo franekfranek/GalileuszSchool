@@ -35,10 +35,11 @@ namespace GalileuszSchool.Controllers
         //get calendar/index
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
-            if(currentTeacher != null)
+            try
             {
+                var user = await _userManager.GetUserAsync(User);
+                var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
+
                 var courses = _context.Courses.Where(x => x.TeacherId == currentTeacher.Id);
                 var selectListTeachers = await courses.Select(s => new SelectListItem
                 {
@@ -46,8 +47,12 @@ namespace GalileuszSchool.Controllers
                     Text = s.Name.ToString()
                 }).ToListAsync();
                 ViewBag.Courses = new SelectList(selectListTeachers, "Value", "Text");
+
             }
-            
+            catch(Exception e)
+            {
+                
+            }
 
             return View();
         }
@@ -55,23 +60,38 @@ namespace GalileuszSchool.Controllers
         //get calendar/getevents
         public async Task<JsonResult> GetEvents()
         {
-            var user = await _userManager.GetUserAsync(User);
-            var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
-            var courses = await _context.Courses.Where(x => x.TeacherId == currentTeacher.Id).Select(x => x.Id).ToListAsync();
-            var events = await _context.CalendarEvents.Where(x => courses.Contains( x.CourseId )).ToListAsync();
+            List<CalendarEvent> events;
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
+                var courses = await _context.Courses.Where(x => x.TeacherId == currentTeacher.Id).Select(x => x.Id).ToListAsync();
+                events = await _context.CalendarEvents.Where(x => courses.Contains(x.CourseId)).ToListAsync();
+            }
+            catch(Exception e) 
+            {
+                return Json(new { text = "Server error! Error message:" + e.Message });
+            }
+            
 
             return Json(events);
         }
-
         //get calendar/GetEventsForStudent
         public async Task<JsonResult> GetEventsForStudents()
         {
-            var user = await _userManager.GetUserAsync(User);
-            var currentStudent = await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
-            var events = await _context.CalendarEventStudents
-                        .Where(x => x.StudentId == currentStudent.Id)
-                        .Include(x=> x.CalendarEvent).Select(x=> x.CalendarEvent).ToListAsync();
-
+            List<CalendarEvent> events;
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var currentStudent = await _context.Students.FirstOrDefaultAsync(x => x.Email == user.Email);
+                events = await _context.CalendarEventStudents
+                            .Where(x => x.StudentId == currentStudent.Id)
+                            .Include(x => x.CalendarEvent).Select(x => x.CalendarEvent).ToListAsync();
+            }
+            catch (Exception e)
+            {
+                return Json(new { text = "Server error! Error message:" + e.Message });
+            }
             return Json(events);
         }
         //post calendar/create
@@ -97,20 +117,27 @@ namespace GalileuszSchool.Controllers
 
                 return Json(new { text = "Class added!" });
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return Json(new { text = "Server error!" });
         }
 
         //it is void but it's async so it returns Task 
         private async Task SaveStudentsByEvent(int courseId, int eventId)
         {
-            var studentsByCourse = await _context.StudenCourseConnections.Where(x => x.CourseId == courseId).ToListAsync();
-            foreach (var item in studentsByCourse)
+            try
             {
-                _context.CalendarEventStudents.Add(new CalendarEventStudent { CalendarEventId = eventId, StudentId = item.StudentId });
+                var studentsByCourse = await _context.StudenCourseConnections.Where(x => x.CourseId == courseId).ToListAsync();
+                foreach (var item in studentsByCourse)
+                {
+                    _context.CalendarEventStudents.Add(new CalendarEventStudent { CalendarEventId = eventId, StudentId = item.StudentId });
+                }
+                await _context.SaveChangesAsync();
             }
+            catch (Exception e)
+            {
 
-            await _context.SaveChangesAsync();
+                throw e;
+            }
+            
         }
 
         //post calendar/edit/event
@@ -125,7 +152,6 @@ namespace GalileuszSchool.Controllers
                     return Json(new { text = "Class edited!" });
                 }
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return Json(new { text = "Server error!" });
         }
         //post calendar/delete/ {id}
@@ -141,7 +167,6 @@ namespace GalileuszSchool.Controllers
                     return Json(new { text = "Class removed!" });
                 }    
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return Json(new { text = "Server error!" });
         }
 
@@ -159,8 +184,13 @@ namespace GalileuszSchool.Controllers
                         .OrderBy(x => x.CalendarEventId)
                         .Where(x => x.CalendarEventId == eventId)
                         .Include("Student").ToListAsync();
+            if(students != null)
+            {
+                return Json(students);
 
-            return Json(students);
+            }else
+                return Json(new { text = "Server error!" });
+
         }
 
         //post

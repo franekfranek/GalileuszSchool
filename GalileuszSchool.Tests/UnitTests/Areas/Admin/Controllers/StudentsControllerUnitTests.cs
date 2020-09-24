@@ -1,40 +1,37 @@
 ﻿using GalileuszSchool.Areas.Admin.Controllers;
-using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Repository;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 using Moq;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GalileuszSchool.Tests
+namespace GalileuszSchool.Tests.UnitTests.Areas.Admin.Controllers
 {
-    public class CoursesControllerUnitTests
+    public class StudentsControllerUnitTests
     {
-        private readonly CoursesController _controller;
-        private readonly Mock<IRepository<Course>> _repoMock = new Mock<IRepository<Course>>();
-        
-        public CoursesControllerUnitTests()
+        private readonly StudentsController _controller;
+        private readonly Mock<IRepository<Student>> _repoMock = new Mock<IRepository<Student>>();
+        private readonly Mock<IWebHostEnvironment> _webHostEnvironmentMock = new Mock<IWebHostEnvironment>();
+
+        public StudentsControllerUnitTests()
         {
             //var mockSet = new Mock<DbSet<Course>>();
             //_contextMock.Setup(m => m.Courses).Returns(mockSet.Object);
-            
-            _controller = new CoursesController(_repoMock.Object);
+
+            _controller = new StudentsController(_webHostEnvironmentMock.Object, _repoMock.Object);
         }
         [Fact]
         public async Task Index_ShouldReturnView()
         {
             //Arrange
-            
+
             //Act
             var result = await _controller.Index();
             //Assert
@@ -43,17 +40,17 @@ namespace GalileuszSchool.Tests
 
         }
 
-        // CREATE COURSE ====================
+        // CREATE STUDENT ====================
         [Fact]
         public async Task Create_ShouldReturnJsonAnonymousObject_WhenInvalidObjectPassed()
         {
             // Arrange
-            var course = new Course()
+            var course = new Student()
             {
-                Level = "Advanced",
-                Price = 10
+                LastName = "Advanced",
+                Email = "MrAdvanced@gmail.com"
             };
-            _controller.ModelState.AddModelError("Name", "Required");
+            _controller.ModelState.AddModelError("FirstName", "Required");
 
             // Act
             dynamic response = await _controller.Create(course);
@@ -62,14 +59,14 @@ namespace GalileuszSchool.Tests
             // Assert
             Assert.IsType<JsonResult>(response);
             Assert.NotNull(response);
-            Assert.Equal("Invalid Course model!", valueFromAnnonymous);
+            Assert.Equal("Invalid Student model!", valueFromAnnonymous);
 
         }
         [Fact]
         public async Task Create_ShouldReturnOk_WhenValidObjectPassed()
         {
             // Arrange
-            var course = GetCourse();
+            var course = GetStudent();
             // Act
             var response = await _controller.Create(course);
 
@@ -78,34 +75,34 @@ namespace GalileuszSchool.Tests
             Assert.IsType<OkResult>(response);
         }
         [Fact]
-        public async Task Create_ShouldReturnAnonymousObject_WhenTeacherAlreadyExists()
+        public async Task Create_ShouldReturnAnonymousObject_WhenStudentAlreadyExists()
         {
             // Arrange
-            var course = GetCourse();
-            _repoMock.Setup(x => x.GetBySlug(course.Slug)).ReturnsAsync(course);
+            var student = GetStudent();
+            _repoMock.Setup(x => x.GetBySlug(student.Slug)).ReturnsAsync(student);
             //Act          
-            dynamic result = await _controller.Create(course);
+            dynamic result = await _controller.Create(student);
             var valueFromAnnonymous = result.Value.GetType().GetProperty("text").GetValue(result.Value, null);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Course already exists!", valueFromAnnonymous);
+            Assert.Equal("Student already exists!", valueFromAnnonymous);
 
         }
 
-        // CREATE COURSE END====================
+        // CREATE STUDENT END====================
 
-        // EDIT COURSE ====================
+        // EDIT STUDENT ====================
         [Fact]
         public async Task Edit_ShouldReturnAnonymousObject_WhenInvalidObjectPassed()
         {
             // Arrange
-            var course = new Course()
+            var course = new Student()
             {
-                Level = "Advanced",
-                Price = 30
+                LastName = "Advanced",
+                Email = "MrAdvanced@gmail.com"
             };
-            _controller.ModelState.AddModelError("Name", "Required");
+            _controller.ModelState.AddModelError("FirstName", "Required");
 
             // Act
             var response = await _controller.Edit(course);
@@ -115,13 +112,13 @@ namespace GalileuszSchool.Tests
             // Assert
             Assert.IsType<JsonResult>(response);
             Assert.NotNull(response);
-            Assert.Equal("Invalid Course model!", valueFromAnnonymous);
+            Assert.Equal("Invalid Student model!", valueFromAnnonymous);
         }
         [Fact]
         public async Task Edit_ShouldReturnOk_WhenValidObjectPassed()
         {
             // Arrange
-            var course = GetCourse();
+            var course = GetStudent();
             // Act
             var response = await _controller.Edit(course);
 
@@ -130,57 +127,58 @@ namespace GalileuszSchool.Tests
             Assert.IsType<OkResult>(response);
         }
         [Fact]
-        public async Task Edit_ShouldReturnAnonymousObject_WhenTeacherAlreadyExists()
+        public async Task Edit_ShouldReturnAnonymousObject_WhenStudentAlreadyExists()
         {
             // Arrange
-            var course = GetCourse();
-            _repoMock.Setup(x => x.GetModelByCondition(x => x.Id != course.Id, x => x.Slug == course.Slug)).ReturnsAsync(course);
+            var course = GetStudent();
+            _repoMock.Setup(x => x.GetModelByWhereAndFirstConditions(x => x.Id != course.Id, x => x.Slug == course.Slug)).ReturnsAsync(course);
             //Act          
             dynamic result = await _controller.Edit(course);
             var valueFromAnnonymous = result.Value.GetType().GetProperty("text").GetValue(result.Value, null);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Course with that name already exists!", valueFromAnnonymous);
+            Assert.Equal("Student with that data already exists!", valueFromAnnonymous);
         }
 
-        // EDIT COURSE END====================
+        // EDIT STUDENT END====================
 
-        // DELETE COURSE ====================
+        // DELETE STUDENT ====================
         [Fact]
         public async Task Delete_ShouldReturnAnonymousObject_WhenNonExistingIdPassed()
         {
             // Arrange
-            var courseId = 0;
+            var studentId = 0;
 
             // Act
-            _repoMock.Setup(x => x.GetById(courseId)).ReturnsAsync((Course)null);
-            dynamic result = await _controller.Delete(courseId);
+            _repoMock.Setup(x => x.GetById(studentId)).ReturnsAsync((Student)null);
+            dynamic result = await _controller.Delete(studentId);
             var valueFromAnnonymous = result.Value.GetType().GetProperty("text").GetValue(result.Value, null);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Course does not exists!", valueFromAnnonymous);
+            Assert.Equal("Student does not exists!", valueFromAnnonymous);
         }
         [Fact]
-        public async Task Delete_ShouldReturnOk_WhenExistingIdPassed()
+        public async Task Delete_ShouldReturnOk_WhenExistingIdPassedAndStudentHadNoProfilePic()
         {
             // Arrange
-            var course = GetCourse();
+            var student = GetStudent();
+            student.Image = "noimage.jpg";
             // Act
-            _repoMock.Setup(x => x.GetById(course.Id)).ReturnsAsync(course);
-            var response = await _controller.Delete(course.Id);
+            _repoMock.Setup(x => x.GetById(student.Id)).ReturnsAsync(student);
+            var response = await _controller.Delete(student.Id);
 
             // Assert
             Assert.NotNull(response);
             Assert.IsType<OkResult>(response);
         }
         [Fact]
-        public async Task Delete_ShouldRemoveOneCourse_WhenExistingIdPassed()
+        public async Task Delete_ShouldRemoveOneCourse_WhenExistingIdPassedAndStudentHadNoProfilePic()
         {
             //Arrange
             var id = 1;
-            _repoMock.Setup(repo => repo.GetById(id)).ReturnsAsync(new Course() { });
+            _repoMock.Setup(repo => repo.GetById(id)).ReturnsAsync(new Student() { Image = "noimage.jpg" });
             _repoMock.Setup(repo => repo.Delete(It.IsAny<int>())).Returns(Task.CompletedTask);
 
             //Act
@@ -189,19 +187,19 @@ namespace GalileuszSchool.Tests
             _repoMock.Verify(repo => repo.Delete(It.IsAny<int>()), Times.Once);
 
         }
-        // DELETE COURSE END====================
+        // DELETE STUDENT END====================
 
-        // FindCourse =================================
+        // FindStudent =================================
         [Fact]
         //[Fact]
-        public async Task FindCourse_ShouldReturnAnonymousObject_WhenUknownIdPassed()
+        public async Task FindStudent_ShouldReturnAnonymousObject_WhenUknownIdPassed()
         {
             // Arrange
-            var courseId = 0;
+            var studentId = 0;
 
             // Act
-            _repoMock.Setup(x => x.GetById(courseId)).ReturnsAsync((Course)null);
-            dynamic result = await _controller.FindCourse(courseId);
+            _repoMock.Setup(x => x.GetById(studentId)).ReturnsAsync((Student)null);
+            dynamic result = await _controller.FindStudent(studentId);
             var valueFromAnnonymous = result.Value.GetType().GetProperty("text").GetValue(result.Value, null);
 
             //Assert
@@ -210,120 +208,122 @@ namespace GalileuszSchool.Tests
         }
 
         [Fact]
-        public async Task FindCourse_ShouldReturnJson_WhenCalled()
+        public async Task FindStudent_ShouldReturnJson_WhenCalled()
         {
             //act
-            var result = await _controller.FindCourse(1);
+            var result = await _controller.FindStudent(1);
 
             //assert
             Assert.IsType<JsonResult>(result);
         }
         [Fact]
-        public async Task FindCourse_ShouldReturnTeacher_WhenExists()
+        public async Task FindStudent_ShouldReturnStudent_WhenExists()
         {
             //Arrange
-            int courseId = 1;
-            var course = GetCourse();
-            _repoMock.Setup(x => x.GetById(courseId)).ReturnsAsync(course);
+            int studentId = 1;
+            var student = GetStudent();
+            _repoMock.Setup(x => x.GetById(studentId)).ReturnsAsync(student);
             //Act          
-            dynamic result = await _controller.FindCourse(courseId);
+            dynamic result = await _controller.FindStudent(studentId);
 
             //Assert
-            Assert.Equal(course.Id, result.Value.Id);
-            Assert.Equal(course.Name, result.Value.Name);
-            Assert.Equal(course.Level, result.Value.Level);
+            Assert.Equal(student.Id, result.Value.Id);
+            Assert.Equal(student.FirstName, result.Value.FirstName);
+            Assert.Equal(student.LastName, result.Value.LastName);
+            Assert.Equal(student.PhoneNumber, result.Value.PhoneNumber);
 
             Assert.NotNull(result);
         }
-        // FindCourse END =================================
+        // FindStudent END =================================
 
-        // GetCourses ================================
+        // GetStudents ================================
         [Fact]
-        public async Task GetCourses_ShouldReturnAnonymousObject_WhenQueryFromDbIsNullOrListLenIs0()
+        public async Task GetStudents_ShouldReturnAnonymousObject_WhenQueryFromDbIsNullOrListLenIs0()
         {
             //Arrange
-            List<Course> teachers = new List<Course>();
+            List<Student> teachers = new List<Student>();
             var mock = teachers.AsQueryable().BuildMock();
             _repoMock.Setup(x => x.GetAll()).Returns(mock.Object);
             //Act
 
-            var result = await _controller.GetCourses();
+            var result = await _controller.GetStudents();
             var valueFromAnnonymous = result.Value.GetType().GetProperty("text").GetValue(result.Value, null);
 
             ////Assert
 
             Assert.NotNull(result);
-            Assert.Equal("No courses found!", valueFromAnnonymous);
+            Assert.Equal("No students found!", valueFromAnnonymous);
 
 
         }
         [Fact]
-        public async Task GetCourses_ShouldReturnJson_WhenCalled()
+        public async Task GetStudents_ShouldReturnJson_WhenCalled()
         {
             //Arrange
-            var teachers = GetCoursesList();
+            var teachers = GetStudentsList();
             var mock = teachers.AsQueryable().BuildMock();
             _repoMock.Setup(x => x.GetAll()).Returns(mock.Object);
 
             //Act
-            var result = await _controller.GetCourses();
+            var result = await _controller.GetStudents();
 
             //Assert
             Assert.IsType<JsonResult>(result);
 
         }
         [Fact]
-        public async Task GetCourses_ShouldReturnAllTeachers_WhenExist()
+        public async Task GetStudents_ShouldReturnAllTeachers_WhenExist()
         {
             //Arrange
-            var teachers = GetCoursesList();
-            var mock = teachers.AsQueryable().BuildMock();
+            var students = GetStudentsList();
+            var mock = students.AsQueryable().BuildMock();
             _repoMock.Setup(x => x.GetAll()).Returns(mock.Object);
 
             //Act
-            var result = await _controller.GetCourses();
+            var result = await _controller.GetStudents();
 
             ////Assert
             Assert.NotNull(result);
-            var teachersJson = Assert.IsType<List<Course>>(result.Value);
+            var teachersJson = Assert.IsType<List<Student>>(result.Value);
             Assert.Equal(3, teachersJson.Count);
 
         }
-        // GetCourses END ================================
+        // GetStudents END ================================
 
-        private Course GetCourse()
+
+        private Student GetStudent()
         {
-            return new Course()
-            {   
+            return new Student()
+            {
                 Id = 1,
-                Name = "English",
-                Level = "Advanced",
-                Price = 50,
-                Slug = "english"
+                FirstName = "Michael",
+                LastName = "Scott",
+                Slug = "michaelscott",
+                PhoneNumber = "000-000-000"
             };
         }
-        private List<Course> GetCoursesList()
+        private List<Student> GetStudentsList()
         {
-            return new List<Course> {
-                new Course()
+            return new List<Student> {
+                new Student()
                 {
                     Id = 1,
-                    Name = "English",
-                    Level = "Advanced"
+                    FirstName = "Franciszek",
+                    LastName = "Zawadzki"
                 },
-                new Course()
+                new Student()
                 {
                     Id = 2,
-                    Name = "Spanish",
-                    Level = "Intermediate"
+                    FirstName = "John",
+                    LastName = "Rambo"
                 },
-                new Course()
+                new Student()
                 {
                     Id = 3,
-                    Name = "French",
-                    Level = "Beginner"
+                    FirstName = "Son",
+                    LastName = "Goku"
                 },
-                
+
             };
         }
     }

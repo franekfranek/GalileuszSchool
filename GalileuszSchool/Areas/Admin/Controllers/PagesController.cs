@@ -92,7 +92,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 page.Slug = page.Id == 1 ? "home" : page.Title.ToLower().Replace(" ", "-");
 
 
-                var slug = await _repository.GetModelByCondition(x => x.Id != page.Id, x => x.Slug == page.Slug);
+                var slug = await _repository.GetModelByWhereAndFirstConditions(x => x.Id != page.Id, x => x.Slug == page.Slug);
                 if (slug != null)
                 {
                     ModelState.AddModelError("", "The page already exists");

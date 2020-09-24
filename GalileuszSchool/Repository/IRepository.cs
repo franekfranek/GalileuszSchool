@@ -17,9 +17,12 @@ namespace GalileuszSchool.Repository
         Task Update(TModel model);
         Task Delete(int id);
         Task<TModel> GetBySlug(string slug);
-        Task<TModel> GetModelByCondition(Expression<Func<TModel, bool>> expression,
+        Task<TModel> GetModelByWhereAndFirstConditions(Expression<Func<TModel, bool>> expression,
                                                 Expression<Func<TModel, bool>> secondExpression);
+        Task<TModel> GetModelByFirstCondition(Expression<Func<TModel, bool>> expression);
         Task<bool> IsInDB(int id);
+
+        //TODO: refactor those 2 bad boyz
         IOrderedQueryable<Teacher> GetAllTeachers();
         IOrderedQueryable<Student> GetAllStudents();
     }

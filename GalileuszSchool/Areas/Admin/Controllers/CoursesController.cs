@@ -94,7 +94,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 course.Slug = course.Name.ToLower().Replace(" ", "-");
 
 
-                var slug = await _repository.GetModelByCondition(x => x.Id != course.Id, x => x.Slug == course.Slug);
+                var slug = await _repository.GetModelByWhereAndFirstConditions(x => x.Id != course.Id, x => x.Slug == course.Slug);
                 if (slug != null)
                 {
                     return Json(new { text = "Course with that name already exists!" });

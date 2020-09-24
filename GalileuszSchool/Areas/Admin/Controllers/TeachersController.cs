@@ -72,7 +72,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 //Explanation: we want to check if there is already teacher we want to edit 
                 // we want to consider all teachers except the one passed and find if any other has slug like it 
                 // in short it checks if edited Teacher DOES not have the same name as somebody in the DB already....
-                var slug = await _repository.GetModelByCondition(x => x.Id != teacher.Id, x => x.Slug == teacher.Slug);
+                var slug = await _repository.GetModelByWhereAndFirstConditions(x => x.Id != teacher.Id, x => x.Slug == teacher.Slug);
 
                 if (slug != null)
                 {

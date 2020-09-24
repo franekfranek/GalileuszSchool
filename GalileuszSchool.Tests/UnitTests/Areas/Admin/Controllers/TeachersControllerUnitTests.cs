@@ -14,7 +14,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GalileuszSchool.Tests
+namespace GalileuszSchool.Tests.UnitTests.Areas.Admin.Controllers
 {
     public class TeachersControllerUnitTests
     {
@@ -136,7 +136,7 @@ namespace GalileuszSchool.Tests
         {
             // Arrange
             var teacher = GetTeacher();
-            _repoMock.Setup(x => x.GetModelByCondition(x => x.Id != teacher.Id, x => x.Slug == teacher.Slug)).ReturnsAsync(teacher);
+            _repoMock.Setup(x => x.GetModelByWhereAndFirstConditions(x => x.Id != teacher.Id, x => x.Slug == teacher.Slug)).ReturnsAsync(teacher);
             //Act          
             dynamic result = await _controller.Edit(teacher);
             var valueFromAnnonymous = result.Value.GetType().GetProperty("text").GetValue(result.Value, null);

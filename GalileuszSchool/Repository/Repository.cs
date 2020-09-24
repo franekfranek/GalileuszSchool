@@ -1,5 +1,6 @@
 ﻿using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models.ModelsForAdminArea;
+using GalileuszSchool.Models.ModelsForNormalUsers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace GalileuszSchool.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<TModel> GetModelByCondition(Expression<Func<TModel, bool>> expression,
+        public async Task<TModel> GetModelByWhereAndFirstConditions(Expression<Func<TModel, bool>> expression,
                                                         Expression<Func<TModel, bool>> secondExpression)
         {
             return await _context.Set<TModel>().Where(expression).AsNoTracking()
@@ -68,6 +69,10 @@ namespace GalileuszSchool.Repository
         {
             return await _context.Set<TModel>().AnyAsync(e => e.Id == id);
         }
+        public async Task<TModel> GetModelByFirstCondition(Expression<Func<TModel, bool>> expression)
+        {
+            return await _context.Set<TModel>().FirstOrDefaultAsync(expression);
+        }
 
         //TODO: generic needed for these, bad practice
         public IOrderedQueryable<Teacher> GetAllTeachers()
@@ -79,5 +84,7 @@ namespace GalileuszSchool.Repository
         {
             return _context.Students.OrderBy(x => x.Id);
         }
+
+        
     }
 }

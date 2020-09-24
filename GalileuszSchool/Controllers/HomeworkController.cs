@@ -23,7 +23,7 @@ namespace GalileuszSchool.Controllers
     {
         private readonly GalileuszSchoolContext _context;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IRepository<Homework> _repository;
+        private readonly IRepository<Homework> _repositoryHomework;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public HomeworkController(GalileuszSchoolContext context,
@@ -33,7 +33,7 @@ namespace GalileuszSchool.Controllers
         {
             _context = context;
             _userManager = userManager;
-            _repository = repository;
+            _repositoryHomework = repository;
             _webHostEnvironment = env;
         }
 
@@ -52,11 +52,10 @@ namespace GalileuszSchool.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 var email = user.Email;
                 var teacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == email);
-                var slug = await _repository.GetBySlug(homework.Slug);
+                var slug = await _repositoryHomework.GetBySlug(homework.Slug);
 
                 if (slug != null)
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new { text = "Homework with this title already exists already exists!" });
                 }
                 string imageName = null;
@@ -79,10 +78,10 @@ namespace GalileuszSchool.Controllers
                     ImageContent = imageName,
                     Course = homework.Course
                 };
-                await _repository.Create(homeworkModel);
+                await _repositoryHomework.Create(homeworkModel);
                 return Json(new { text = "Homework added!" });
             }
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
             return Json(new { text = "Server error!" });
         }
 
@@ -135,7 +134,7 @@ namespace GalileuszSchool.Controllers
         }
         public async Task<IActionResult> FindHomework(int id)
         {
-            var homework = await _repository.GetById(id);
+            var homework = await _repositoryHomework.GetById(id);
             return new JsonResult(homework);
         }
 

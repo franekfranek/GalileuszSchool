@@ -79,7 +79,7 @@ function generateCalendar() {
         }
     })
     .catch(e => {
-            console.log(e);
+            //console.log(e);
     }); 
 }
 

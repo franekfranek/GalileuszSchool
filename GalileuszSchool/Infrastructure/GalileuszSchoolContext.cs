@@ -25,7 +25,7 @@ namespace GalileuszSchool.Infrastructure
         public DbSet<ClassRoom> ClassRoom { get; set; }
         public DbSet<Homework> Homework { get; set; }
         public DbSet<StudentHomework> StudentHomework { get; set; }
-        public DbSet<CalendarEvent> CalendarEvents { get; set; }
+        public virtual DbSet<CalendarEvent> CalendarEvents { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
