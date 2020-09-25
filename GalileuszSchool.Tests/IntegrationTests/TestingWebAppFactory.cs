@@ -27,27 +27,31 @@ namespace GalileuszSchool.Tests.IntegrationTests
                 var serviceProvider = new ServiceCollection()
                   .AddEntityFrameworkInMemoryDatabase()
                   .BuildServiceProvider();
+                //this is in memory db call can be done to real sql server one
                 services.AddDbContext<GalileuszSchoolContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryEmployeeTest");
+                    options.UseInMemoryDatabase("InMemoryCalendarEventsTest");
                     options.UseInternalServiceProvider(serviceProvider);
                 });
                 var sp = services.BuildServiceProvider();
                 using (var scope = sp.CreateScope())
                 {
-                    using (var appContext = scope.ServiceProvider.GetRequiredService<GalileuszSchoolContext>())
+                    var scopedServices = scope.ServiceProvider;
+                    var db = scopedServices.GetRequiredService<GalileuszSchoolContext>();
+                    db.Database.EnsureCreated();
+
+                    try
                     {
-                        try
-                        {
-                            appContext.Database.EnsureCreated();
-                        }
-                        catch (Exception ex)
-                        {
-                            //Log errors 
-                            throw ex;
-                        }
+                        Helpers.Utilities.InitializeDbForTests(db);
+
                     }
-                }
+                    catch (Exception ex)
+                    {
+                        //Log errors 
+                        throw ex;
+                    }
+                    }
+                
             });
         }
     }

@@ -11,6 +11,7 @@ using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers;
 using GalileuszSchool.Models.ModelsForNormalUsers.Calendar;
 using GalileuszSchool.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -32,27 +33,28 @@ namespace GalileuszSchool.Controllers
             _userManager = userManager;
         }
 
+        [Authorize]
         //get calendar/index
         public async Task<IActionResult> Index()
         {
-            try
-            {
-                var user = await _userManager.GetUserAsync(User);
-                var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
+            //try
+            //{
+            //    var user = await _userManager.GetUserAsync(User);
+            //    var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
 
-                var courses = _context.Courses.Where(x => x.TeacherId == currentTeacher.Id);
-                var selectListTeachers = await courses.Select(s => new SelectListItem
-                {
-                    Value = s.Id.ToString(),
-                    Text = s.Name.ToString()
-                }).ToListAsync();
-                ViewBag.Courses = new SelectList(selectListTeachers, "Value", "Text");
+            //    var courses = _context.Courses.Where(x => x.TeacherId == currentTeacher.Id);
+            //    var selectListTeachers = await courses.Select(s => new SelectListItem
+            //    {
+            //        Value = s.Id.ToString(),
+            //        Text = s.Name.ToString()
+            //    }).ToListAsync();
+            //    ViewBag.Courses = new SelectList(selectListTeachers, "Value", "Text");
 
-            }
-            catch(Exception e)
-            {
+            //}
+            //catch(Exception e)
+            //{
                 
-            }
+            //}
 
             return View();
         }
@@ -60,7 +62,7 @@ namespace GalileuszSchool.Controllers
         //get calendar/getevents
         public async Task<JsonResult> GetEvents()
         {
-            List<CalendarEvent> events;
+            List<CalendarEvent> events = new List<CalendarEvent>();
             try
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -70,7 +72,7 @@ namespace GalileuszSchool.Controllers
             }
             catch(Exception e) 
             {
-                return Json(new { text = "Server error! Error message:" + e.Message });
+                //return Json(new { text = "Server error! Error message:" + e.Message });
             }
             
 
@@ -95,6 +97,7 @@ namespace GalileuszSchool.Controllers
             return Json(events);
         }
         //post calendar/create
+        [HttpPost]
         public async Task<JsonResult> Create(CalendarEvent calendarEvent)
         {
             if (ModelState.IsValid)
@@ -141,6 +144,7 @@ namespace GalileuszSchool.Controllers
         }
 
         //post calendar/edit/event
+        [HttpPost]
         public async Task<JsonResult> Edit(CalendarEvent calendarEvent)
         {
             if (ModelState.IsValid)
@@ -155,6 +159,7 @@ namespace GalileuszSchool.Controllers
             return Json(new { text = "Server error!" });
         }
         //post calendar/delete/ {id}
+        [HttpPost]
         public async Task<JsonResult> Delete(int id)
         {
             if (ModelState.IsValid)
@@ -194,6 +199,7 @@ namespace GalileuszSchool.Controllers
         }
 
         //post
+        [HttpPost]
         public async Task<JsonResult> CheckAttendance(AttendanceForm[] attendanceForms)
         {
             if (ModelState.IsValid)

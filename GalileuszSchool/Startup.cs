@@ -20,6 +20,8 @@ using GalileuszSchool.Models.ModelsForNormalUsers;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using System.Security.Claims;
 using GalileuszSchool.Services.Facebook;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace GalileuszSchool
 {
@@ -63,7 +65,18 @@ namespace GalileuszSchool
             })
                     .AddEntityFrameworkStores<GalileuszSchoolContext>()
                     .AddDefaultTokenProviders();
-
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.AccessDeniedPath = "/Account/Login";
+            //    options.Cookie.Name = "GSCookies";
+            //    options.Cookie.HttpOnly = true;
+            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+            //    options.LoginPath = "/Account/Login";
+            //    // ReturnUrlParameter requires 
+            //    //using Microsoft.AspNetCore.Authentication.Cookies;
+            //    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+            //    options.SlidingExpiration = true;
+            //});
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
@@ -77,7 +90,7 @@ namespace GalileuszSchool
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {
-                   
+
 
                     //options.ClientId = Configuration["GalileuszSchool-Authentication-Google-ClientId"];
                     //options.ClientSecret = Configuration["GalileuszSchool-Authentication-Google-ClientId"];
@@ -101,7 +114,13 @@ namespace GalileuszSchool
                             return Task.CompletedTask;
                         }
                     };
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.LoginPath = new PathString("/account/login");
+                    options.AccessDeniedPath = new PathString("account/denied");
                 });
+            
             var facebookAuthSettings = new FacebookAuthSettings();
             //facebookAuthSettings.AppId = Configuration["FacebookAuthSettings-AppId"];
             //facebookAuthSettings.AppSecret = Configuration["FacebookAuthSettings-AppSecret"];
