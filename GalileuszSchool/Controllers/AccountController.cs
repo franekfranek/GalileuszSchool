@@ -178,7 +178,6 @@ namespace GalileuszSchool.Controllers
             if (ModelState.IsValid)
             {
                 AppUser appUser = await _userManager.FindByEmailAsync(login.Email);
-                //if (appUser != null && appUser.EmailConfirmed)
                 
                 if (appUser != null)
                 {
@@ -188,6 +187,7 @@ namespace GalileuszSchool.Controllers
                     if (result.Succeeded)
                     {
                         return Redirect(login.ReturnUrl ?? "/account/edit");
+                        //return Ok();
                     }
 
                 }
@@ -195,7 +195,7 @@ namespace GalileuszSchool.Controllers
                 ModelState.AddModelError("", "Login failed, wrong credentials or your email is not confirmed");
             }
 
-            return View(login);
+            return RedirectToAction("Register");
         }
 
         // /get/account/logout

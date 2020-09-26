@@ -2,6 +2,7 @@
 using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers;
 using GalileuszSchool.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -37,12 +38,14 @@ namespace GalileuszSchool.Controllers
             _webHostEnvironment = env;
         }
 
+        [Authorize]
         public IActionResult Index()
         {   
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Homework homework)
         {
@@ -84,77 +87,105 @@ namespace GalileuszSchool.Controllers
 
             return Json(new { text = "Server error!" });
         }
-
+        [Authorize]
         public async Task<JsonResult> GetHomeworks(string option)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var teacher = await _context.Teachers.FirstOrDefaultAsync(x=> x.Email == user.Email);
-            var student = await _context.Students.FirstOrDefaultAsync(x=> x.Email == user.Email);
-
+            AppUser user = null;
             Expression<Func<StudentHomework, bool>> whereExpressionForStudent = null;
             Expression<Func<StudentHomework, bool>> whereExpressionForTeacher = null;
-
-            switch (option)
+            try
             {
-                case "All":
-                    whereExpressionForStudent = x => x.StudentId == student.Id;
-                    whereExpressionForTeacher = x => x.HomeworkId != 0;
-                    break;
-                case "Submitted":
-                    whereExpressionForStudent = x => x.StudentId == student.Id && x.IsDone == true;
-                    whereExpressionForTeacher = x => x.IsDone == true;
-                    break;
-                case "Unsubmitted":
-                    whereExpressionForStudent = x => x.StudentId == student.Id && x.IsDone == false;
-                    whereExpressionForTeacher = x => x.IsDone == false;
-                    break;
+                user = await _userManager.GetUserAsync(User);
+                var teacher = await _context.Teachers.FirstOrDefaultAsync(x=> x.Email == user.Email);
+                var student = await _context.Students.FirstOrDefaultAsync(x=> x.Email == user.Email);
 
+                
+
+                switch (option)
+                {
+                    case "All":
+                        whereExpressionForStudent = x => x.StudentId == student.Id;
+                        whereExpressionForTeacher = x => x.HomeworkId != 0;
+                        break;
+                    case "Submitted":
+                        whereExpressionForStudent = x => x.StudentId == student.Id && x.IsDone == true;
+                        whereExpressionForTeacher = x => x.IsDone == true;
+                        break;
+                    case "Unsubmitted":
+                        whereExpressionForStudent = x => x.StudentId == student.Id && x.IsDone == false;
+                        whereExpressionForTeacher = x => x.IsDone == false;
+                        break;
+
+                }
             }
-            
+            catch (Exception e)
+            {
+
+                return Json(new { text = "Server error! Error message:" + e.Message });
+            }
+
             List<Homework> homeworks = null;
-            if (user.IsTeacher)
+            if (user != null)
             {
-                homeworks = await _context.StudentHomework
-                                                .Where(whereExpressionForTeacher)
-                                                .Include(x => x.Homework).ThenInclude(x => x.Teacher)
-                                                .Select(x => x.Homework).Where(x => x.TeacherId == teacher.Id)
-                                                .Distinct()
-                                                .ToListAsync();
-            }
-            else
-            {
-                homeworks = await _context.StudentHomework
-                                                .Where(whereExpressionForStudent)
-                                                .Include(x => x.Homework).ThenInclude(x => x.Teacher)
-                                                .Select(x => x.Homework)
-                                                .ToListAsync();
+                if (user.IsTeacher)
+                {
+                    homeworks = await _context.StudentHomework
+                                                    .Where(whereExpressionForTeacher)
+                                                    .Include(x => x.Homework).ThenInclude(x => x.Teacher)
+                                                    .Select(x => x.Homework).Where(x => x.TeacherId == teacher.Id)
+                                                    .Distinct()
+                                                    .ToListAsync();
+                }
+                else
+                {
+                    homeworks = await _context.StudentHomework
+                                                    .Where(whereExpressionForStudent)
+                                                    .Include(x => x.Homework).ThenInclude(x => x.Teacher)
+                                                    .Select(x => x.Homework)
+                                                    .ToListAsync();
+                }
             }
 
             return Json(homeworks);
         }
+        [Authorize]
         public async Task<IActionResult> FindHomework(int id)
         {
             var homework = await _repositoryHomework.GetById(id);
             return new JsonResult(homework);
         }
+        [Authorize]
 
         public async Task<IActionResult> IsStudentOrTeacher()
         {
             var user = await _userManager.GetUserAsync(User);
-            return Json(new { isTeacher = user.IsTeacher, isStudent = user.IsStudent });
+            if (user != null)
+            {
+                return Json(new { isTeacher = user.IsTeacher, isStudent = user.IsStudent });
+
+
+            }
+            else
+                return Json(new { text = "Server error!" });
         }
 
+        [Authorize]
         public async Task<IActionResult> GetCoursesOfTeacher()
         {
             var teacher = GetLoggedTeacher().Result;
 
             var courses = await _context.Courses.Where(x => x.TeacherId == teacher.Id).ToListAsync();
+            if (teacher != null && courses != null)
+            {
+                return Json(courses);
+            }
+            else
+                return Json(new { text = "Server error!" });
 
-            return Json(courses);
         }
 
         //make it non-generic 
-        public async Task<Teacher> GetLoggedTeacher()
+        private async Task<Teacher> GetLoggedTeacher()
         {
             var user = await _userManager.GetUserAsync(User);
             return await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);

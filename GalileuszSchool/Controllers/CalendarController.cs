@@ -60,6 +60,7 @@ namespace GalileuszSchool.Controllers
         }
 
         //get calendar/getevents
+        [Authorize]
         public async Task<JsonResult> GetEvents()
         {
             List<CalendarEvent> events = new List<CalendarEvent>();
@@ -79,6 +80,7 @@ namespace GalileuszSchool.Controllers
             return Json(events);
         }
         //get calendar/GetEventsForStudent
+        [Authorize]
         public async Task<JsonResult> GetEventsForStudents()
         {
             List<CalendarEvent> events;
@@ -98,6 +100,7 @@ namespace GalileuszSchool.Controllers
         }
         //post calendar/create
         [HttpPost]
+        [Authorize]
         public async Task<JsonResult> Create(CalendarEvent calendarEvent)
         {
             if (ModelState.IsValid)
@@ -139,12 +142,12 @@ namespace GalileuszSchool.Controllers
             {
 
                 throw e;
-            }
-            
+            }            
         }
 
         //post calendar/edit/event
         [HttpPost]
+        [Authorize]
         public async Task<JsonResult> Edit(CalendarEvent calendarEvent)
         {
             if (ModelState.IsValid)
@@ -160,6 +163,7 @@ namespace GalileuszSchool.Controllers
         }
         //post calendar/delete/ {id}
         [HttpPost]
+        [Authorize]
         public async Task<JsonResult> Delete(int id)
         {
             if (ModelState.IsValid)
@@ -183,6 +187,7 @@ namespace GalileuszSchool.Controllers
         }
 
         //get /calendar/GetStudentsByEvent/ {id}
+        [Authorize]
         public async Task<JsonResult> GetStudentsByEvent(int eventId)
         {
             var students = await _context.CalendarEventStudents
@@ -200,6 +205,7 @@ namespace GalileuszSchool.Controllers
 
         //post
         [HttpPost]
+        [Authorize]
         public async Task<JsonResult> CheckAttendance(AttendanceForm[] attendanceForms)
         {
             if (ModelState.IsValid)

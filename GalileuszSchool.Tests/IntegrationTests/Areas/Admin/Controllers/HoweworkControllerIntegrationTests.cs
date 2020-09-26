@@ -15,11 +15,11 @@ using Xunit;
 
 namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
 {
-    public class CalendarControllerIntegrationTests : IClassFixture<TestingWebAppFactory<Startup>>
+    public class HoweworkControllerIntegrationTests : IClassFixture<TestingWebAppFactory<Startup>>
     {
         private readonly HttpClient _client;
         private readonly TestingWebAppFactory<Startup> _factory;
-        public CalendarControllerIntegrationTests(TestingWebAppFactory<Startup> factory)
+        public HoweworkControllerIntegrationTests(TestingWebAppFactory<Startup> factory)
         {
             _factory = factory;
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
@@ -34,7 +34,7 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
             // Arrange
 
             // Act
-            var response = await _client.GetAsync("calendar/index");
+            var response = await _client.GetAsync("/Homework/index");
             // Asser
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             Assert.StartsWith("http://localhost/Account/Login",
@@ -47,7 +47,7 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
             var client = GetAuthorizedClient();
 
             //Act
-            var response = await client.GetAsync("/calendar/index");
+            var response = await client.GetAsync("/Homework/index");
 
             // Assert
             //Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -57,15 +57,16 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
         }
 
         [Theory]
-        [InlineData("/GetEvents")]
-        [InlineData("/GetEventsForStudents")]
-        [InlineData("/GetStudentsByEvent")]
+        [InlineData("/GetHomeworks")]
+        [InlineData("/FindHomework")]
+        [InlineData("/IsStudentOrTeacher")]
+        [InlineData("/GetCoursesOfTeacher")]
         public async Task Get_EndpointsReturnSuccessAndCorrectContentTypeForAuthorizedUser(string url)
         {
             // Arrange
 
             // Act
-            var response = await _client.GetAsync("calendar" + url);
+            var response = await _client.GetAsync("/Homework" + url);
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
@@ -76,15 +77,16 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
 
         [Theory]
         [InlineData("/Index")]
-        [InlineData("/GetEvents")]
-        [InlineData("/GetEventsForStudents")]
-        [InlineData("/GetStudentsByEvent")]
+        [InlineData("/GetHomeworks")]
+        [InlineData("/FindHomework")]
+        [InlineData("/IsStudentOrTeacher")]
+        [InlineData("/GetCoursesOfTeacher")]
         public async Task Get_AllMethods_RedirectsAnUnauthenticatedUser(string url)
         {
             // Arrange
 
             // Act
-            var response = await _client.GetAsync("/calendar" + url);
+            var response = await _client.GetAsync("/Homework" + url);
             // Assert
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             Assert.StartsWith("http://localhost/Account/Login",
@@ -92,9 +94,6 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
         }
         [Theory]
         [InlineData("/Create")]
-        [InlineData("/Edit")]
-        [InlineData("/Delete")]
-        [InlineData("/CheckAttendance")]
         public async Task Post_AllMethods_RedirectsAnUnauthenticatedUser(string url)
         {
             // Arrange
@@ -110,13 +109,10 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
 
         [Theory]
         [InlineData("/Create")]
-        [InlineData("/Edit")]
-        [InlineData("/Delete")]
-        [InlineData("/CheckAttendance")]
         public async Task Post_CreateNewEvent_ReturnsOkForAuthorizedUser(string url)
         {
             // Arrange
-            var defaultPage = await _client.GetAsync("/calendar" + url);
+            var defaultPage = await _client.GetAsync("/Homework" + url);
             var content = await HtmlHelpers.GetDocumentAsync(defaultPage);
 
             //Act
@@ -151,6 +147,5 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
 
             return client;
         }
-        
     }
 }

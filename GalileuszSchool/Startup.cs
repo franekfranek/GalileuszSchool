@@ -34,17 +34,17 @@ namespace GalileuszSchool
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public virtual void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddControllersWithViews();
 
-            services.AddSession(options =>
-            {
-                //options.IdleTimeout = TimeSpan.FromSeconds(2);
-            });
+            //services.AddSession(options =>
+            //{
+            //    //options.IdleTimeout = TimeSpan.FromSeconds(2);
+            //});
 
             services.AddRouting(options =>
             {
@@ -65,18 +65,19 @@ namespace GalileuszSchool
             })
                     .AddEntityFrameworkStores<GalileuszSchoolContext>()
                     .AddDefaultTokenProviders();
-            //services.ConfigureApplicationCookie(options =>
-            //{
-            //    options.AccessDeniedPath = "/Account/Login";
-            //    options.Cookie.Name = "GSCookies";
-            //    options.Cookie.HttpOnly = true;
-            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-            //    options.LoginPath = "/Account/Login";
-            //    // ReturnUrlParameter requires 
-            //    //using Microsoft.AspNetCore.Authentication.Cookies;
-            //    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-            //    options.SlidingExpiration = true;
-            //});
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "GSCookies";
+                options.LoginPath = "/Account/Login";
+
+                options.AccessDeniedPath = "/Account/Denied";
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                //ReturnUrlParameter requires
+                //using Microsoft.AspNetCore.Authentication.Cookies;
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
@@ -87,6 +88,8 @@ namespace GalileuszSchool
             services.AddTransient<TeachersController>();
             //services.AddScoped<ICoursesRepository, CoursesRepository>();
             //it here in case specific modifications have to be made to any model
+
+            // TODO: change it for identity way it can not function because of identity and cookies conf
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {
@@ -114,13 +117,8 @@ namespace GalileuszSchool
                             return Task.CompletedTask;
                         }
                     };
-                })
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.LoginPath = new PathString("/account/login");
-                    options.AccessDeniedPath = new PathString("account/denied");
                 });
-            
+
             var facebookAuthSettings = new FacebookAuthSettings();
             //facebookAuthSettings.AppId = Configuration["FacebookAuthSettings-AppId"];
             //facebookAuthSettings.AppSecret = Configuration["FacebookAuthSettings-AppSecret"];
@@ -135,7 +133,7 @@ namespace GalileuszSchool
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

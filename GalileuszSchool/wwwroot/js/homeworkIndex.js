@@ -441,6 +441,7 @@ function ViewModel() {
                 var mappedCourses = $.map(res, function (item) {
                     return new Course(item);
                 });
+                console.log(mappedCourses);
                 self.coursesAvailable(mappedCourses);
             }
         });
@@ -449,10 +450,18 @@ function ViewModel() {
     //determine who is logged in
     self.isStudentOrTeacher = function () {
         $.get('/homework/isstudentorteacher').done(function (res) {
+            console.log(res);
             self.isStudentStatus(res.isStudent);
             self.isTeacherStatus(res.isTeacher);
             self.whichFolders(res);
+            self.checkIfTeacherLoggedAndLoadCourses();  
         });  
+    }
+    //load courses teacher's courses
+    self.checkIfTeacherLoggedAndLoadCourses = function () {
+        if (self.isTeacherStatus() === true) {
+            self.getCourses();
+        }
     }
 
     //establish what user is logged in
@@ -460,10 +469,7 @@ function ViewModel() {
     // show all homework by default
     self.goToFolder('All');
 
-    //load courses teacher's courses
-    if (self.isTeacherStatus === true) {
-        self.getCourses();
-    }
+    
 }
 
 ko.applyBindings(new ViewModel());
