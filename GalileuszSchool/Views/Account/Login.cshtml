@@ -36,6 +36,10 @@
 
 
         </form>
+        <div>
+            <strong>Not registered yet ?</strong>
+            <a asp-controller="Account" asp-action="Register">Register here.</a>
+        </div>
 
         @{
             if (Model.ExternalLogins.Count != 0)
@@ -49,10 +53,10 @@
                             if (provider.Name == "Google")
                             {
                                 <button type="submit" class="btn btn-outline-dark mr-5" name="provider" value="@provider.Name"
-                                        role="button" style="text-transform:none" title="Login using your @provider.DisplayName account">
+                                        role="button" style="text-transform:none" title="Log in using your @provider.DisplayName account">
                                     <img width="25px;" alt="Google sign-in"
                                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
-                                    Login with Google
+                                    Log in with Google
                                 </button>
                             }
 
@@ -66,12 +70,7 @@
         }
 
 
-        @*<div>
-
-            <fb:login-button scope="public_profile,email"
-                             onlogin="checkLoginState();">
-            </fb:login-button>
-        </div>*@
+        
         
 
 

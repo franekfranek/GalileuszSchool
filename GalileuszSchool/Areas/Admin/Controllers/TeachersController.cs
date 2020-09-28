@@ -60,7 +60,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
         //admin/teachers/edit/{id}
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Teacher teacher)
         {
             //ViewBag.CourseId = new SelectList(context.Courses.OrderBy(x => x.Sorting), "Id", "Name", teacher.CourseId);
@@ -71,7 +71,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 //Explanation: we want to check if there is already teacher we want to edit 
                 // we want to consider all teachers except the one passed and find if any other has slug like it 
-                // in short it checks if edited Teacher DOES not have the same name as somebody in the DB already....
+                // in short it checks if edited Teacher DOES NOT have the same name as somebody in the DB already....
                 var slug = await _repository.GetModelByWhereAndFirstConditions(x => x.Id != teacher.Id, x => x.Slug == teacher.Slug);
 
                 if (slug != null)
@@ -83,8 +83,8 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 return Ok();
             }
-            //Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { text = "Invalid Techer model!" });
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { text = "Invalid teacher model!" });
         }
 
         //get/admin/teachers/delete/{id}

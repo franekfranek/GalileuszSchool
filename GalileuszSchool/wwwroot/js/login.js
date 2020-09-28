@@ -21,7 +21,7 @@
 
 function checkLoginState() {
     FB.getLoginStatus(function (response) {
-        console.log(typeof (response.authResponse.accessToken));
+        console.log(response.authResponse.accessToken);
         statusChangeCallback(response);
     });
 }
@@ -34,6 +34,7 @@ function statusChangeCallback(response) {
         data: { accessToken: response.authResponse.accessToken},
         success: function (res) {
             console.log(res);
+            window.location = "https://localhost:44350/account/edit";
         }
     });
 }

@@ -1,14 +1,15 @@
 ﻿//class model
 function Class(data) {
     var self = this;
+    var courseName = data.calendarEvent.course.name;
     self.Id = ko.observable(data.calendarEventId);
-    self.Title = ko.observable(data.calendarEvent.title);
-    self.Course = ko.observable(data.calendarEvent.course.name);
+    //cutting the course name ending for better view
+    self.Title = ko.observable(data.calendarEvent.title.substring(0, data.calendarEvent.title.indexOf(courseName)));
+    self.Course = ko.observable(courseName);
     self.Date = ko.observable(data.calendarEvent.start.substring(0, 10));
     if (data.isPaid === true) {
         self.IsPaid = ko.observable("Yes");
     } else self.IsPaid = ko.observable("No");
-
     if (data.isPresent === true) {
         self.IsPresent = ko.observable("Present");
     } else self.IsPresent = ko.observable("Absent");
@@ -26,6 +27,8 @@ function ViewModel() {
     //who is logged
     self.isStudentStatus = ko.observable();
     self.isTeacherStatus = ko.observable();
+    self.noClassesYet = ko.observable(false);
+
     self.grandTotal = ko.pureComputed(function () {
         var total = 0;
         $.each(self.classes(), function () {
@@ -48,10 +51,17 @@ function ViewModel() {
             url: '/account/GetClasses',
             type: 'get',
             success: function (res) {
-                var mappedClasses = $.map(res, function (item) {
-                    return new Class(item);
-                });
-                self.classes(mappedClasses);
+                console.log(res);
+                if (res.length !== 0) {
+                    self.noClassesYet(false);
+                    var mappedClasses = $.map(res, function (item) {
+
+                        return new Class(item);
+                    });
+                    self.classes(mappedClasses);
+                }else {
+                    self.noClassesYet(true);
+                }
             }
         });
     }

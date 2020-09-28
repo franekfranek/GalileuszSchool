@@ -122,7 +122,7 @@
 
 </table>
 
-<!-- Chosen mail -->
+<!-- Chosen homework -->
 <div data-bind="if: toggleDetailedView" >
     <h2>Assignment: </h2>
     <div class="viewMail" data-bind="with: chosenHomeworkData">
@@ -163,8 +163,6 @@
                         </div>
 
                     </div>
-
-
 
                     <div data-bind="if: studentNotAssignedYet().length <= 0" class="heading">
                         <p>This homework is assigned to all available students </p>
@@ -290,7 +288,7 @@
 
 @section Scripts{
 
-    <script src="~/js/homeworkIndex.js"></script>
+    <script src="~/js/Homework/homeworkIndex.js"></script>
     <script>
         document.getElementById('inputFile')
             .addEventListener('change', function () {

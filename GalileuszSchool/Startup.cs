@@ -80,6 +80,15 @@ namespace GalileuszSchool
             });
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
+            services.Configure<CookiePolicyOptions>(opt =>
+            {
+                // This lambda determines whether user consent for non-essential 
+                // cookies is needed for a given request.
+                opt.CheckConsentNeeded = context => true;
+                // requires using Microsoft.AspNetCore.Http;
+                opt.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+                
 
             services.AddRazorPages();
 
@@ -148,6 +157,7 @@ namespace GalileuszSchool
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
+            app.UseCookiePolicy();
 
             app.UseRouting();
 

@@ -27,12 +27,9 @@ namespace GalileuszSchool.Models.ModelsForAdminArea
         public string PhoneNumber { get; set; }
 
         [EmailAddress]
-        [FileExtensions]
+        //[FileExtensions]
         public string Email { get; set; }
 
-        //public int CourseId { get; set; }
-
-        //public virtual Course Course{ get; set; }
         public virtual ICollection<Homework> Homeworks { get; set; }
 
 

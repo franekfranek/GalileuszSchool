@@ -148,7 +148,8 @@
                     <input type="button" value="Cancel" class="btn btn-default" data-dismiss="modal">
                     <input type="submit" value="Update" class="btn btn-success" id="editStudentPost">
 
-                    <input type="hidden" name="createEventDate" id="createEventDate"/>
+                    @*<input type="hidden" name="createEventDate" id="createEventDate" />*@
+                    <input type="hidden" name="idStudentEdit" id="idStudentEdit" />
                 </div>
 
             </form>
@@ -192,6 +193,6 @@
 
 
 @section Scripts{
-    <script src="~/js/studentIndex.js"></script>
+    <script src="~/js/AdminArea/studentIndex.js"></script>
     <script src="~/js/site.js"></script>
 }

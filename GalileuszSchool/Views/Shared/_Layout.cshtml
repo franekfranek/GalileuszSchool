@@ -45,21 +45,21 @@
 
             <div class="sidebar-heading" style="background-color:white">
                 <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Edit">
-                    <img class="ml-3" src="~/media/logo2.png" alt="" height="50" width="185" />
+                    <img class="ml-3" src="~/media/logo2.png" alt="" height="45" width="180" />
                 </a>
             </div>
 
             @if (User?.Identity?.IsAuthenticated ?? false)
             {
-                <a href="#" class="list-group-item list-group-item-action bg-light">
+                <a asp-controller="Calendar" asp-action="Index" class="list-group-item list-group-item-action bg-light">
                     Lesson plan
                     <i class="material-icons-outlined side-icons">poll</i>
                 </a>
                 <a asp-controller="Homework" asp-action="Index" class="list-group-item list-group-item-action bg-light">
                     Homework
                     <i class="material-icons-outlined side-icons">home_work</i>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action bg-light">
+                </a >
+                <a asp-controller="Account" asp-action="Edit" class="list-group-item list-group-item-action bg-light">
                     Payment
                     <i class="material-icons-outlined side-icons">payment</i>
                 </a>
@@ -80,6 +80,10 @@
             </div>
 
         </div>
+        @*sidebar END*@
+
+
+
         <!-- /#sidebar-wrapper -->
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light border-bottom">
@@ -92,8 +96,8 @@
                     <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 
                         @*<li class="nav-item active">
-                                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                            </li>*@
+                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        </li>*@
                         <li class="nav-item">
                             @*@if(User.IsInRole("student")){*@
                             <a>
@@ -154,6 +158,7 @@
                 <div class="container" style="margin-bottom: 500px;">
                     <main role="main" class="pb-3">
                         <partial name="_NotificationPartial" />
+                        <partial name="_CookieConsentPartial" />
                         @RenderBody()
                     </main>
                 </div>

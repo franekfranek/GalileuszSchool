@@ -164,7 +164,6 @@ function ViewModel() {
 
     // OPERATIONS
 
-
     //ONLY TEACHER METHODS
     //save homework
     this.submit = function () {

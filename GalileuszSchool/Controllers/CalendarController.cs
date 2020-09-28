@@ -37,24 +37,24 @@ namespace GalileuszSchool.Controllers
         //get calendar/index
         public async Task<IActionResult> Index()
         {
-            //try
-            //{
-            //    var user = await _userManager.GetUserAsync(User);
-            //    var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var currentTeacher = await _context.Teachers.FirstOrDefaultAsync(x => x.Email == user.Email);
 
-            //    var courses = _context.Courses.Where(x => x.TeacherId == currentTeacher.Id);
-            //    var selectListTeachers = await courses.Select(s => new SelectListItem
-            //    {
-            //        Value = s.Id.ToString(),
-            //        Text = s.Name.ToString()
-            //    }).ToListAsync();
-            //    ViewBag.Courses = new SelectList(selectListTeachers, "Value", "Text");
+                var courses = _context.Courses.Where(x => x.TeacherId == currentTeacher.Id);
+                var selectListTeachers = await courses.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name.ToString()
+                }).ToListAsync();
+                ViewBag.Courses = new SelectList(selectListTeachers, "Value", "Text");
 
-            //}
-            //catch(Exception e)
-            //{
-                
-            //}
+            }
+            catch (Exception e)
+            {
+
+            }
 
             return View();
         }
@@ -73,7 +73,7 @@ namespace GalileuszSchool.Controllers
             }
             catch(Exception e) 
             {
-                //return Json(new { text = "Server error! Error message:" + e.Message });
+                //return Json(new { text = "Server error! });
             }
             
 
@@ -94,7 +94,7 @@ namespace GalileuszSchool.Controllers
             }
             catch (Exception e)
             {
-                return Json(new { text = "Server error! Error message:" + e.Message });
+                return Json(new { text = "Server error!" });
             }
             return Json(events);
         }

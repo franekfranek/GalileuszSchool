@@ -87,19 +87,20 @@ namespace GalileuszSchool.Controllers
 
             return Json(new { text = "Server error!" });
         }
+
+        //todo: refactor getHomeworks...:(
         [Authorize]
         public async Task<JsonResult> GetHomeworks(string option)
         {
             AppUser user = null;
             Expression<Func<StudentHomework, bool>> whereExpressionForStudent = null;
             Expression<Func<StudentHomework, bool>> whereExpressionForTeacher = null;
+            Teacher teacher;
             try
             {
                 user = await _userManager.GetUserAsync(User);
-                var teacher = await _context.Teachers.FirstOrDefaultAsync(x=> x.Email == user.Email);
+                teacher = await _context.Teachers.FirstOrDefaultAsync(x=> x.Email == user.Email);
                 var student = await _context.Students.FirstOrDefaultAsync(x=> x.Email == user.Email);
-
-                
 
                 switch (option)
                 {
@@ -124,17 +125,36 @@ namespace GalileuszSchool.Controllers
                 return Json(new { text = "Server error! Error message:" + e.Message });
             }
 
-            List<Homework> homeworks = null;
+            List<Homework> homeworks = GetHoweworksForTeachersOrStudents(user, whereExpressionForStudent,
+                                                                            whereExpressionForTeacher, teacher, option).Result;
+           
+
+            return Json(homeworks);
+        }
+
+        private async Task<List<Homework>> GetHoweworksForTeachersOrStudents(AppUser user, Expression<Func<StudentHomework, bool>> whereExpressionForStudent,
+                        Expression<Func<StudentHomework, bool>> whereExpressionForTeacher, Teacher teacher, string option)
+        {
+            List<Homework> homeworks = new List<Homework>();
             if (user != null)
             {
                 if (user.IsTeacher)
                 {
-                    homeworks = await _context.StudentHomework
-                                                    .Where(whereExpressionForTeacher)
-                                                    .Include(x => x.Homework).ThenInclude(x => x.Teacher)
-                                                    .Select(x => x.Homework).Where(x => x.TeacherId == teacher.Id)
-                                                    .Distinct()
-                                                    .ToListAsync();
+                    if(option == "All")
+                    {
+                        homeworks = await _context.Homework.Where(x => x.TeacherId == teacher.Id).Include(x => x.Teacher).ToListAsync();
+
+                    }
+                    else
+                    {
+                        homeworks = await _context.StudentHomework
+                                                        .Where(whereExpressionForTeacher)
+                                                        .Include(x => x.Homework).ThenInclude(x => x.Teacher)
+                                                        .Select(x => x.Homework).Where(x => x.TeacherId == teacher.Id)
+                                                        .Distinct()
+                                                        .ToListAsync();
+                    }
+
                 }
                 else
                 {
@@ -145,14 +165,20 @@ namespace GalileuszSchool.Controllers
                                                     .ToListAsync();
                 }
             }
-
-            return Json(homeworks);
+            return homeworks;
         }
+
         [Authorize]
         public async Task<IActionResult> FindHomework(int id)
         {
             var homework = await _repositoryHomework.GetById(id);
-            return new JsonResult(homework);
+            if(homework != null)
+            {
+                return new JsonResult(homework);
+            }
+            else
+                return Json(new { text = "Server error!" });
+
         }
         [Authorize]
 

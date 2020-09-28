@@ -104,7 +104,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
                 return Ok();
             }
-
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return Json(new { text = "Invalid Course model!" });
         }
 

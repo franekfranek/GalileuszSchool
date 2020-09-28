@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Drawing;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using GalileuszSchool.Areas.Admin.Controllers;
+using GalileuszSchool.External;
 using GalileuszSchool.Infrastructure;
 using GalileuszSchool.Models;
 using GalileuszSchool.Models.ModelsForAdminArea;
 using GalileuszSchool.Models.ModelsForNormalUsers;
+using GalileuszSchool.Models.ModelsForNormalUsers.Calendar;
 using GalileuszSchool.Services;
 using GalileuszSchool.Services.Facebook;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +23,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using WebPWrecover.Services;
+using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace GalileuszSchool.Controllers
 {
@@ -91,46 +97,16 @@ namespace GalileuszSchool.Controllers
                     return View(user);
                 }
 
-                AppUser appUser = new AppUser
-                {
-                    UserName = user.FirstName.ToLower() + "-" + user.LastName.ToLower(),
-                    Email = user.Email,
-                    IsStudent = user.IsStudent,
-                    PhoneNumber = user.PhoneNumber,
-                    IsTeacher = user.IsTeacher,
-                    RegistrationDate = DateTime.Now
-
-                };
+                AppUser appUser = await CreateNewAppUser(user);
                
                 IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
 
                 if (result.Succeeded)
                 {
-                    if (appUser.IsStudent)
-                    {
-                        var currentStudent = await _userManager.FindByNameAsync(appUser.UserName);
-                        await _userManager.AddToRoleAsync(currentStudent, "student");
-                        await _studentsController.Create(new Student
-                        {
-                            FirstName = user.FirstName,
-                            LastName = user.LastName,
-                            PhoneNumber = "000-000-000",
-                            Email = user.Email
-                        });
-                    }
+                    await CreateStudentOrTeacher(appUser, user);
+
                     
-                    if (appUser.IsTeacher)
-                    {
-                        var currentTeacher = await _userManager.FindByNameAsync(appUser.UserName);
-                        await _userManager.AddToRoleAsync(currentTeacher, "teacher");
-                        await _teachersController.Create(new Teacher
-                        {
-                            FirstName = user.FirstName,
-                            LastName = user.LastName,
-                            PhoneNumber = "000-000-000",
-                            Email = user.Email
-                        });
-                    }
+
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
                     var confirmationLink = Url.Action("ConfirmEmail", "Account",
@@ -143,6 +119,8 @@ namespace GalileuszSchool.Controllers
                         "Your confirmation link: "+ confirmationLink);
 
                     TempData["Success"] = "You succesufully registered your account! We sent you email confirmation";
+                    
+
                     return RedirectToAction("Login");
                 }
                 else
@@ -155,6 +133,52 @@ namespace GalileuszSchool.Controllers
             }
 
             return View(user);
+        }
+
+        private async Task CreateStudentOrTeacher(AppUser appUser, User user)
+        {
+            if (appUser.IsStudent)
+            {
+                var currentStudent = await _userManager.FindByNameAsync(appUser.UserName);
+                await _userManager.AddToRoleAsync(currentStudent, "student");
+                await _studentsController.Create(new Student
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = "000-000-000",
+                    Email = user.Email
+                });
+            }
+
+            if (appUser.IsTeacher)
+            {
+                var currentTeacher = await _userManager.FindByNameAsync(appUser.UserName);
+                await _userManager.AddToRoleAsync(currentTeacher, "teacher");
+                await _teachersController.Create(new Teacher
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = "000-000-000",
+                    Email = user.Email
+                });
+            }
+        }
+
+        private async Task<AppUser> CreateNewAppUser(User user)
+        {
+            var appUser = new AppUser
+            {
+                UserName = user.FirstName.ToLower() + "-" + user.LastName.ToLower(),
+                Email = user.Email,
+                IsStudent = user.IsStudent,
+                PhoneNumber = user.PhoneNumber,
+                IsTeacher = user.IsTeacher,
+                RegistrationDate = DateTime.Now,
+                //due to limited resources with email sender provider
+                EmailConfirmed = true
+
+        };
+            return appUser;
         }
 
         // /get/account/login
@@ -191,11 +215,11 @@ namespace GalileuszSchool.Controllers
                     }
 
                 }
-
-                ModelState.AddModelError("", "Login failed, wrong credentials or your email is not confirmed");
+                TempData["Error"] = "Login failed, wrong credentials or your email is not confirmed";
+                //ModelState.AddModelError("", "Login failed, wrong credentials or your email is not confirmed");
             }
 
-            return RedirectToAction("Register");
+            return Redirect("Login");
         }
 
         // /get/account/logout
@@ -293,7 +317,7 @@ namespace GalileuszSchool.Controllers
 
 
                     TempData["Success"] = "Your details have been changed!";
-                    return Redirect("/");
+                    return Redirect("/account/edit");
                 }
                 TempData["Error"] = "An error occures. Please try again.";
             }
@@ -538,39 +562,80 @@ namespace GalileuszSchool.Controllers
             //user is not db we have to register 
             if(user == null)
             {
-                var newUser = new AppUser
-                {
-                    UserName = userInfo.FirstName.ToLower() + "-" + userInfo.LastName.ToLower(),
-                    Email = userInfo.Email,
-                    RegistrationDate = DateTime.Now
-                };
-
-                var createResult = await _userManager.CreateAsync(newUser);
-
-                if (!createResult.Succeeded)
-                {
-                    TempData["Error"] = "Erro: User was't registered. Please try again.";
-                    return Json(new { Text = "Erro: User was't registered. Please try again." });
-                }
-
-
-                await _signInManager.SignInAsync(newUser,false);
-                return Redirect("Edit");
-
+                await CreateNewUserAndStudentForFbUser(userInfo);
+                return RedirectToAction("Edit");
             }
 
             //user is registered already we just log him in
             await _signInManager.SignInAsync(user, true);
-            return Redirect("Register");
+            return RedirectToAction("Edit", "Account");
+        }
+
+        private async Task CreateNewUserAndStudentForFbUser(FacebookUserInfoResult userInfo)
+        {
+            //new student
+            await _studentsController.Create(new Student()
+            {
+                FirstName = userInfo.FirstName,
+                LastName = userInfo.LastName,
+                //ImageUpload = DownloadImage(userInfo.Picture.Data.Url).Result,
+                Email = userInfo.Email,
+                PhoneNumber = "000-000-000"
+            });
+            //new .net user
+            var newUser = new AppUser
+            {
+                UserName = userInfo.FirstName.ToLower() + "-" + userInfo.LastName.ToLower(),
+                Email = userInfo.Email,
+                RegistrationDate = DateTime.Now,
+                IsStudent = true,
+                PhoneNumber = "000-000-000"
+
+            };
+            var createResult = await _userManager.CreateAsync(newUser);
+            if (!createResult.Succeeded)
+            {
+                TempData["Error"] = "Error: User was't registered. Please try again.";
+            }
+            await _signInManager.SignInAsync(newUser, false);
+            
+
+        }
+
+        // iformfile created is invalid
+        private async Task<IFormFile> DownloadImage(Uri fromUrl)
+        {
+            //using (System.Net.WebClient webClient = new System.Net.WebClient())
+            //{
+            //    using (Stream stream = webClient.OpenRead(fromUrl))
+            //    {
+            //        return Image.FromStream
+            //    }
+            //}
+            WebClient wb = new WebClient();
+            var byteArr = await wb.DownloadDataTaskAsync(fromUrl);
+            var stream = new MemoryStream(byteArr);
+            IFormFile file = new FormFile(stream, 0, byteArr.Length, "name", "fileName");
+            return file;
+
+
         }
 
         public async Task<JsonResult> GetClasses()
         {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var currentStudent = await _context.Students.FirstOrDefaultAsync(x => x.Email == currentUser.Email);
-            var classes = await _context.CalendarEventStudents
-                        .Where(x => x.StudentId == currentStudent.Id)
-                        .Include(x => x.CalendarEvent.Course).ToListAsync();
+            List<CalendarEventStudent> classes = null;
+            try
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                var currentStudent = await _context.Students.FirstOrDefaultAsync(x => x.Email == currentUser.Email);
+                classes = await _context.CalendarEventStudents
+                            .Where(x => x.StudentId == currentStudent.Id)
+                            .Include(x => x.CalendarEvent.Course).ToListAsync();
+            }
+            catch (Exception)
+            {
+                return Json(new { Text = "Server error!" });
+            }
 
             return Json(classes);
         }

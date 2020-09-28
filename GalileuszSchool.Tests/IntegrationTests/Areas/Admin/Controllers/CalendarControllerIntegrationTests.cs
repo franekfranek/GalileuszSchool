@@ -90,22 +90,22 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
             Assert.StartsWith("http://localhost/Account/Login",
                 response.Headers.Location.OriginalString);
         }
-        [Theory]
-        [InlineData("/Create")]
-        [InlineData("/Edit")]
-        [InlineData("/Delete")]
-        [InlineData("/CheckAttendance")]
-        public async Task Post_AllMethods_RedirectsAnUnauthenticatedUser(string url)
-        {
-            // Arrange
+        //[Theory]
+        //[InlineData("/Create")]
+        //[InlineData("/Edit")]
+        //[InlineData("/Delete")]
+        //[InlineData("/CheckAttendance")]
+        //public async Task Post_AllMethods_RedirectsAnUnauthenticatedUser(string url)
+        //{
+        //    Arrange
 
-            // Act
+        //    Act
 
-            // Assert
-            //Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            //Assert.StartsWith("http://localhost/Account/Login",
-            //    response.Headers.Location.OriginalString);
-        }
+        //     Assert
+        //    Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        //    Assert.StartsWith("http://localhost/Account/Login",
+        //        response.Headers.Location.OriginalString);
+        //}
 
 
         [Theory]
@@ -120,14 +120,14 @@ namespace GalileuszSchool.Tests.IntegrationTests.Areas.Admin.Controllers
             var content = await HtmlHelpers.GetDocumentAsync(defaultPage);
 
             //Act
-            //var response = await _client.SendAsync(
-            //    (IHtmlFormElement)content.QuerySelector("form[id='createEventform']"),
-            //    (IHtmlButtonElement)content.QuerySelector("button[id='createNewEvent']"));
+            var response = await _client.SendAsync(
+                (IHtmlFormElement)content.QuerySelector("form[id='createEventform']"),
+                (IHtmlButtonElement)content.QuerySelector("button[id='createNewEvent']"));
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
-            //Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            //Assert.Equal("/", response.Headers.Location.OriginalString);
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+            Assert.Equal("/", response.Headers.Location.OriginalString);
         }
 
         private HttpClient GetAuthorizedClient()

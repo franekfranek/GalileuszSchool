@@ -67,11 +67,20 @@ function generateCalendar() {
                 events: '/calendar/GetEventsForStudents',
                 eventClick: function (info) {
                     info.jsEvent.preventDefault();
-
+                    console.log(info.event.start);
                     if (info.event.url) {
                         window.open(info.event.url);
                     } else {
-                        Swal.fire(info.event.title, 'Start: ' + info.event.start + ' End: ' + info.event.end, 'question');
+                        //https://sweetalert2.github.io/
+                        Swal.fire({
+                            title: '<strong>' + info.event.title + '</strong>',
+                            icon: 'info',
+                            html:
+                                'Start: ' + info.event.startStr.substring(0, 19)  + '<br>' +
+                                ' End: ' + info.event.endStr.substring(0, 19),
+                            showCloseButton: true,
+                            focusConfirm: true,
+                        })
                     }
                 },
             });

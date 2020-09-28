@@ -133,6 +133,7 @@ $(document).ready(function () {
         if (isValidate) {
             e.preventDefault();
             var studentId = $('#idStudentEdit').val();
+            console.log(studentId);
             var studnetFirstName = $('#editStudentFirstName').val();
             var studentLastName = $('#editStudentLastName').val();
             var studentPhone = $('#editStudentPhone').val();
