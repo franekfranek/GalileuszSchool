@@ -110,6 +110,7 @@ function ViewModel() {
     self.Title = ko.observable("");
     self.TextContent = ko.observable("");
     self.HomeworkPicture = ko.observable("");
+    self.modalTextFile = ko.observable();
 
     self.currentFileSrc = ko.observable("");
 
@@ -152,7 +153,6 @@ function ViewModel() {
             return self.currentStudentName() + "'s solution: ";
         },
         write: function (value) {
-            console.log(value);
             return value;
         },
         owner: self
@@ -168,12 +168,14 @@ function ViewModel() {
     //save homework
     this.submit = function () {
         var data = new FormData();
-
         data.append('Title', self.Title());
         data.append('TextContent', self.TextContent());
         data.append('PhotoContent', self.HomeworkPicture());
         data.append('Course', self.selectedCourse().Name());
-        
+        //for (var entry of data.entries()){
+        //    console.log(entry[0], entry[1]);
+        //}
+
         $.ajax({
             url: "/homework/create",
             data: data,
@@ -185,8 +187,10 @@ function ViewModel() {
                 RequestVerificationToken:
                     $('input:hidden[name="__RequestVerificationToken"]').val()
             },
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
-                console.log(res);
                 $('#createHomeworkModal').on('hidden.bs.modal', function () {
                     $(this).find('form').trigger('reset');
                     $(this).find('textarea').val('');
@@ -194,23 +198,43 @@ function ViewModel() {
                     self.currentFileSrc("");
                     self.goToFolder('All');
                 })
-            }, error: function (res) {
-                console.log(res);
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
+                $.notify("Homework: " + self.Title() + " created!", "success");
             }
         });
         self.showDialog(false);
+    }
+    //wtihout the focus on textarea file was not saved to observable
+    self.focusOnTextArea = function () {
+        var textbox = $('#homeworkContent');
+        textbox.focus();
     }
     self.loadStudentsPerHomework = function (homework) {
         $.ajax({
             url: '/studentHomework/studentsByHomework',
             data: { id: homework.Id },
             type: 'get',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 var mappedStudents = $.map(res, function (item) {
                     return new Student(item, self.chosenHomeworkData().Id());
                 });
                 self.studentsPerHomework(mappedStudents);
                 self.loadStudentsWithoutHomework(self.studentsPerHomework());
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         });
     }
@@ -229,10 +253,20 @@ function ViewModel() {
                 studentId: student.Id(),
                 homeworkId: self.chosenHomeworkData().Id()
             },
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 var solutiuon = new StudentHomework(res);
                 
                 self.studentSolutiuonToShow(solutiuon);
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         });
     }
@@ -249,11 +283,21 @@ function ViewModel() {
             dataType: 'json',
             traditional: true,
             data: { alreadyAssignedStudents: ids },
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 var mappedStudents = $.map(res, function (item) {
                     return new Student(item);
                 });
                 self.studentNotAssignedYet(mappedStudents);
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         });
     }
@@ -272,10 +316,21 @@ function ViewModel() {
                 homeworkId: self.chosenHomeworkData().Id,
                 studentsIds: ids
             },
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 self.selectedStudents([]);
                 self.goToHomework(self.chosenHomeworkData());
 
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
+                $.notify("Students added!", "success");
             }
         });
     }
@@ -299,11 +354,6 @@ function ViewModel() {
         data.append('SolutionTextContent', self.studentSolutionText());
         data.append('PhotoSolution', self.studentSolutionPicture());
 
-
-        for (var key of data.entries()) {
-            console.log(key[0] + ', ' + key[1]);
-        }
-
         $.ajax({
             url: "/studenthomework/AddStudentSolution",
             data: data,
@@ -315,14 +365,22 @@ function ViewModel() {
                 RequestVerificationToken:
                     $('input:hidden[name="__RequestVerificationToken"]').val()
             },
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 self.goToFolder('All');
                 self.studentSolutionText = ko.observable("");
                 self.studentSolutionPicture = ko.observable("");
-                console.log(res);
 
-            }, error: function (res) {
-                console.log(res);
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
+                $.notify("Homework submitted!", "success");
             }
         });
     }
@@ -332,6 +390,9 @@ function ViewModel() {
             url: '/studentHomework/GetAllStudentHomeworkWithFlag',
             data: { isDone: isDone },
             type: 'get',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 if (res.length > 0) {
                     $(".book-homework").attr("title", "You have " + res.length + " homework(s) unsubmited.");
@@ -341,6 +402,13 @@ function ViewModel() {
                     $("#txt").remove();
                 }
                 
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         });
     }
@@ -350,7 +418,6 @@ function ViewModel() {
     self.goToHomework = function (homework) {
         self.toggleDetailedView(true);
         self.chosenHomeworkData(homework);
-        console.log(self.chosenHomeworkData());
         if (self.chosenHomeworkData().ImageContent() !== null) {
             self.isFileAttached(true);
             self.chosenHomeworkImageSrc('/media/homeworks/' + self.chosenHomeworkData().ImageContent());
@@ -373,9 +440,19 @@ function ViewModel() {
             url: '/studentHomework/GetCurrentStudentHomework',
             data: { id: homeworkId },
             type: 'get',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 self.chosenStudentHomework(new StudentHomework(res));
                 self.isCurrenHomeworkDone(self.chosenStudentHomework().IsDone());
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         });
     }
@@ -383,7 +460,6 @@ function ViewModel() {
     // BEHAVIOURS
     //determine which folders to load
     self.whichFolders = function (who) {
-        console.log(who.isTeacher);
         if (who.isTeacher) self.folders(['All', 'Submitted', 'Unsubmitted']);
         else self.folders(['All', 'Submitted', 'Unsubmitted']);
     }
@@ -396,8 +472,10 @@ function ViewModel() {
             type: 'get',
             url: '/homework/gethomeworks',
             data: { option: folder },
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (result) {
-                console.log(result);
                 //convert it to Homework instances, then populate self.homeworks
                 var mappedHomeworks = $.map(result, function (item) {
                     return new Homework(item)
@@ -408,6 +486,13 @@ function ViewModel() {
                 if (self.isStudentStatus() === true) {
                     self.getStudentHomeworkWithFlag(false);
                 }
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         });
     };
@@ -436,12 +521,21 @@ function ViewModel() {
         $.ajax({
             url: '/Homework/GetCoursesOfTeacher',
             type: 'get',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 var mappedCourses = $.map(res, function (item) {
                     return new Course(item);
                 });
-                console.log(mappedCourses);
                 self.coursesAvailable(mappedCourses);
+            },
+            error: function (res) {
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         });
     }
@@ -449,7 +543,6 @@ function ViewModel() {
     //determine who is logged in
     self.isStudentOrTeacher = function () {
         $.get('/homework/isstudentorteacher').done(function (res) {
-            console.log(res);
             self.isStudentStatus(res.isStudent);
             self.isTeacherStatus(res.isTeacher);
             self.whichFolders(res);

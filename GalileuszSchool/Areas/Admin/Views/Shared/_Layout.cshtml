@@ -12,6 +12,7 @@
 
     <title>@ViewData["Title"] - Admin area</title>
 
+    <link href="~/css/spinner/spinner.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Happy+Monkey|Jura|Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet" />
@@ -29,7 +30,7 @@
         @*sidebar*@
         <div class="bg-light border-right" id="sidebar-wrapper">
             <div class="sidebar-heading" style="background-color:white">
-                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Edit">
+                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="ContactMe">
                     <img class="ml-3" src="~/media/logo2.png" alt="" height="45" width="180" />
                 </a>
             </div>
@@ -50,12 +51,6 @@
                 <a class="list-group-item list-group-item-action bg-light" asp-area="Admin" asp-controller="User" asp-action="Index">All Users</a>
 
             }
-
-            <div class="social">
-                <div class="fab fa-facebook-f"></div>
-                <div class="fab fa-twitter"></div>
-                <div class="fab fa-linkedin-in"></div>
-            </div>
 
         </div>
 

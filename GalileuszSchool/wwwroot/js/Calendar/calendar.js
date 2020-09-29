@@ -4,12 +4,19 @@ async function isStudentOrTeacher() {
     var response =  $.ajax({
         url: "/homework/isstudentorteacher",
         type: "get",
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         success: function (res) {
             //console.log(res);
 
         }, error: function (res) {
-            console.log(res);
+            $.notify("Error please try again", "error");
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
         }
+
     });
     return response;
 
@@ -67,7 +74,6 @@ function generateCalendar() {
                 events: '/calendar/GetEventsForStudents',
                 eventClick: function (info) {
                     info.jsEvent.preventDefault();
-                    console.log(info.event.start);
                     if (info.event.url) {
                         window.open(info.event.url);
                     } else {
@@ -98,29 +104,36 @@ $('#createNewEvent').on('click', function (e) {
 
     var data = {};
     $("#createEventform").serializeArray().map(function (x) { data[x.name] = x.value; }); 
-    console.log(data);
+
     var mappedEvent = new Event(data);
-    console.log(mappedEvent);
 
     $.ajax({
         url: "/calendar/create",
         data: mappedEvent,
         type: "post",
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         //headers: {
         //    RequestVerificationToken:
         //        $('input:hidden[name="__RequestVerificationToken"]').val()
         //},
         success: function (res) {
-            console.log(res);
             $('#createEvent').modal('hide');
             $('#createEvent').on('hidden.bs.modal', function () {
                 $(this).find('form').trigger('reset');
                 $(this).find('textarea').val('');
                 generateCalendar();
             })
-        }, error: function (res) {
+        },
+        error: function (res) {
             $('#createEvent').modal('hide');
-            console.log(res);
+            $.notify("Error please try again", "error");
+
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
+            $.notify("New class created!", "success");
         }
     });
 });
@@ -132,25 +145,32 @@ $('#editEventBtn').on('click', function (e) {
     var data = {};
     $("#editEventform").serializeArray().map(function (x) { data[x.name] = x.value; });
     var mappedEvent = new Event(data);
-    console.log(mappedEvent);
 
     $.ajax({
         url: "/calendar/edit",
         data: mappedEvent,
         type: "post",
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         //headers: {
         //    RequestVerificationToken:
         //        $('input:hidden[name="__RequestVerificationToken"]').val()
         //},
         success: function (res) {
-            console.log(res);
             $('#editEvent').modal('hide');
             $('#editEvent').on('hidden.bs.modal', function () {
                 generateCalendar();
             })
-        }, error: function (res) {
+        },
+        error: function (res) {
             $('#editEvent').modal('hide');
-            console.log(res);
+            $.notify("Error please try again", "error");
+
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
+            $.notify("Class edited!", "success");
         }
     });
     
@@ -170,15 +190,24 @@ $('#deleteEvent').on('click', function (e) {
             url: "/calendar/delete",
             data: { id: deleteId },
             type: "post",
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
-                console.log(res);
                 $('#editEvent').modal('hide');
                 $('#editEvent').on('hidden.bs.modal', function () {
                     generateCalendar();
                 })
-            }, error: function (res) {
+            },
+            error: function (res) {
                 $('#editEvent').modal('hide');
-                console.log(res);
+                $.notify("Error please try again", "error");
+
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
+                $.notify("Class deleted!", "error");
+
             }
         });
     }
@@ -192,14 +221,12 @@ $('#saveAttendance').on('click', function (e) {
 
     //instead it's possible to get value from checkboxes even if its not checked
     var serializedArray = $("#saveAttendanceFormId").serializeArray();
-    console.log(serializedArray);
 
     if (serializedArray.length <= 2) {
         alert("Please just check present students otherwise leave it as it is.");
     } else {
         for (var i =2; i < serializedArray.length; i++) {
             var item = {};
-            console.log(serializedArray[2].value);
 
             item['EventId'] = serializedArray[0].value;
             item['StudentId'] = serializedArray[i].name.substring(9);
@@ -216,12 +243,23 @@ function saveAttendance(dataArr) {
         url: "/calendar/CheckAttendance",
         data: { attendanceForms: dataArr },
         type: "post",
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         success: function (res) {
             $('#editEvent').modal('hide');
 
-        }, error: function (res) {
+        },
+        error: function (res) {
             $('#editEvent').modal('hide');
-            console.log(res);
+            $.notify("Error please try again", "error");
+
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
+            $.notify("Attendance checked!", "success");
+;
+
         }
     });
 }
@@ -232,8 +270,10 @@ function getStudentByEvent(eventId) {
         url: "/calendar/GetStudentsByEvent",
         data: { eventId: eventId },
         type: "get",
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         success: function (res) {
-            console.log(res);
             $.each(res, function (index, value) {
                 var fullName = value.student.firstName + " " + value.student.lastName;
 
@@ -252,8 +292,13 @@ function getStudentByEvent(eventId) {
                 $('#saveAttendanceFormId').append($(htmlPart));
             })
             
-        }, error: function (res) {
-            console.log(res);
+        },
+        error: function (res) {
+            $.notify("Error please try again", "error");
+
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
         }
     });
 }
@@ -267,7 +312,6 @@ function removeStudentsHtml() {
 
 //EVENT MODEL
 function Event(data) {
-    console.log(data);
     this.Id = data.id;
     this.Title = data.title;
     this.Description = data.description;

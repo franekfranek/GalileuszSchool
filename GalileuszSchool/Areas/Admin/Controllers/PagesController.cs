@@ -126,5 +126,6 @@ namespace GalileuszSchool.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
+        
     }
 }

@@ -639,6 +639,10 @@ namespace GalileuszSchool.Controllers
 
             return Json(classes);
         }
+        public async Task<IActionResult> ContactMe()
+        {
+            return View();
+        }
     }
 
 

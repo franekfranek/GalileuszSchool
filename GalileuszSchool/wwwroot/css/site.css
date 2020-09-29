@@ -194,27 +194,27 @@ li.nav-item.logout{
       color:#fff;
       transition:all 300ms ease-in-out;
 }
-div.fa-facebook-f{
-background: #5252b8;
+div.fa-github {
+    background: mediumseagreen;
 }
 
-div.fa-twitter{
-background: #00acee;
+div.fa-stack-overflow {
+    background: darkorange;
 }
 
 div.fa-linkedin-in{
     background: #55acee;
 }
 
-div.fa-facebook-f:hover {
-    color: #5252b8;
+div.fa-github:hover {
+    color: mediumseagreen;
     background: #fff;
-    border: 1px solid #5252b8;
+    border: 1px solid mediumseagreen;
 }
-div.fa-twitter:hover {
-    color: #00acee;
+div.fa-stack-overflow:hover {
+    color: darkorange;
     background: #fff;
-    border: 1px solid #00acee;
+    border: 1px solid darkorange;
 }
 div.fa-linkedin-in:hover {
     color: #55acee;
@@ -235,4 +235,8 @@ div.fa-linkedin-in:hover {
 /*icon eye*/
 .see-homework{
     cursor: pointer;
+}
+
+.biggerFont{
+    font-size:20px;
 }

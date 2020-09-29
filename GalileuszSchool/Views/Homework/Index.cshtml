@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Homework";
 }
+    
 
 @*==========CREATE HOMEWORK MODAL=========*@
 <div class="modal fade" tabindex="-1" role="dialog"
@@ -26,11 +27,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Content</label>
-                        <input type="file"
-                               name="TextContent" id="inputFile" />
-                        <textarea data-bind="textInput: studentSolutionText" style="width: 470px; height: 150px;"
-                                  class="form-control" name="content" id="homeworkContent"></textarea>
+                        <label>Text Content</label>
+                        <input data-bind="event:{ change: $root.focusOnTextArea }" type="file"
+                               name="content" id="inputFile" />
+                        <textarea data-bind="textInput: TextContent" style="width: 470px; height: 150px;"
+                                  class="form-control" name="TextContent" id="homeworkContent"></textarea>
                     </div>
 
                     <div class="form-group">
@@ -120,15 +121,17 @@
         </tr>
     </tbody>
 
+
 </table>
+
 
 <!-- Chosen homework -->
 <div data-bind="if: toggleDetailedView" >
     <h2>Assignment: </h2>
     <div class="viewMail" data-bind="with: chosenHomeworkData">
-        <div class="mailInfo">
-            <h1 data-bind="text: Title()"></h1>
-            <div class="row">
+        <div class="mailInfo biggerFont">
+            <strong><p data-bind="text: Title()"></p></strong>
+            <div class="row ">
                 <p class="col-6">
                     <label class="mr-1">Course:</label> <span data-bind="text: Course()"></span><br />
                     <label>Content: </label> <br /><span data-bind="text: TextContent()"></span>
@@ -146,7 +149,7 @@
 </div>
 
 @*=======TEACHER VIEW=======*@
-<div data-bind="if: isTeacherStatus">
+<div class="biggerFont" data-bind="if: isTeacherStatus">
     <div data-bind="if: toggleDetailedView">
 
         <div class="row">
@@ -222,7 +225,7 @@
                                         }">
                               </span></h5></td>
                         <td class="see-homework" data-bind="if: CurrentHomeworkIsDone, click: $root.showStudentHomework">
-                        <span class="material-icons" style="color: steelblue;">visibility</span></td>
+                        <span title="See student's solution" class="material-icons" style="color: steelblue;">visibility</span></td>
                     </tr>
                     
                 </tbody>
@@ -283,6 +286,9 @@
         <p style="text-align:center">You have already submitted this assigment.</p>
         <!-- /ko -->
     </div>
+</div>
+<div id="loader" class="ldio-bh5k7c8rd5c hidden" style="left: 50%;">
+    <div></div><div></div>
 </div>
 
 

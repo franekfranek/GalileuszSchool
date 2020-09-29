@@ -14,11 +14,17 @@
             type: 'Get',
             data: { id: userId },
             url: '/admin/User/FindUser',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (result) {
                 $('#detailsUserModal #id').text(result.id);
                 $('#detailsUserModal #phoneNumberConfirmed').text(result.PhoneNumberConfirmed);
                 $('#detailsUserModal #accessFailedCount').text(result.AccessFailedCount);
                 $('#detailsUserModal #securityStamp').text(result.SecurityStamp);
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         })
     });
@@ -51,6 +57,9 @@
             type: 'GET',
             data: { id: userId },
             url: '/admin/User/Delete',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function () {
                 $('#deleteUserModal').modal('hide');
 
@@ -72,6 +81,9 @@
                     notf.hide("slow");
                 }, 2000);
                 GetUsers();
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
 
         })
@@ -86,8 +98,14 @@ var GetUsers = function () {
         type: "post",
         url: "/Admin/User/GetUsers",
         dataType: 'json',
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         success: function (data) {
             bindDataTable(data);
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
         }
     })
 };

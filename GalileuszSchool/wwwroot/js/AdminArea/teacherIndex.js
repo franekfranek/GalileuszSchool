@@ -44,6 +44,9 @@
             type: 'GET',
             data: { id: teacherId },
             url: '/admin/Teachers/Delete',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function () {
                 $('#deleteTeacherModal').modal('hide');
 
@@ -65,6 +68,9 @@
                     notf.hide("slow");
                 }, 2000);
                 GetTeachers();
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
 
         })
@@ -78,12 +84,18 @@
             type: 'Get',
             data: { id: teacherId },
             url: '/admin/Teachers/FindTeacher',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (result) {
                 $('#editTeacherModal #idTeacherEdit').val(result.id);
                 $('#editTeacherModal #editTeacherFirstName').val(result.firstName);
                 $('#editTeacherModal #editTeacherLastName').val(result.lastName);
                 $('#editTeacherModal #editTeacherPhone').val(result.phoneNumber);
                 $('#editTeacherModal #editTeacherEmail').val(result.email);
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         })
     });
@@ -124,6 +136,9 @@
                 type: 'POST',
                 data: data,
                 url: '/admin/Teachers/Edit',
+                beforeSend: function () {
+                    $('#loader').removeClass('hidden');
+                },
                 success: function () {
 
                     $('#editTeacherModal').modal('hide');
@@ -147,6 +162,9 @@
                         notf.hide("slow");
                     }, 2000);
                     GetTeachers();
+                },
+                complete: function () {
+                    $('#loader').addClass('hidden');
                 }
             })
         }
@@ -188,6 +206,9 @@
                 type: 'POST',
                 data: data,
                 url: '/admin/Teachers/Create',
+                beforeSend: function () {
+                    $('#loader').removeClass('hidden');
+                },
                 success: function () {
 
                     $('#createTeacherModal').modal('hide');
@@ -217,6 +238,9 @@
                         notf.hide("slow");
                     }, 2000);
                     GetTeachers();
+                },
+                complete: function () {
+                    $('#loader').addClass('hidden');
                 }
             })
         }
@@ -229,9 +253,15 @@ var GetTeachers = function () {
         type: "post",
         url: "/Admin/Teachers/GetTeachers",
         dataType: 'json',
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         success: function (data) {
             bindDataTable(data);
 
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
         }
 
     })

@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
@@ -13,7 +12,8 @@
 
     <title>@ViewData["Title"] - GalileuszSchool</title>
 
-
+    <link href="~/css/spinner/spinner.css" rel="stylesheet" />
+    @*<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">*@
     <link href="https://fonts.googleapis.com/css?family=Happy+Monkey|Jura|Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet" />
@@ -28,6 +28,7 @@
     <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="~/js/Notify/notify.min.js"></script>
     @*<script async defer
                 src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleMapsApiKey"]&callback=initMap">
         </script>*@
@@ -44,7 +45,7 @@
         <div class="bg-light border-right" id="sidebar-wrapper">
 
             <div class="sidebar-heading" style="background-color:white">
-                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Edit">
+                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="ContactMe">
                     <img class="ml-3" src="~/media/logo2.png" alt="" height="45" width="180" />
                 </a>
             </div>
@@ -70,13 +71,13 @@
             }
             else
             {
-                <a href="#" class="list-group-item list-group-item-action bg-light">Contact</a>
-                <a href="#" class="list-group-item list-group-item-action bg-light">About Us</a>
+                <a asp-area="" asp-controller="Account" asp-action="ContactMe" class="list-group-item list-group-item-action bg-light">Contact</a>
+                <a asp-area="" asp-controller="Account" asp-action="ContactMe" class="list-group-item list-group-item-action bg-light">About Us</a>
             }
             <div class="social">
-                <div class="fab fa-facebook-f"></div>
-                <div class="fab fa-twitter"></div>
-                <div class="fab fa-linkedin-in"></div>
+                <div onclick="linkToSocialMedia('git')" class="fab fa-github"></div>
+                <div onclick="linkToSocialMedia('so')" class="fab fa-stack-overflow"></div>
+                <div onclick="linkToSocialMedia('li')" class="fab fa-linkedin-in"></div>
             </div>
 
         </div>
@@ -174,7 +175,7 @@
                                 <p>A rover wearing a fuzzy suit doesn’t alarm the real penguins</p>
 
                                 <div class="col-xs-3 input-group">
-                                    <input type="text" class="form-control" size="20" placeholder="You Email">
+                                    <input type="text" class="form-control" size="20" placeholder="Your Email">
                                     <span class="input-group-btn">
                                         <button class="btn btn-outline-light" type="button">Subscribe</button>
                                     </span>
@@ -235,6 +236,22 @@
                 title: "Galileusz School"
             });
         }*@
+
+        function linkToSocialMedia(option) {
+            switch (option) {
+                case 'git':
+                    window.location = "https://github.com/franekfranek";
+                    break;
+                case 'li':
+                    window.location = "https://linkedin.com/in/franciszek-zawadzki-0821961a2";
+                    break;
+                case 'so':
+                    window.location = "https://stackoverflow.com/users/12086742/kenarf";
+                    break;
+                default:
+                    console.log("error");
+            };
+        };
     </script>
 
     @RenderSection("Scripts", required: true)

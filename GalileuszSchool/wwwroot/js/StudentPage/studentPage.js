@@ -50,6 +50,9 @@ function ViewModel() {
         $.ajax({
             url: '/account/GetClasses',
             type: 'get',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (res) {
                 console.log(res);
                 if (res.length !== 0) {
@@ -62,6 +65,9 @@ function ViewModel() {
                 }else {
                     self.noClassesYet(true);
                 }
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         });
     }

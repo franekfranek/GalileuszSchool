@@ -61,6 +61,9 @@ $(document).ready(function () {
             type: 'GET',
             data: { id: studentId },
             url: '/admin/Students/Delete',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function () {
                 $('#deleteStudentModal').modal('hide');
 
@@ -82,6 +85,9 @@ $(document).ready(function () {
                     notf.hide("slow");
                 }, 2000);
                 GetStudents();
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         })
     });
@@ -94,6 +100,9 @@ $(document).ready(function () {
             type: 'Get',
             data: { id: studentId },
             url: '/admin/Students/FindStudent',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (result) {
                 $('#editStudentModal #idStudentEdit').val(result.id);
                 $('#editStudentModal #targetImgStudentEdit').attr('src', '/media/students/'+ result.image);
@@ -101,6 +110,9 @@ $(document).ready(function () {
                 $('#editStudentModal #editStudentLastName').val(result.lastName);
                 $('#editStudentModal #editStudentPhone').val(result.phoneNumber);
                 $('#editStudentModal #editStudentEmail').val(result.email);
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         })
     });
@@ -161,6 +173,9 @@ $(document).ready(function () {
                     RequestVerificationToken:
                         $('input:hidden[name="__RequestVerificationToken"]').val()
                 },
+                beforeSend: function () {
+                    $('#loader').removeClass('hidden');
+                },
                 success: function () {
 
                     $('#editStudentModal').modal('hide');
@@ -183,6 +198,9 @@ $(document).ready(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetStudents();
+                },
+                complete: function () {
+                    $('#loader').addClass('hidden');
                 }
             })
         }
@@ -246,6 +264,9 @@ $(document).ready(function () {
                     RequestVerificationToken:
                         $('input:hidden[name="__RequestVerificationToken"]').val()
                 },
+                beforeSend: function () {
+                    $('#loader').removeClass('hidden');
+                },
                 success: function () {
 
                     $('#createStudentModal').modal('hide');
@@ -277,6 +298,9 @@ $(document).ready(function () {
                         notf.hide("slow");
                     }, 2000);
                     GetStudents();
+                },
+                complete: function () {
+                    $('#loader').addClass('hidden');
                 }
             })
         }
@@ -289,8 +313,14 @@ var GetStudents = function () {
         type: "post",
         url: "/Admin/Students/GetStudents",
         dataType: 'json',
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         success: function (data) {
             bindDataTable(data);
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
         }
     })
 };

@@ -39,6 +39,9 @@
             type: 'GET',
             data: {id: courseId},
             url: '/admin/Courses/Delete',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function () {
                 $('#deleteCourseModal').modal('hide');
 
@@ -60,6 +63,9 @@
                     notf.hide("slow");
                 }, 2000);
                 GetCourses();
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
 
 
@@ -75,6 +81,9 @@
             type: 'Get',
             data: { id: courseId },
             url: '/admin/Courses/FindCourse',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (result) {
                 $('#editCourseModal #idEdit').val(result.id);
                 $('#editCourseModal #editCourseName').val(result.name);
@@ -82,6 +91,9 @@
                 $('#editCourseModal #description').val(result.description);
                 $('#editCourseModal #price').val(result.price);
                 $('#editCourseModal #teacherId').val(result.teacherId);
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         })
     });
@@ -122,6 +134,9 @@
                 type: 'POST',
                 data: data,
                 url: '/admin/Courses/Edit',
+                beforeSend: function () {
+                    $('#loader').removeClass('hidden');
+                },
                 success: function () {
 
                     $('#editCourseModal').modal('hide');
@@ -144,6 +159,9 @@
                         notf.hide("slow");
                     }, 2000);
                     GetCourses();
+                },
+                complete: function () {
+                    $('#loader').addClass('hidden');
                 }
             })
         }
@@ -161,6 +179,9 @@
             type: 'Get',
             data: { id: courseId },
             url: '/admin/Courses/FindCourse',
+            beforeSend: function () {
+                $('#loader').removeClass('hidden');
+            },
             success: function (result) {
                 $('#detailsCourseModal #id').text(result.id);
                 $('#detailsCourseModal #name').text(result.name);
@@ -170,6 +191,9 @@
                 $('#detailsCourseModal #slug').text(result.slug);
                 $('#detailsCourseModal #sorting').text(result.sorting);
                 $('#detailsCourseModal #teacherId').text(result.teacherId);
+            },
+            complete: function () {
+                $('#loader').addClass('hidden');
             }
         })
     });
@@ -209,6 +233,9 @@
                 type: 'POST',
                 data: data,
                 url: '/admin/Courses/Create',
+                beforeSend: function () {
+                    $('#loader').removeClass('hidden');
+                },
                 success: function (res) {
                     console.log(res);
                     $('#createCourseModal').modal('hide');
@@ -242,6 +269,9 @@
                         notf.hide("slow");
                     }, 2000);
                     GetCourses();
+                },
+                complete: function () {
+                    $('#loader').addClass('hidden');
                 }
             })
         }
@@ -255,10 +285,16 @@ var GetCourses = function () {
         type: "post",
         url: "/Admin/Courses/GetCourses",
         dataType: 'json',
+        beforeSend: function () {
+            $('#loader').removeClass('hidden');
+        },
         success: function (data) {
 
             bindDataTable(data);
 
+        },
+        complete: function () {
+            $('#loader').addClass('hidden');
         }
 
     })
