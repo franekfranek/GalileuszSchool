@@ -427,6 +427,7 @@ function ViewModel() {
 
         if (self.isStudentStatus() === true) {
             self.getStudentHomeworkDetails(homework.Id);
+            self.loadCkEditor();
         }
         else {
             self.loadStudentsPerHomework(homework);
@@ -555,13 +556,25 @@ function ViewModel() {
             self.getCourses();
         }
     }
+    self.loadCkEditor = function () {
+        if (self.isStudentStatus() === true && self.toggleDetailedView() === true) {
+            //CKEDITOR.editorConfig = function (config) {
+            //    config.language = 'fr';
+            //    config.uiColor = '#AADC6E';
+            //};
+            
+            CKEDITOR.replace('editor1', {
+                //extraPlugins: 'font'
+            });
+        }
+    }
 
     //establish what user is logged in
     self.isStudentOrTeacher();
     // show all homework by default
     self.goToFolder('All');
-
     
 }
 
 ko.applyBindings(new ViewModel());
+

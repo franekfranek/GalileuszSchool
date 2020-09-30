@@ -3,8 +3,8 @@
 @{
     ViewData["Title"] = "Homework";
 }
-    
 
+<h2>Manage homeworks</h2>
 @*==========CREATE HOMEWORK MODAL=========*@
 <div class="modal fade" tabindex="-1" role="dialog"
      data-bind="modal:showDialog" id="createHomeworkModal">
@@ -84,11 +84,11 @@
             click: $root.goToFolder">
     </li>
     <!-- /ko -->
-    
-        <li data-bind="click: function(){showDialog(true)}, ifnot: isStudentStatus ">
-            <i  class="material-icons" data-toggle="tooltip" title="New">&#xE147</i>
-            <span>New</span>
-        </li>
+
+    <li data-bind="click: function(){showDialog(true)}, ifnot: isStudentStatus ">
+        <i class="material-icons" data-toggle="tooltip" title="New">&#xE147</i>
+        <span>New</span>
+    </li>
 
 </ul>
 
@@ -126,7 +126,7 @@
 
 
 <!-- Chosen homework -->
-<div data-bind="if: toggleDetailedView" >
+<div data-bind="if: toggleDetailedView">
     <h2>Assignment: </h2>
     <div class="viewMail" data-bind="with: chosenHomeworkData">
         <div class="mailInfo biggerFont">
@@ -136,9 +136,9 @@
                     <label class="mr-1">Course:</label> <span data-bind="text: Course()"></span><br />
                     <label>Content: </label> <br /><span data-bind="text: TextContent()"></span>
                 </p>
-                <p class="col-6" data-bind="if: $root.isFileAttached" >
+                <p class="col-6" data-bind="if: $root.isFileAttached">
                     <label class="mr-5">Attached file:</label>
-                    <img data-bind="attr: {src: $root.chosenHomeworkImageSrc()}" class="img-fluid" height="450" width="450" />
+                    <img data-bind="attr: {src: $root.chosenHomeworkImageSrc()}" style="max-width:80%;max-height:80%" />
                 </p>
             </div>
 
@@ -202,54 +202,59 @@
             </div>
         </div>
         <h2 class="mt-3">Students who already got this assigment: </h2>
-    <div class="row">
-        <div class="col-6">
-            <table class="table">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Status</th>
-                        <th></th>
+        <div class="row">
+            <div class="col-6">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Status</th>
+                            <th></th>
 
-                    </tr>
-                </thead>
-                <tbody data-bind="foreach: studentsPerHomework">
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: studentsPerHomework">
 
-                    <tr scope="row">
-                        <td data-bind="text: FullName"></td>
-                        <td > <h5><span data-bind="text: Status, css:{
+                        <tr scope="row">
+                            <td data-bind="text: FullName"></td>
+                            <td>
+                                <h5>
+                                    <span data-bind="text: Status, css:{
                                         'badge' : true,
                                         'badge-success' : CurrentHomeworkIsDone(),
                                         'badge-danger' : !CurrentHomeworkIsDone()
-                                        
-                                        }">
-                              </span></h5></td>
-                        <td class="see-homework" data-bind="if: CurrentHomeworkIsDone, click: $root.showStudentHomework">
-                        <span title="See student's solution" class="material-icons" style="color: steelblue;">visibility</span></td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-        </div>
-        <div data-bind="if: $root.toggleStudentHomework" class="col-6">
-            <div class="viewMail" data-bind="foreach: $root.studentSolutiuonToShow">
-                <h2 id="studentSolution" data-bind="text: $root.currentStudentMessage()"> </h2>
-                <div class="mailInfo" data-bind="text: SolutionTextContent"></div>
-                <div class="mt-3" data-bind="if: ImageSrc()">
-                    
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>Attached pictures:</h2>
-                        </div>
-                        <div class="card-body d-flex align-items-center justify-content-center">
-                            <img data-bind="attr: {src: ImageSrc()}" class="img-fluid justify-content-center" height="300" width="300" />
-                        </div>
-                    </div>
 
+                                        }">
+                                    </span>
+                                </h5>
+                            </td>
+                            <td class="see-homework" data-bind="if: CurrentHomeworkIsDone, click: $root.showStudentHomework">
+                                <span title="See student's solution" class="material-icons" style="color: steelblue;">visibility</span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div data-bind="if: $root.toggleStudentHomework" class="col-6">
+                <div class="viewMail" data-bind="foreach: $root.studentSolutiuonToShow">
+                    <h2 id="studentSolution" data-bind="text: $root.currentStudentMessage()"> </h2>
+                    <div class="mailInfo" data-bind="text: SolutionTextContent"></div>
+                    <div class="mt-3" data-bind="if: ImageSrc()">
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Attached pictures:</h2>
+                            </div>
+                            <div class="card-body d-flex align-items-center justify-content-center">
+                                <img data-bind="attr: {src: ImageSrc()}" class="img-fluid justify-content-center" height="300" width="300" />
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
     </div>
 </div>
@@ -261,7 +266,7 @@
         <!-- ko ifnot: $root.isCurrenHomeworkDone -->
         <form class="solutionX" id="homework-solution">
 
-            <div class="form-group">
+            <div class="form-group" id="editor1">
                 <textarea data-bind="textInput: studentSolutionText" style="width: 100%; height: 100%"
                           class="form-control" name="content" id="homeworkContent"></textarea>
             </div>
@@ -281,7 +286,6 @@
                    id="submitSolution" data-bind="click : savaStudentSolution">
         </div>
         <!-- /ko -->
-
         <!-- ko if: $root.isCurrenHomeworkDone -->
         <p style="text-align:center">You have already submitted this assigment.</p>
         <!-- /ko -->
@@ -292,10 +296,14 @@
 </div>
 
 
+
+
 @section Scripts{
 
     <script src="~/js/Homework/homeworkIndex.js"></script>
+
     <script>
+
         document.getElementById('inputFile')
             .addEventListener('change', function () {
 
@@ -307,6 +315,7 @@
 
                 fr.readAsText(this.files[0]);
             })
+        
     </script>
 
 

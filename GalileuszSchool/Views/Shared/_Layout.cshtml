@@ -25,20 +25,20 @@
     <link href="~/css/emailStyle.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/student-submission-table.css" rel="stylesheet" />
-    <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @*<script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>*@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="~/js/Notify/notify.min.js"></script>
-    @*<script async defer
-                src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleMapsApiKey"]&callback=initMap">
-        </script>*@
+    <script src="~/js/ckeditor/ckeditor.js"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleMapsApiKey"]&callback=initMap">
+    </script>
 
 
 
 </head>
 
 <body>
-
     <div id="wrapper">
 
         <!-- Sidebar -->
@@ -59,7 +59,7 @@
                 <a asp-controller="Homework" asp-action="Index" class="list-group-item list-group-item-action bg-light">
                     Homework
                     <i class="material-icons-outlined side-icons">home_work</i>
-                </a >
+                </a>
                 <a asp-controller="Account" asp-action="Edit" class="list-group-item list-group-item-action bg-light">
                     Payment
                     <i class="material-icons-outlined side-icons">payment</i>
@@ -86,12 +86,13 @@
 
 
         <!-- /#sidebar-wrapper -->
+
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light border-bottom">
                 <i id="menu-toggle" class="material-icons md-36" title="Menu" style="padding-right:5px;">&#xe5d2;</i>
 
-                @if (!(User?.Identity?.IsAuthenticated ?? false))
-                {<strong>Welcome to Galileusz School </strong>}
+                @*@if (!(User?.Identity?.IsAuthenticated ?? false))
+                {<strong>Welcome to Galileusz School </strong>}*@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
@@ -153,10 +154,14 @@
                 </div>
             </nav>
         </div>
+        
         <!-- Page Content -->
         <div id="page-content-wrapper">
             <div class="page-wrap">
                 <div class="container" style="margin-bottom: 500px;">
+
+                        
+
                     <main role="main" class="pb-3">
                         <partial name="_NotificationPartial" />
                         <partial name="_CookieConsentPartial" />
@@ -222,7 +227,7 @@
             $("#wrapper").toggleClass("toggled");
         });
 
-        @*var map;
+        var map;
         function initMap() {
             var coordinates = { lat: 52.199636, lng: 20.933612 }
             map = new google.maps.Map(document.getElementById("map"), {
@@ -235,7 +240,7 @@
                 map: map,
                 title: "Galileusz School"
             });
-        }*@
+        }
 
         function linkToSocialMedia(option) {
             switch (option) {
