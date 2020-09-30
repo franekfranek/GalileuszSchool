@@ -62,10 +62,11 @@ As an admin we can:
 * add roles to specific users
 * manage registered users
 
-
+Other:
 * registration system 
 * email confirmation
 * forgot password option
+* see school location
 
 ## Status
 Project is: _on hold_
