@@ -67,6 +67,7 @@ Other:
 * email confirmation
 * forgot password option
 * see school location
+* login with Facebook or Google
 
 ## Status
 Project is: _on hold_
