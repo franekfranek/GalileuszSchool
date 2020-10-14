@@ -28,7 +28,7 @@ attendance, students payments etc.
 ![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs1.png)
 
 ## Technologies
-* ASP.NET MVC 5.2.7
+* ASP.NET Core 3.1
 * Knockout 3.5.1
 * Entity Framework 3.1.0 
 * SqlServer 3.1.0
