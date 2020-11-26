@@ -1,4 +1,4 @@
-# GalileuszSchool - school administration tool
+# GalileuszSchool - school administration tool :school:
 
 This project is inspired to be Student Information System and School Management System. It
 is platform for school administrators, students and teachers to help them with everyday
@@ -73,4 +73,4 @@ Other:
 Project is: _on hold_
 
 ## Contact
-franciszekezawadzki@gmail.com - feel free to contact me!
+:envelope: franciszekezawadzki@gmail.com - feel free to contact me!
