@@ -1,18 +1,6 @@
-/*!
- * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
- * Code licensed under the Apache License v2.0.
- * For details, see http://www.apache.org/licenses/LICENSE-2.0.
- */
-
 /* Toggle Styles */
 
-#wrapper {
-    padding-left: 0;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
+
 
 #wrapper.toggled {
     padding-left: 250px;
@@ -30,6 +18,9 @@
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    /*    background-color: rgba(128, 217, 120, 0.18);*/
+    background-color: #fbfbf0;
+/*    border-right: 1px solid rgba(82, 194, 154, 0.9);*/
 }
 
 #wrapper.toggled #sidebar-wrapper {
@@ -39,7 +30,7 @@
 #page-content-wrapper {
     width: 100%;
     position: absolute;
-    padding: 15px;
+/*    padding: 15px;*/
 }
 
 #wrapper.toggled #page-content-wrapper {
@@ -47,16 +38,43 @@
     margin-right: -250px;
 }
 
-/* Sidebar Styles */
-
-.sidebar-nav {
-    position: absolute;
-    top: 0;
-    width: 250px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+.first-link-sidebar {
+    margin-top: 2.5em;
+    border-radius: 25px !important;
+    margin-top: 2.5em !important;
 }
+
+/* Sidebar Styles */
+.sidebar-heading {
+    height: 20%;
+    margin-bottom: 3em;
+    border-bottom: 2px solid rgba(82, 194, 154, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.sidebar-heading img{
+    max-height: 150px;
+    max-width: 150px;
+    border-radius: 40%;
+    margin-top: 10px;
+}
+    .sidebar-heading p {
+        color: rgba(82, 194, 154, 0.9);
+        font-size: 2em;
+/*        margin-left: 25%;*/
+    }
+
+
+    .sidebar-nav {
+        position: absolute;
+        top: 0;
+        width: 250px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
 
 .sidebar-nav li {
     text-indent: 20px;
@@ -72,7 +90,7 @@
 .sidebar-nav li a:hover {
     text-decoration: none;
     color: #fff;
-    background: rgba(255,255,255,0.2);
+/*    background: rgba(255,255,255,0.2);*/
 }
 
 .sidebar-nav li a:active,
@@ -95,7 +113,18 @@
     background: none;
 }
 
-@media(min-width:768px) {
+.list-group-item {
+    margin: 10px;
+    background-color: rgba(255,255,255,0.3) !important;
+    border: 2px solid rgba(82, 194, 154, 0.9);
+    border-radius: 25px;
+    text-transform: uppercase;
+    font-family: 'Amatic SC', cursive;
+    color: rgba(82, 194, 154, 0.9);
+}
+
+
+/*@media(min-width:768px) {
     #wrapper {
         padding-left: 250px;
     }
@@ -112,14 +141,17 @@
         width: 0;
     }
 
-    #page-content-wrapper {
-        padding: 20px;
-        position: relative;
+    #page-content-wrapper {*/
+/*        padding: 20px;*/
+        /*position: relative;
     }
 
     #wrapper.toggled #page-content-wrapper {
         position: relative;
         margin-right: 0;
-    }
-}
+    }*/
+/*}*/
 
+.list-group-item-action {
+    width: auto;
+}

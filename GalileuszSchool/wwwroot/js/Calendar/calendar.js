@@ -8,7 +8,7 @@ async function isStudentOrTeacher() {
             $('#loader').removeClass('hidden');
         },
         success: function (res) {
-            //console.log(res);
+            console.log(res);
 
         }, error: function (res) {
             $.notify("Error please try again", "error");

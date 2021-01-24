@@ -38,3 +38,9 @@ function statusChangeCallback(response) {
         }
     });
 }
+
+let getPicture = () => {
+    let div = document.querySelector(".main-picture");
+    div.style.display = "block";
+}
+getPicture();

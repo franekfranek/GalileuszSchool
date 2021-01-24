@@ -1,10 +1,14 @@
-﻿.folders {
+﻿.homework-title {
+    color: #52c29a;
+}
+
+.folders {
     background-color: #bbb;
     list-style-type: none;
     padding: 0;
     margin: 0;
     border-radius: 7px;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #d6d6d6), color-stop(0.4, #c0c0c0), color-stop(1,#a4a4a4));
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #228B22), color-stop(0.4, #98FB98), color-stop(1,#52c29a));
     margin: 10px 0 16px 0;
     font-size: 0px;
 }
@@ -19,13 +23,13 @@
     }
 
     .folders li {
-        font-size: 16px;
+        font-size: 20px;
         font-weight: bold;
         display: inline-block;
         padding: 0.5em 1.5em;
         cursor: pointer;
-        color: #444;
-        text-shadow: #f7f7f7 0 1px 1px;
+        color: white;
+/*        text-shadow: #f7f7f7 0 1px 1px;*/
         border-left: 1px solid #ddd;
         border-right: 1px solid #888;
     }
@@ -39,30 +43,31 @@
     }
     /* IE7 only */
     .folders .selected {
-        background-color: #444 !important;
+        background-color: #52c29a !important;
         color: white;
         text-shadow: none;
         border-right-color: #aaa;
         border-left: none;
-        box-shadow: inset 1px 2px 6px #070707;
+        box-shadow: inset 1px 2px 6px #228B22;
     }
 
 .mails {
     width: 100%;
     table-layout: fixed;
     border-spacing: 0;
+    color: #52c29a;
+    font-size: 18px;
 }
 
     .mails thead {
-        background-color: #bbb;
+        background-color: #52c29a;
         font-weight: bold;
-        color: #444;
-        text-shadow: #f7f7f7 0 1px 1px;
+        color: white;
     }
 
     .mails tbody tr:hover {
         cursor: pointer;
-        background-color: #68c !important;
+        background-color: #20B2AA !important;
         color: White;
     }
 
@@ -112,24 +117,27 @@
 }
 
     .viewMail .mailInfo h1 {
+        color: #52c29a;
         margin-top: 0.2em;
         font-size: 130%;
     }
 
     .viewMail .mailInfo label {
-        color: #777;
         font-weight: bold;
         min-width: 2.75em;
         text-align: right;
         display: inline-block;
     }
+.hom-details-title {
+    font-size: 2em;
+}
 
 .viewMail .message {
     padding: 0 1.25em;
 }
 
 .solutionX {
-    background-color: powderblue;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #228B22), color-stop(0.4, #98FB98), color-stop(1,#52c29a));
     padding: 1em 1em 0.5em 1.25em;
     border-radius: 1em;
 }
@@ -138,7 +146,7 @@
     color: #fff !important;
     text-transform: uppercase;
     text-decoration: none;
-    background: #60a3bc;
+    background: #52c29a;
     padding: 20px;
     border-radius: 50px;
     display: inline-block;

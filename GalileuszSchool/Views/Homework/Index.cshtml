@@ -4,7 +4,7 @@
     ViewData["Title"] = "Homework";
 }
 
-<h2>Manage homeworks</h2>
+<h2 class="homework-title">Manage homeworks</h2>
 @*==========CREATE HOMEWORK MODAL=========*@
 <div class="modal fade" tabindex="-1" role="dialog"
      data-bind="modal:showDialog" id="createHomeworkModal">
@@ -127,10 +127,10 @@
 
 <!-- Chosen homework -->
 <div data-bind="if: toggleDetailedView">
-    <h2>Assignment: </h2>
+    <h2 style="        color: #52c29a;">Assignment: </h2>
     <div class="viewMail" data-bind="with: chosenHomeworkData">
         <div class="mailInfo biggerFont">
-            <strong><p data-bind="text: Title()"></p></strong>
+            <p class="hom-details-title" data-bind="text: Title()"></p>
             <div class="row ">
                 <p class="col-6">
                     <label class="mr-1">Course:</label> <span data-bind="text: Course()"></span><br />
@@ -239,7 +239,7 @@
             <div data-bind="if: $root.toggleStudentHomework" class="col-6">
                 <div class="viewMail" data-bind="foreach: $root.studentSolutiuonToShow">
                     <h2 id="studentSolution" data-bind="text: $root.currentStudentMessage()"> </h2>
-                    <div class="mailInfo" data-bind="text: SolutionTextContent"></div>
+                    <div class="mailInfo" >I'm attached file with solution.</div>
                     <div class="mt-3" data-bind="if: ImageSrc()">
 
                         <div class="card">

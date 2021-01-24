@@ -216,10 +216,11 @@ namespace GalileuszSchool.Controllers
 
                 }
                 TempData["Error"] = "Login failed, wrong credentials or your email is not confirmed";
+
                 //ModelState.AddModelError("", "Login failed, wrong credentials or your email is not confirmed");
             }
 
-            return Redirect("Login");
+            return Redirect("/account/login");
         }
 
         // /get/account/logout

@@ -35,7 +35,7 @@ namespace GalileuszSchool.Areas.Admin.Controllers
                 _context.Add(studentCourseConnection);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 TempData["Error"] = "Error ocurred!/The student is already enrolled for this course!";
                 return RedirectToAction("Index", "Courses");

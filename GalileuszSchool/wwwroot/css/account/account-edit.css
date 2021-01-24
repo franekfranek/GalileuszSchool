@@ -1,0 +1,8 @@
+﻿@media(max-width:1010px) {
+    .row {
+        display: block !important;
+    }
+    .col-5, .col-7{
+        max-width: 100%;
+    }
+}

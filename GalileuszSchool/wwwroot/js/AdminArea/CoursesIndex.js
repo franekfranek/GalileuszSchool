@@ -5,7 +5,7 @@
 
     //ADD STUDENT
     $('#addStudentModal').on('show.bs.modal', function (e) {
-
+        console.log(e);
 
         var courseId = $(e.relatedTarget).data('course-id');
         var courseName = $(e.relatedTarget).data('course-name');
@@ -96,7 +96,7 @@
                 $('#loader').addClass('hidden');
             }
         })
-    });
+    })
 
     $('#editCourse').on('click', function (e) {
 

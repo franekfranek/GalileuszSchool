@@ -54,11 +54,9 @@ function ViewModel() {
                 $('#loader').removeClass('hidden');
             },
             success: function (res) {
-                console.log(res);
                 if (res.length !== 0) {
                     self.noClassesYet(false);
                     var mappedClasses = $.map(res, function (item) {
-
                         return new Class(item);
                     });
                     self.classes(mappedClasses);

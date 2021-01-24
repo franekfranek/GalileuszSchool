@@ -1,87 +1,104 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-* {
+﻿* {
     /*font-family: 'Happy Monkey', cursive;*/
-    font-family: 'Jura', sans-serif;
+    font-family: 'Amatic SC', cursive;
+
+/*    text-shadow: 0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45)*/
+}
+    *::-webkit-scrollbar {
+        display: none;
+    }
+
+html, body {
+    height: 100%;
+    margin:0;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #fbfbf0;
+    /*    min-height: 100vh;*/
 }
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
+
 
 /* Provide sufficient contrast against white background */
 a {
-  /*color: #0366d6;*/
-   text-decoration: none;
-   color:steelblue;
+    color: #52c29a !important;
+    text-decoration: none;
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff !important;
+    background-color: #52c29a;
+    border: 1px solid white;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.container.main {
+    /*    main wrapper will take all the space possible and rest just what is needed*/
+    flex: 1;
+    margin-bottom: 100px;
+    margin-top: 100px;
 }
 
 /* footer styles
 -------------------------------------------------- */
-html, body {
-    height: 100%;
-}
-
-.page-wrap {
-/*    height: 1000px; */
-    /* Force height on body */
-    position: relative;
-    
-}
 .footer {
-    position: relative;
-    bottom: 0;
-    background-color: steelblue;
-    color:white;
+    display: flex;
+    /*    padding: 0;
+    bottom: 0;*/
+    background-color: #52c29a;
+    color: white;
     height: auto;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    /*    flex-shrink: 0;*/
 }
 
-    .footer .about-company i {
-        font-size: 25px;
+.child{
+    display: inline-block;
+    flex: 1;
+    margin: 10px;
+}
+    .child.contact {
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        
+        
     }
-
-    .footer .about-company a {
-        color: white;
+    .child.map{
+        flex:2;
     }
-
-        .footer .about-company a:hover {
-            color: #4180cb;
-        }
-
-    .footer .location i {
-        font-size: 18px;
+    .child.subs {
+        margin-left: 2em;
+        margin-right: 3em;
     }
-
-    .footer .copyright p {
-        border-top: 1px solid rgba(255, 255, 255, .1);
-        text-align: center;
+.last-child{
+    width: 100%;
+    text-align: center;
+}
+    .last-child > p > small{
+        color: whitesmoke;
     }
 
 .small-logo {
     display: inline-block;
     vertical-align: middle;
 }
+/*footer ends*/
 
-/*@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-*/
+
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
@@ -107,45 +124,15 @@ li.nav-item.logout{
 
 .error {
     color: red;
-    /*background-color: #f2dede;
-    border-color: #ebccd1;
-    padding: 1px 20px 1px 20px;*/
-}
 
-/*thead {
-    background-color: #006DCC;
-    color: white;
-}*/
+}
 
 /*icons*/
 
-/*homework notification*/
-.book-homework {
-    font-size: 20px;
-    color: steelblue;
-    cursor: pointer;
-    padding-right:8px;
-    padding-top:8px;
-    position:relative;
-    display: none;
-}
-#txt {
-    background-color: red;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: right;
-    color: white;
-    border-radius: 25px;
-    position: absolute;
-    padding: 2px;
-    top: 0px;
-    right: 0px;
-}
-/*end of homework notf*/
 
 #menu-toggle {
     font-size: 36px;
-    color: steelblue;
+    color: floralwhite;
     cursor: pointer;
 }
 
@@ -228,10 +215,6 @@ div.fa-linkedin-in:hover {
     display: none;
 }
 
-/*.modal-content {
-    border: blue 6px solid;
-}*/
-
 /*icon eye*/
 .see-homework{
     cursor: pointer;
@@ -240,3 +223,141 @@ div.fa-linkedin-in:hover {
 .biggerFont{
     font-size:20px;
 }
+
+.main-picture {
+    background-image: url(../media/shool.jpg);
+    background-size: cover;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    color: #fff;
+    text-align: center;
+    box-shadow: inset 0 0 0 2000px rgba(0,0,0, 0.3);
+    min-height: 80vh;
+    display: none;
+}
+
+        .main-picture >p.smaller {
+            font-size: 2em;
+            margin-top: 35%;
+        }
+
+.navbar {
+    /*    background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(45,253,170,1) 100%);*/
+    display: block !important;
+    background: #52c29a;
+    padding: 0px 5rem 0px 5rem;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+}
+
+.navbar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    
+}
+
+.center-nav {
+    display: flex;
+    align-items: center;
+}
+    .center-nav p {
+        text-transform: uppercase;
+        font-family: 'Amatic SC', cursive;
+/*        text-shadow: 0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);*/
+        color: white;
+        font-size: 2em;
+        margin: 0.5em;
+        
+    }
+
+.right-nav > a {
+    color: white !important;
+    font-size: 1.5em;
+    display: inline-block !important;
+
+}
+/*homework notification*/
+.book-homework {
+    font-size: 35px;
+    color: white;
+    cursor: pointer;
+    padding-right: 8px;
+    padding-top: 8px;
+    position: relative;
+    display: none;
+    margin-right: 7px;
+}
+
+#txt {
+    background-color: red;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: right;
+    color: white;
+    border-radius: 25px;
+    position: absolute;
+    padding: 5px;
+    
+    bottom: -14px;
+    right: -8px;
+}
+/*end of homework notf*/
+
+/*dropdown menu*/
+.navbar-nav .dropdown-menu {
+     position: absolute !important; 
+     float: none;
+}
+
+
+/*a.navbar-brand {
+    background: url(../media/logo-small.png);
+}*/
+
+@media (max-width: 992px) {
+    .collapse {
+        display: block !important;
+    }
+    
+}
+
+@media (max-width: 992px) {
+    .collapse {
+        display: block !important;
+    }
+}
+
+@media (max-width: 555px) {
+    .footer {
+        flex-direction: column;
+    }
+
+    .map {
+        flex-basis: 20%;
+    }
+}
+
+@media (max-width: 760px) {
+    .navbar-nav{
+        flex-direction: column !important;
+    }
+}
+
+@media (max-width: 540px) {
+    .center-nav {
+        flex-direction: column !important;
+    }
+}
+
+
+
+
+/** 
+    HACK GOOD ONE
+    {
+    background: #000 !important;
+    color: #0f0 !important;
+    outline: solid #f00 1px !important;
+}*/
