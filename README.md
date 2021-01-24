@@ -44,7 +44,7 @@ attendance, students payments etc.
 * Bootstrap 4.3.1
 
 ## Setup
-Please clone the the repo and type _dotnet run_ in your terminal.
+Please clone the the repo, go to project directory and type _dotnet run_ in your terminal.
 
 ## Features
 As a student we can:
