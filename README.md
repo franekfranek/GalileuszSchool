@@ -14,18 +14,27 @@ attendance, students payments etc.
 * [Contact](#contact)
 
 ## Screenshots
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs7.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs3.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs2.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs4.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs5.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs6.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs9.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs10.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs11.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs12.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs13.png)
-![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/gs1.png)
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g6.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g4.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g12.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g13.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g9.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g10.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g2.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g3.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g1.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/g8.png)
+
+![](./GalileuszSchool/wwwroot/media/GalileuszSchoolPics/14.png)
 
 ## Technologies
 * ASP.NET Core 3.1
@@ -35,6 +44,7 @@ attendance, students payments etc.
 * Bootstrap 4.3.1
 
 ## Setup
+Please clone the the repo and type _dotnet run_ in your terminal.
 
 ## Features
 As a student we can:
