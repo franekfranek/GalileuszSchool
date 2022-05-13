@@ -1,3 +1,4 @@
+[![Board Status](https://dev.azure.com/franciszekezawadzki/98f02072-aa8d-42fd-8153-3c736099964c/8e12f73e-4634-4923-b4b4-43986efcf423/_apis/work/boardbadge/1775633b-4ad4-4138-bc31-096b2ce645d1)](https://dev.azure.com/franciszekezawadzki/98f02072-aa8d-42fd-8153-3c736099964c/_boards/board/t/8e12f73e-4634-4923-b4b4-43986efcf423/Microsoft.RequirementCategory)
 # GalileuszSchool - school administration tool :school:
 
 This project is inspired to be Student Information System and School Management System. It
